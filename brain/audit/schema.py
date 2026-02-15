@@ -9,6 +9,33 @@ Database schema for Brain audit tables
 import db
 
 
+def ensure_habit_events_table():
+    """Ensure the habit_events table exists for event sourcing."""
+    with db.get_conn() as conn:
+        # Habit events table for event sourcing
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS habit_events (
+                id TEXT PRIMARY KEY,
+                event_type TEXT NOT NULL,
+                entity_type TEXT NOT NULL,
+                entity_id TEXT NOT NULL,
+                timestamp TEXT NOT NULL,
+                version TEXT NOT NULL DEFAULT '1.0',
+                payload TEXT NOT NULL,
+                metadata TEXT,
+                created_at TEXT DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        
+        # Indexes for efficient querying
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_habit_events_type ON habit_events(event_type);")
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_habit_events_entity ON habit_events(entity_type, entity_id);")
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_habit_events_timestamp ON habit_events(timestamp);")
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_habit_events_entity_type ON habit_events(entity_type);")
+        
+        conn.commit()
+
+
 def ensure_audit_tables():
     """Ensure Brain audit tables exist"""
     with db.get_conn() as conn:
