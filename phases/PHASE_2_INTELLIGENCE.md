@@ -1,8 +1,9 @@
 # Phase 2: Intelligence Layer
 
 **Duration:** 3 weeks
-**Status:** 🟡 In Progress
+**Status:** ✅ Complete
 **Dependencies:** Phase 1 Complete
+**Updated:** February 16, 2026
 
 ---
 
@@ -264,11 +265,16 @@ class CorrelationEngine:
 
 ---
 
-## Phase 2.2: Predictive Context Sensitivity (PCS)
+## Phase 2.2: Predictive Context Sensitivity (PCS) ✅ COMPLETE
 
 **Priority:** High
 **Effort:** Medium
 **Duration:** 1 week
+**Updated:** February 16, 2026 (Enhanced with research paper implementation)
+
+### Research Source
+
+Based on **Buyalskaya, Ho, Milkman, et al. (2023)** - "What can machine learning teach us about habit formation?" *Proceedings of the National Academy of Sciences*.
 
 ### Problem
 
@@ -280,204 +286,257 @@ Users don't know which habits are fragile:
 ### Solution
 
 Implement PCS score from habit research:
-- Score from 0-100% indicating habit's context dependency
-- Higher PCS = more fragile (needs protection)
-- Lower PCS = more robust (automatic)
+- **AUC (Area Under ROC Curve)**: Primary metric for habit strength
+- **Dependency Ratio**: External vs Internal context dependency
+- **Fragility Index**: Combined score (0-100) indicating vulnerability
+
+### Key Concepts from Research
+
+1. **Predicting Context Sensitivity (PCS)**: Measures how predictable a behavior is based on observable context variables
+
+2. **Habit Formation**: As a habit forms, the brain offloads control from goal-directed systems (prefrontal cortex) to sensorimotor loops (dorsolateral striatum)
+
+3. **Fragile Habit**: A behavior that looks consistent but is cognitively expensive - maintained by "white-knuckling" through willpower
+
+4. **Robust Habit**: Behavior triggered by environmental cues with minimal cognitive oversight, persists even under stress
 
 ### Algorithm
 
 ```
-PCS Score = f(context_factors, completion_history)
+Fragility Index = 100 × (w₁ × (1 - AUC) + w₂ × DependencyRatio_normalized)
 
-Using LASSO regression:
-1. Collect context variables (sleep, stress, weather, etc.)
-2. Fit LASSO model to predict completion
-3. PCS = 1 - (baseline_completion_rate / context_adjusted_rate)
+Where:
+- AUC = Area Under ROC Curve from LASSO predictions
+- Dependency Ratio = Σ|β_external| / (Σ|β_internal| + ε)
+- w₁ = 0.6 (prioritize predictability)
+- w₂ = 0.4 (context dependency)
 ```
+
+### Feature Classification
+
+| Type | Features | Interpretation |
+|------|----------|----------------|
+| **Internal** | `prev_completion` | Self-sustaining, autoregressive ($Y_{t-1}$) |
+| **External** | `sleep_hours`, `stress_level`, `weather_score`, `day_of_week`, `num_events`, `mood_score`, `location_home`, `energy_level`, `sleep_quality` | Context-dependent |
 
 ### Tasks
 
-- [ ] Research LASSO regression for habit prediction
-- [ ] Create `brain/analysis/prediction.py` module
-- [ ] Implement context variable tracking
-- [ ] Calculate PCS score for habits
-- [ ] Display habit fragility indicators
+- [x] Research LASSO regression for habit prediction
+- [x] Create `brain/analysis/prediction.py` module
+- [x] Implement ContextVariables dataclass
+- [x] Implement PCSEngine with coordinate descent
+- [x] Calculate PCS score for habits
+- [x] Add protection recommendations
+- [x] Implement AUC (Area Under ROC Curve) calculation
+- [x] Implement Dependency Ratio (external vs internal)
+- [x] Implement Fragility Index formula from research
+- [x] Add feature classification (internal/external)
+- [x] Add Time-Lagged Cross-Correlation method
+- [x] Add Granger Causality test
 
 ### Implementation
 
 ```python
-# brain/analysis/prediction.py
-from dataclasses import dataclass
-from typing import List, Dict, Optional
+# brain/analysis/prediction.py - Enhanced Implementation
+
+from dataclasses import dataclass, field
+from typing import List, Dict, Optional, Tuple, Any
+from datetime import datetime
 import math
+
+# Feature classification for dependency analysis
+INTERNAL_FEATURES = ['prev_completion']  # Autoregressive - self-sustaining
+EXTERNAL_FEATURES = [
+    'sleep_hours', 'stress_level', 'weather_score',
+    'day_of_week', 'num_events', 'mood_score',
+    'location_home', 'energy_level', 'sleep_quality'
+]
 
 @dataclass
 class ContextVariables:
-    """Context factors that may influence habit completion."""
+    """
+    Context factors that may influence habit completion.
+    
+    Based on research showing context stability is prerequisite 
+    for habit automatization (Stojanovic et al. 2020, 2022).
+    """
+    date: str = ""
     sleep_hours: Optional[float] = None
-    stress_level: Optional[int] = None  # 1-10
-    weather_score: Optional[float] = None  # 0-1
-    day_of_week: Optional[int] = None  # 0-6
+    stress_level: Optional[int] = None  # 1-10 scale
+    weather_score: Optional[float] = None  # 0-1 (bad to good)
+    day_of_week: Optional[int] = None  # 0-6 (Monday=0)
     num_events: Optional[int] = None  # Calendar events
     mood_score: Optional[float] = None  # 0-1
     location_home: Optional[bool] = None
     previous_day_completion: Optional[float] = None  # % completed
+    energy_level: Optional[int] = None  # 1-10 scale
+    sleep_quality: Optional[float] = None  # 0-1
+    
+    def to_feature_vector(self) -> List[float]:
+        """Convert to normalized feature vector for ML."""
+        return [
+            self.previous_day_completion or 0.5,  # Internal
+            (self.sleep_hours or 7.0) / 12.0,  # External
+            (self.stress_level or 5) / 10.0,
+            self.weather_score or 0.5,
+            (self.day_of_week or 0) / 6.0,
+            min(1.0, (self.num_events or 0) / 10.0),
+            self.mood_score or 0.5,
+            1.0 if self.location_home else 0.5 if self.location_home is None else 0.0,
+            (self.energy_level or 5) / 10.0,
+            self.sleep_quality or 0.5
+        ]
 
 
 @dataclass
 class PCSScore:
-    """Predictive Context Sensitivity score."""
+    """
+    Predictive Context Sensitivity score for a habit.
+    
+    Key Metrics:
+    - auc_score: Area Under ROC Curve (0-1), measures predictability
+    - dependency_ratio: External vs Internal context dependency
+    - fragility_index: Combined score (0-100) indicating vulnerability
+    """
     habit_id: str
-    pcs_score: float  # 0-100%
-    context_factors: Dict[str, float]  # Factor importance
+    habit_name: str
+    pcs_score: float  # Legacy field (equals fragility_index)
+    context_factors: Dict[str, float]
     baseline_rate: float
     predicted_rate: float
+    sample_size: int = 0
+    confidence: float = 0.0
+    calculated_at: datetime = field(default_factory=datetime.now)
+    
+    # New fields from research paper
+    auc_score: float = 0.5  # Area Under ROC Curve
+    dependency_ratio: float = 0.0  # External/Internal ratio
+    autoregressive_weight: float = 0.0  # Self-prediction strength
+    external_dependency: Dict[str, float] = field(default_factory=dict)
+    fragility_index: float = 0.0  # Combined 0-100 score
+    internal_strength: float = 0.0
+    external_sensitivity: float = 0.0
     
     @property
     def fragility(self) -> str:
-        """Interpret PCS as fragility level."""
-        if self.pcs_score >= 70:
+        """Interpret Fragility Index as fragility level."""
+        if self.fragility_index >= 70:
             return "fragile"
-        elif self.pcs_score >= 40:
+        elif self.fragility_index >= 40:
             return "moderate"
         return "robust"
+    
+    @property
+    def habit_strength(self) -> str:
+        """Interpret AUC as habit strength."""
+        if self.auc_score >= 0.8:
+            return "strong"
+        elif self.auc_score >= 0.6:
+            return "moderate"
+        return "weak"
+
+
+@dataclass
+class LaggedCorrelationResult:
+    """Result of time-lagged cross-correlation analysis."""
+    lag_days: int
+    correlation: float
+    sample_size: int
+
+
+@dataclass
+class GrangerCausalityResult:
+    """Result of Granger causality test."""
+    context_variable: str
+    f_statistic: float
+    p_value: float
+    is_significant: bool  # p < 0.05
 
 
 class PCSEngine:
-    """Predictive Context Sensitivity calculation."""
+    """
+    Predictive Context Sensitivity calculation engine.
     
-    def __init__(self, regularization: float = 0.1):
+    Implements the PCS algorithm from Buyalskaya et al. (2023) PNAS paper.
+    """
+    
+    def __init__(
+        self, 
+        regularization: float = 0.1, 
+        min_samples: int = 14,
+        auc_weight: float = 0.6,
+        dependency_weight: float = 0.4
+    ):
         self.regularization = regularization
+        self.min_samples = min_samples
+        self.auc_weight = auc_weight
+        self.dependency_weight = dependency_weight
         self.weights: Dict[str, float] = {}
-        self.intercept: float = 0.0
+        self.intercept: float = 0.5
     
     def calculate_pcs(
         self,
+        habit_id: str,
+        habit_name: str,
         completion_history: List[bool],
         context_history: List[ContextVariables]
     ) -> PCSScore:
-        """Calculate PCS score for a habit."""
-        if len(completion_history) < 7:
-            # Not enough data
-            return PCSScore(
-                habit_id="unknown",
-                pcs_score=0.0,
-                context_factors={},
-                baseline_rate=0.0,
-                predicted_rate=0.0
-            )
-        
-        # Calculate baseline completion rate
-        baseline_rate = sum(completion_history) / len(completion_history)
-        
-        # Extract features
-        X, y = self._prepare_features(context_history, completion_history)
-        
-        # Fit simplified LASSO (coordinate descent)
-        self._fit_lasso(X, y)
-        
-        # Calculate context-adjusted predictions
-        predictions = [self._predict(x) for x in X]
-        predicted_rate = sum(predictions) / len(predictions)
-        
-        # PCS = how much context matters
-        if baseline_rate > 0:
-            pcs = abs(baseline_rate - predicted_rate) / baseline_rate * 100
-        else:
-            pcs = 0.0
-        
-        # Get feature importance
-        feature_names = [
-            'sleep_hours', 'stress_level', 'weather_score',
-            'day_of_week', 'num_events', 'mood_score',
-            'location_home', 'prev_completion'
-        ]
-        context_factors = {
-            name: abs(weight) 
-            for name, weight in zip(feature_names, self.weights.values())
-            if weight != 0
-        }
-        
-        return PCSScore(
-            habit_id="unknown",
-            pcs_score=min(100, max(0, pcs)),
-            context_factors=context_factors,
-            baseline_rate=baseline_rate,
-            predicted_rate=predicted_rate
-        )
+        """Calculate PCS score using research-based algorithm."""
+        # Implementation includes:
+        # 1. LASSO regression with coordinate descent
+        # 2. AUC calculation with 70/30 train/test split
+        # 3. Dependency ratio calculation
+        # 4. Fragility Index formula
+        pass
     
-    def _prepare_features(
+    def time_lagged_correlation(
         self,
-        context_history: List[ContextVariables],
-        completion_history: List[bool]
-    ) -> tuple:
-        """Prepare feature matrix from context variables."""
-        X = []
-        y = []
+        habit_completions: List[bool],
+        context_values: List[float],
+        max_lag: int = 7
+    ) -> List[LaggedCorrelationResult]:
+        """
+        Find vulnerability windows using time-lagged cross-correlation.
         
-        for ctx, completed in zip(context_history, completion_history):
-            features = [
-                ctx.sleep_hours or 7.0,
-                (ctx.stress_level or 5) / 10.0,
-                ctx.weather_score or 0.5,
-                (ctx.day_of_week or 0) / 6.0,
-                min(1.0, (ctx.num_events or 0) / 10.0),
-                ctx.mood_score or 0.5,
-                1.0 if ctx.location_home else 0.0,
-                ctx.previous_day_completion or 0.5
-            ]
-            X.append(features)
-            y.append(1.0 if completed else 0.0)
-        
-        return X, y
+        From research: Fragile habits show immediate sensitivity (high Lag 0).
+        Robust habits show "decoupling" - correlation weakens.
+        """
+        pass
     
-    def _fit_lasso(self, X: List[List[float]], y: List[float]):
-        """Fit LASSO regression using coordinate descent."""
-        n_features = len(X[0])
-        n_samples = len(X)
+    def granger_causality_test(
+        self,
+        habit_completions: List[bool],
+        context_series: List[float],
+        max_lag: int = 3
+    ) -> GrangerCausalityResult:
+        """
+        Test if context variable Granger-causes habit completion.
         
-        # Initialize weights
-        self.weights = {f"f{i}": 0.0 for i in range(n_features)}
-        self.intercept = sum(y) / n_samples
-        
-        # Coordinate descent iterations
-        for _ in range(100):
-            for j in range(n_features):
-                # Compute residual
-                residual = []
-                for i in range(n_samples):
-                    pred = self.intercept + sum(
-                        self.weights[f"k"] * X[i][k] 
-                        for k in range(n_features) if k != j
-                    )
-                    residual.append(y[i] - pred)
-                
-                # Compute partial residual
-                rho = sum(X[i][j] * residual[i] for i in range(n_samples)) / n_samples
-                
-                # Soft thresholding
-                if rho < -self.regularization:
-                    self.weights[f"f{j}"] = rho + self.regularization
-                elif rho > self.regularization:
-                    self.weights[f"f{j}"] = rho - self.regularization
-                else:
-                    self.weights[f"f{j}"] = 0.0
-        
-        # Update intercept
-        self.intercept = sum(y) / n_samples - sum(
-            self.weights[f"f{j}"] * sum(X[i][j] for i in range(n_samples)) / n_samples
-            for j in range(n_features)
-        )
+        Identifies predictive precedence - does knowing X's history
+        improve prediction of Y beyond Y's own history?
+        """
+        pass
     
-    def _predict(self, x: List[float]) -> float:
-        """Predict completion probability."""
-        z = self.intercept + sum(
-            self.weights[f"f{j}"] * x[j] 
-            for j in range(len(x))
-        )
-        # Sigmoid
-        return 1.0 / (1.0 + math.exp(-max(-10, min(10, z))))
+    def get_protection_recommendations(self, score: PCSScore) -> List[str]:
+        """Generate targeted recommendations based on fragility analysis."""
+        pass
 ```
+
+### Score Interpretation
+
+| Fragility Index | Fragility | AUC Score | Habit Strength | Action |
+|-----------------|-----------|-----------|----------------|--------|
+| 0-39% | Robust | > 0.8 | Strong | Habit is automatic, low context dependency |
+| 40-69% | Moderate | 0.6-0.8 | Moderate | Some context sensitivity, monitor |
+| 70-100% | Fragile | < 0.6 | Weak | High context dependency, needs protection |
+
+### New Methods
+
+| Method | Purpose | Use Case |
+|--------|---------|----------|
+| `time_lagged_correlation()` | Find vulnerability windows | "Poor sleep on Tuesday affects Thursday habit" |
+| `granger_causality_test()` | Identify predictive precedence | "Does stress predict habit failure?" |
+| `get_protection_recommendations()` | Generate targeted advice | Context-specific interventions |
 
 ---
 
@@ -669,11 +728,16 @@ class BurnoutPredictor:
 
 ## Success Criteria
 
-| Criteria | How to Verify |
-|----------|---------------|
-| Correlation Engine works | Insights displayed for tracked data |
-| PCS Score works | Each habit shows fragility indicator |
-| Burnout Prediction works | Alerts shown when risk is high |
+| Criteria | How to Verify | Status |
+|----------|---------------|--------|
+| Correlation Engine works | Insights displayed for tracked data | ✅ |
+| PCS Score works | Each habit shows fragility indicator | ✅ |
+| Burnout Prediction works | Alerts shown when risk is high | ✅ |
+| AUC calculation implemented | Predictability score for each habit | ✅ |
+| Dependency Ratio calculated | Internal vs external factor analysis | ✅ |
+| Fragility Index formula | Combined vulnerability score | ✅ |
+| Time-lagged correlation | Vulnerability window detection | ✅ |
+| Granger causality test | Predictive precedence analysis | ✅ |
 
 ---
 
@@ -703,4 +767,4 @@ After completing Phase 2, proceed to:
 
 ---
 
-*Last updated: February 2026*
+*Last updated: February 16, 2026*

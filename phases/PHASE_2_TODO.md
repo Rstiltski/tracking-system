@@ -68,7 +68,8 @@ Corr(x_t, y_{t+k}) for k = 0, 1, 2, ... days
 
 **Status:** ✅ Complete  
 **Priority:** High  
-**Duration:** Completed
+**Duration:** Completed  
+**Updated:** February 16, 2026 (Enhanced with research paper implementation)
 
 ### Problem Solved
 - Users don't know which habits are fragile vs robust
@@ -81,7 +82,9 @@ Corr(x_t, y_{t+k}) for k = 0, 1, 2, ... days
 |------|---------|--------|
 | `brain/analysis/prediction.py` | PCSEngine with LASSO regression | ✅ |
 | `brain/analysis/prediction.py` | ContextVariables dataclass | ✅ |
-| `brain/analysis/prediction.py` | PCSScore dataclass | ✅ |
+| `brain/analysis/prediction.py` | PCSScore dataclass (enhanced) | ✅ |
+| `brain/analysis/prediction.py` | LaggedCorrelationResult dataclass | ✅ |
+| `brain/analysis/prediction.py` | GrangerCausalityResult dataclass | ✅ |
 
 ### Task Checklist
 
@@ -91,14 +94,69 @@ Corr(x_t, y_{t+k}) for k = 0, 1, 2, ... days
 - [x] Implement PCSEngine with coordinate descent
 - [x] Calculate PCS score for habits
 - [x] Add protection recommendations
+- [x] Implement AUC (Area Under ROC Curve) calculation
+- [x] Implement Dependency Ratio (external vs internal)
+- [x] Implement Fragility Index formula from research
+- [x] Add feature classification (internal/external)
+- [x] Add Time-Lagged Cross-Correlation method
+- [x] Add Granger Causality test
+
+### Research Source
+
+Based on Buyalskaya, Ho, Milkman, et al. (2023) - "What can machine learning teach us about habit formation?" PNAS.
+
+### Key Metrics Implemented
+
+| Metric | Description | Formula |
+|--------|-------------|---------|
+| **AUC Score** | Area Under ROC Curve, measures predictability | Trapezoidal rule on ROC curve |
+| **Dependency Ratio** | External vs Internal coefficient ratio | Σ\|β_external\| / (Σ\|β_internal\| + ε) |
+| **Fragility Index** | Combined vulnerability score | 100 × (0.6 × (1-AUC) + 0.4 × DependencyRatio_norm) |
+
+### Feature Classification
+
+| Type | Features | Interpretation |
+|------|----------|----------------|
+| **Internal** | prev_completion | Self-sustaining, autoregressive |
+| **External** | sleep_hours, stress_level, weather_score, day_of_week, num_events, mood_score, location_home, energy_level, sleep_quality | Context-dependent |
 
 ### PCS Score Interpretation
 
-| PCS Score | Fragility | Action |
-|-----------|-----------|--------|
-| 0-39% | Robust | Habit is automatic, low context dependency |
-| 40-69% | Moderate | Some context sensitivity, monitor |
-| 70-100% | Fragile | High context dependency, needs protection |
+| Fragility Index | Fragility | Habit Strength (AUC) | Action |
+|-----------------|-----------|---------------------|--------|
+| 0-39% | Robust | > 0.8 (Strong) | Habit is automatic, low context dependency |
+| 40-69% | Moderate | 0.6-0.8 (Moderate) | Some context sensitivity, monitor |
+| 70-100% | Fragile | < 0.6 (Weak) | High context dependency, needs protection |
+
+### New Methods Added
+
+```python
+# Time-Lagged Cross-Correlation
+results = engine.time_lagged_correlation(completions, sleep_values, max_lag=7)
+# Returns correlation at each lag day to find vulnerability windows
+
+# Granger Causality Test
+result = engine.granger_causality_test(completions, stress_values, max_lag=3)
+# Tests if context variable predicts habit completion
+```
+
+### Algorithm Details
+
+**LASSO Regression with Coordinate Descent:**
+- Soft thresholding for feature selection
+- Drives non-predictive weights to zero
+- Isolates "active ingredients" of habit context
+
+**AUC Calculation:**
+- 70/30 train/test split
+- Trapezoidal rule for ROC curve
+- AUC > 0.5 indicates predictability from context
+
+**Fragility Index Formula:**
+```
+Fragility = 100 × (w₁ × (1 - AUC) + w₂ × DependencyRatio_normalized)
+where w₁ = 0.6, w₂ = 0.4
+```
 
 ---
 

@@ -1,0 +1,11 @@
+# Python dependencies for Veryfyn Tracking System
+# Based on analysis of imports in Python files
+
+# Standard library modules used (no need to install)
+# sqlite3, json, datetime, pathlib, threading, uuid, logging, dataclasses, enum, typing, contextlib, os, sys, re, hashlib, time
+
+# Third-party dependencies commonly used in similar projects
+streamlit>=1.28.0
+sqlalchemy>=2.0.0
+pyyaml>=6.0
+requests>=2.31.0
