@@ -402,7 +402,10 @@ const Storage = {
         const goals = this.getGoals();
         goal.id = this.generateId();
         goal.createdAt = new Date().toISOString();
-        goal.progress = 0;
+        goal.progress = goal.progress || 0;
+        goal.streak = goal.streak || 0;
+        goal.conditions = goal.conditions || [];
+        goal.currentValue = goal.currentValue || 0;
         goals.push(goal);
         this.saveGoals(goals);
         return goal;
@@ -412,7 +415,29 @@ const Storage = {
         const goals = this.getGoals();
         const index = goals.findIndex(g => g.id === id);
         if (index !== -1) {
-            goals[index] = { ...goals[index], ...updates };
+            // Preserve existing conditions if not provided in updates
+            const existingGoal = goals[index];
+            const updatedGoal = { ...existingGoal, ...updates };
+            
+            // Ensure conditions array exists
+            updatedGoal.conditions = updates.conditions !== undefined 
+                ? (updates.conditions || []) 
+                : (existingGoal.conditions || []);
+                
+            // Ensure streak and progress are maintained appropriately
+            updatedGoal.streak = updates.streak !== undefined 
+                ? (updates.streak || 0) 
+                : (existingGoal.streak || 0);
+                
+            updatedGoal.progress = updates.progress !== undefined 
+                ? (updates.progress || 0) 
+                : (existingGoal.progress || 0);
+                
+            updatedGoal.currentValue = updates.currentValue !== undefined 
+                ? (updates.currentValue || 0) 
+                : (existingGoal.currentValue || 0);
+
+            goals[index] = updatedGoal;
             this.saveGoals(goals);
             return goals[index];
         }

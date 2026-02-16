@@ -1,5 +1,6 @@
 /**
  * Goals Module - Handles goal setting and progress tracking
+ * Enhanced with perfice-inspired features
  */
 
 const Goals = {
@@ -60,11 +61,21 @@ const Goals = {
 
     // Create goal card HTML
     createGoalCard(goal) {
-        const deadline = goal.deadline 
-            ? new Date(goal.deadline).toLocaleDateString() 
+        const deadline = goal.deadline
+            ? new Date(goal.deadline).toLocaleDateString()
             : 'No deadline';
-        
+
         const isCompleted = goal.progress >= 100;
+        
+        // Format goal conditions display if they exist
+        let conditionsDisplay = '';
+        if (goal.conditions && goal.conditions.length > 0) {
+            conditionsDisplay = `
+                <div class="goal-conditions">
+                    ${goal.conditions.map(condition => this.formatCondition(condition)).join('')}
+                </div>
+            `;
+        }
 
         return `
             <div class="goal-card ${isCompleted ? 'completed' : ''}">
@@ -72,6 +83,10 @@ const Goals = {
                     <div class="goal-title">${goal.title}</div>
                     <div class="goal-deadline">📅 ${deadline}</div>
                 </div>
+                <div class="goal-description">
+                    ${goal.description || ''}
+                </div>
+                ${conditionsDisplay}
                 <div class="goal-progress">
                     <div class="progress-bar">
                         <div class="progress-fill" style="width: ${goal.progress}%"></div>
@@ -81,6 +96,9 @@ const Goals = {
                         <span>Target: ${goal.target}</span>
                     </div>
                 </div>
+                <div class="goal-streak">
+                    🔥 Streak: ${goal.streak || 0} days
+                </div>
                 <div class="goal-actions">
                     <button class="goal-action-btn goal-progress-btn" data-goal-id="${goal.id}">
                         ${isCompleted ? '✅ Completed' : '📈 Update Progress'}
@@ -89,6 +107,25 @@ const Goals = {
                 </div>
             </div>
         `;
+    },
+
+    // Format condition for display
+    formatCondition(condition) {
+        if (condition.type === 'COMPARISON') {
+            return `
+                <div class="condition-item">
+                    <span class="condition-operator">${condition.operator}</span>
+                    <span class="condition-target">${condition.target}</span>
+                </div>
+            `;
+        } else if (condition.type === 'GOAL_MET') {
+            return `
+                <div class="condition-item">
+                    <span class="condition-goal">Depends on: ${condition.goalName}</span>
+                </div>
+            `;
+        }
+        return '';
     },
 
     // Render goals overview for dashboard
@@ -115,6 +152,7 @@ const Goals = {
                     <div class="goal-overview-bar">
                         <div class="goal-overview-fill" style="width: ${goal.progress}%; background: ${color}"></div>
                     </div>
+                    <div class="goal-overview-streak">🔥 ${goal.streak || 0}</div>
                 </div>
             `;
         }).join('');
@@ -141,6 +179,25 @@ const Goals = {
                     <label class="form-label">Description (optional)</label>
                     <textarea class="form-textarea" id="goalDescription" placeholder="Describe your goal..."></textarea>
                 </div>
+                
+                <!-- Basic goal conditions section -->
+                <div class="form-group">
+                    <label class="form-label">Goal Conditions (Optional)</label>
+                    <div class="goal-conditions-section">
+                        <div class="condition-row">
+                            <select class="form-select condition-operator" id="basicConditionOperator">
+                                <option value="">No specific condition (progress-based)</option>
+                                <option value="GREATER_THAN">Greater Than</option>
+                                <option value="LESS_THAN">Less Than</option>
+                                <option value="EQUAL">Equal To</option>
+                                <option value="GREATER_THAN_EQUAL">Greater Than or Equal</option>
+                                <option value="LESS_THAN_EQUAL">Less Than or Equal</option>
+                            </select>
+                            
+                            <input type="text" class="form-input condition-target" id="basicConditionTarget" placeholder="Target value (e.g., 10000)" style="margin-top: 10px;">
+                        </div>
+                    </div>
+                </div>
             `,
             footer: `
                 <button class="btn btn-secondary" onclick="App.closeModal()">Cancel</button>
@@ -157,6 +214,10 @@ const Goals = {
         const target = document.getElementById('goalTarget')?.value.trim();
         const deadline = document.getElementById('goalDeadline')?.value;
         const description = document.getElementById('goalDescription')?.value.trim();
+        
+        // Get basic condition values
+        const conditionOperator = document.getElementById('basicConditionOperator')?.value;
+        const conditionTarget = document.getElementById('basicConditionTarget')?.value.trim();
 
         if (!title) {
             App.showToast('Please enter a goal title', 'error');
@@ -168,11 +229,26 @@ const Goals = {
             return;
         }
 
+        // Prepare conditions array
+        const conditions = [];
+        if (conditionOperator && conditionTarget) {
+            conditions.push({
+                id: 'cond_' + Date.now(),
+                type: 'COMPARISON',
+                operator: conditionOperator,
+                target: conditionTarget
+            });
+        }
+
         Storage.addGoal({
             title,
             target,
             deadline,
-            description
+            description,
+            conditions: conditions,
+            progress: 0,
+            streak: 0,
+            currentValue: 0
         });
 
         App.closeModal();
@@ -202,7 +278,11 @@ const Goals = {
                 </div>
                 <div class="form-group">
                     <label class="form-label">Current Value</label>
-                    <input type="text" class="form-input" id="goalCurrent" placeholder="e.g., 21 km">
+                    <input type="text" class="form-input" id="goalCurrent" value="${goal.currentValue || ''}" placeholder="e.g., 21 km">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Streak Days</label>
+                    <input type="number" class="form-input" id="goalStreak" value="${goal.streak || 0}" min="0">
                 </div>
             `,
             footer: `
@@ -218,19 +298,26 @@ const Goals = {
     updateProgress(goalId) {
         const progress = parseInt(document.getElementById('goalProgress')?.value);
         const current = document.getElementById('goalCurrent')?.value.trim();
+        const streak = parseInt(document.getElementById('goalStreak')?.value);
 
         if (isNaN(progress) || progress < 0 || progress > 100) {
             App.showToast('Please enter a valid progress (0-100)', 'error');
             return;
         }
 
-        Storage.updateGoal(goalId, { 
+        if (isNaN(streak) || streak < 0) {
+            App.showToast('Please enter a valid streak value', 'error');
+            return;
+        }
+
+        Storage.updateGoal(goalId, {
             progress,
-            currentValue: current
+            currentValue: current,
+            streak
         });
 
         App.closeModal();
-        
+
         if (progress >= 100) {
             App.showToast('🎉 Goal completed!', 'success');
             Storage.addXP(50);
@@ -240,7 +327,7 @@ const Goals = {
         } else {
             App.showToast('Progress updated!', 'success');
         }
-        
+
         this.render();
         App.updateDashboard();
     },

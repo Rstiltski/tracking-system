@@ -583,8 +583,24 @@ studyu/
 |------------------|---------|
 | [RESEARCH_SUMMARY.md](RESEARCH_SUMMARY.md) | Overview of all research |
 | [BEHAVIORAL_SCIENCE.md](BEHAVIORAL_SCIENCE.md) | Habitica gamification details |
+| [CORRELATION_ENGINE_RESEARCH.md](CORRELATION_ENGINE_RESEARCH.md) | Phase 2.1 Correlation Engine research |
 | [docs/specs/HABIT_SCORE_SPEC.md](../specs/HABIT_SCORE_SPEC.md) | Loop algorithm spec |
 | [docs/specs/N_OF_1_TRIALS_SPEC.md](../specs/N_OF_1_TRIALS_SPEC.md) | StudyU implementation |
+
+---
+
+## Cloned Repositories
+
+The following repositories have been cloned for detailed analysis:
+
+| Repository | Location | Purpose |
+|------------|----------|---------|
+| roqua/autovar | `repos/autovar/` | VAR models, Granger causality (Phase 2.1) |
+| p0lloc/perfice | `repos/perfice/` | Automatic insights, NLG (Phase 2.1) |
+| markrai/fitbaus | `repos/fitbaus/` | Correlation matrix dashboard (Phase 2.1) |
+| farhanaugustine/Temporal_Behavior_Analysis | `repos/Temporal_Behavior_Analysis/` | Time-lagged cross-correlation (Phase 2.1) |
+| gianlucatruda/quantified-sleep | `repos/quantified-sleep/` | ML for lag detection (Phase 2.1) |
+| karlicoss/HPI | `repos/HPI/` | Data unification infrastructure (Phase 2.1) |
 
 ---
 

@@ -359,7 +359,7 @@ const App = {
                 Time.init();
                 break;
             case 'goals':
-                Goals.init();
+                Goals.init();  // Using the enhanced version of the original Goals module
                 break;
             case 'achievements':
                 Achievements.init();
@@ -568,7 +568,7 @@ const App = {
         Finances.init();
         Health.init();
         Time.init();
-        Goals.init();
+        Goals.init();  // Using the enhanced version of the original Goals module
         Achievements.init();
         this.updateDashboard();
     }

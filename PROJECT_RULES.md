@@ -798,6 +798,26 @@ Before submitting changes, verify:
 6. **Phase 6: Notifications** - Reminders system
 7. **Phase 7: Polish** - Final testing and optimization
 
+### 🔄 Phase Development Protocol
+
+**CRITICAL: This protocol MUST be followed for ALL phases.**
+
+1. **At the start of each phase**, the AI assistant should ONLY create the phase markdown documentation file (e.g., `phases/PHASE_X_*.md`)
+2. **DO NOT implement any code** until the user provides research and guidance
+3. **Work through each phase TOGETHER** with the user - they will provide research, then the AI updates the code based on that research
+4. **Wait for explicit approval** before moving to implementation
+5. **The user is the driver** - they research, provide information, and guide the direction
+
+**Workflow:**
+```
+User provides research → AI reviews existing code → AI updates where necessary → User approves
+```
+
+**This ensures:**
+- User maintains control over development direction
+- Research is properly incorporated
+- No premature implementation without context
+
 ### 🔄 Before Starting Work
 1. Check `ROADMAP.md` for current phase
 2. Review this rules document
