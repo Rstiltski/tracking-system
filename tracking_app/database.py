@@ -354,6 +354,250 @@ def init_db() -> None:
         metadata TEXT DEFAULT '{}'
     );
     
+    -- Habit Stacks (Phase 3.1 - Habit Stacking)
+    CREATE TABLE IF NOT EXISTS habit_stacks (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        name TEXT NOT NULL,
+        trigger_description TEXT NOT NULL,
+        anchor_category TEXT DEFAULT 'custom',
+        is_active INTEGER DEFAULT 1,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    
+    -- Stack Items (links habits to stacks in order)
+    CREATE TABLE IF NOT EXISTS stack_items (
+        id TEXT PRIMARY KEY,
+        stack_id TEXT NOT NULL,
+        habit_id TEXT NOT NULL,
+        position_index INTEGER NOT NULL,
+        delay_seconds INTEGER DEFAULT 0,
+        is_tiny INTEGER DEFAULT 1,
+        tiny_version_description TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (stack_id) REFERENCES habit_stacks(id) ON DELETE CASCADE,
+        FOREIGN KEY (habit_id) REFERENCES habits(id) ON DELETE CASCADE,
+        UNIQUE(stack_id, habit_id)
+    );
+    
+    -- Stack Completions (track stack effectiveness)
+    CREATE TABLE IF NOT EXISTS stack_completions (
+        id TEXT PRIMARY KEY,
+        stack_id TEXT NOT NULL,
+        completion_date DATE NOT NULL,
+        completed_items TEXT DEFAULT '[]',
+        completion_order TEXT DEFAULT '[]',
+        conversion_rate REAL DEFAULT 0.0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (stack_id) REFERENCES habit_stacks(id) ON DELETE CASCADE
+    );
+    
+    -- SRBAI Results (habit automaticity surveys)
+    CREATE TABLE IF NOT EXISTS srbai_results (
+        id TEXT PRIMARY KEY,
+        habit_id TEXT NOT NULL,
+        user_id TEXT NOT NULL,
+        survey_date DATE NOT NULL,
+        q1_automatic INTEGER NOT NULL,
+        q2_without_thinking INTEGER NOT NULL,
+        q3_start_unintentionally INTEGER NOT NULL,
+        q4_difficult_not_to_do INTEGER NOT NULL,
+        automaticity_score REAL,
+        is_habit_formed INTEGER DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (habit_id) REFERENCES habits(id) ON DELETE CASCADE
+    );
+    
+    -- Implementation Intentions (Phase 3.2 - If-Then Planning)
+    CREATE TABLE IF NOT EXISTS implementation_intentions (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        goal_id TEXT,
+        name TEXT NOT NULL,
+        trigger_type TEXT NOT NULL,
+        trigger_source TEXT NOT NULL,
+        trigger_predicate TEXT NOT NULL,
+        trigger_description TEXT,
+        action_type TEXT NOT NULL,
+        action_payload TEXT NOT NULL,
+        action_priority INTEGER DEFAULT 0,
+        action_delay_seconds INTEGER DEFAULT 0,
+        is_active INTEGER DEFAULT 1,
+        trigger_count INTEGER DEFAULT 0,
+        success_count INTEGER DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    
+    -- Intention Triggers (log when intentions are triggered)
+    CREATE TABLE IF NOT EXISTS intention_triggers (
+        id TEXT PRIMARY KEY,
+        intention_id TEXT NOT NULL,
+        triggered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        context_data TEXT DEFAULT '{}',
+        action_dispatched INTEGER DEFAULT 0,
+        user_responded INTEGER DEFAULT 0,
+        response_time_seconds REAL,
+        FOREIGN KEY (intention_id) REFERENCES implementation_intentions(id) ON DELETE CASCADE
+    );
+    
+    -- Rewards (Phase 3.3 - Variable Reward Scheduling)
+    CREATE TABLE IF NOT EXISTS rewards (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        reward_type TEXT NOT NULL,
+        rarity TEXT NOT NULL,
+        weight REAL DEFAULT 1.0,
+        value INTEGER DEFAULT 0,
+        icon TEXT DEFAULT '🎁',
+        description TEXT DEFAULT '',
+        is_active INTEGER DEFAULT 1,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    
+    -- User Reward History (track rewards received)
+    CREATE TABLE IF NOT EXISTS user_reward_history (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        reward_id TEXT NOT NULL,
+        reward_name TEXT NOT NULL,
+        rarity TEXT NOT NULL,
+        received_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        context TEXT DEFAULT '{}',
+        FOREIGN KEY (reward_id) REFERENCES rewards(id) ON DELETE CASCADE
+    );
+    
+    -- User Reward Stats (aggregate stats per user)
+    CREATE TABLE IF NOT EXISTS user_reward_stats (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL UNIQUE,
+        total_rolls INTEGER DEFAULT 0,
+        total_rewards INTEGER DEFAULT 0,
+        common_count INTEGER DEFAULT 0,
+        uncommon_count INTEGER DEFAULT 0,
+        rare_count INTEGER DEFAULT 0,
+        legendary_count INTEGER DEFAULT 0,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    
+    -- ============================================
+    -- Phase 4: Notifications & Reminders System
+    -- ============================================
+    
+    -- Notifications table
+    CREATE TABLE IF NOT EXISTS notifications (
+        id TEXT PRIMARY KEY,
+        type TEXT NOT NULL,
+        title TEXT NOT NULL,
+        message TEXT NOT NULL,
+        priority TEXT DEFAULT 'medium',
+        status TEXT DEFAULT 'pending',
+        scheduled_for TIMESTAMP,
+        sent_at TIMESTAMP,
+        delivered_at TIMESTAMP,
+        read INTEGER DEFAULT 0,
+        entity_type TEXT,
+        entity_id TEXT,
+        action_url TEXT,
+        metadata TEXT DEFAULT '{}',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    
+    -- Push subscriptions (Web Push API)
+    CREATE TABLE IF NOT EXISTS push_subscriptions (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        endpoint TEXT NOT NULL UNIQUE,
+        p256dh TEXT NOT NULL,
+        auth TEXT NOT NULL,
+        user_agent TEXT,
+        device_name TEXT,
+        last_active TIMESTAMP,
+        is_active INTEGER DEFAULT 1,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    
+    -- Notification logs (delivery tracking)
+    CREATE TABLE IF NOT EXISTS notification_logs (
+        id TEXT PRIMARY KEY,
+        notification_id TEXT NOT NULL,
+        channel TEXT NOT NULL,
+        status TEXT NOT NULL,
+        error_message TEXT,
+        response_code INTEGER,
+        dispatched_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        delivered_at TIMESTAMP,
+        clicked_at TIMESTAMP,
+        FOREIGN KEY (notification_id) REFERENCES notifications(id) ON DELETE CASCADE
+    );
+    
+    -- Reminder schedules
+    CREATE TABLE IF NOT EXISTS reminder_schedules (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        entity_type TEXT NOT NULL,
+        entity_id TEXT NOT NULL,
+        reminder_time TEXT,
+        days_of_week TEXT DEFAULT '[]',
+        enabled INTEGER DEFAULT 1,
+        snooze_minutes INTEGER DEFAULT 5,
+        max_snoozes INTEGER DEFAULT 3,
+        current_snoozes INTEGER DEFAULT 0,
+        is_smart INTEGER DEFAULT 0,
+        smart_time TEXT,
+        channels TEXT DEFAULT '["in_app"]',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    
+    -- Completion history (for smart scheduling)
+    CREATE TABLE IF NOT EXISTS completion_history (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        entity_type TEXT NOT NULL,
+        entity_id TEXT NOT NULL,
+        completed_at TIMESTAMP NOT NULL,
+        scheduled_for TIMESTAMP,
+        variance_seconds INTEGER,
+        reminder_sent INTEGER DEFAULT 0,
+        snooze_count INTEGER DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    
+    -- Notification preferences
+    CREATE TABLE IF NOT EXISTS notification_preferences (
+        user_id TEXT PRIMARY KEY,
+        enabled INTEGER DEFAULT 1,
+        quiet_hours_start TEXT,
+        quiet_hours_end TEXT,
+        default_sound TEXT DEFAULT 'default',
+        vibration_enabled INTEGER DEFAULT 1,
+        habit_reminders_enabled INTEGER DEFAULT 1,
+        task_reminders_enabled INTEGER DEFAULT 1,
+        goal_reminders_enabled INTEGER DEFAULT 1,
+        achievement_notifications_enabled INTEGER DEFAULT 1,
+        streak_warnings_enabled INTEGER DEFAULT 1,
+        daily_digest_enabled INTEGER DEFAULT 0,
+        browser_notifications_enabled INTEGER DEFAULT 1,
+        email_notifications_enabled INTEGER DEFAULT 0,
+        email_address TEXT,
+        smart_scheduling_enabled INTEGER DEFAULT 1,
+        min_reminder_lead_minutes INTEGER DEFAULT 15,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    
+    -- VAPID configuration (Web Push authentication)
+    CREATE TABLE IF NOT EXISTS vapid_config (
+        id INTEGER PRIMARY KEY CHECK (id = 1),
+        subject TEXT NOT NULL,
+        public_key TEXT NOT NULL,
+        private_key TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    
     -- Indexes for common queries
     CREATE INDEX IF NOT EXISTS idx_habit_entries_habit_id ON habit_entries(habit_id);
     CREATE INDEX IF NOT EXISTS idx_habit_entries_date ON habit_entries(entry_date);
@@ -362,6 +606,17 @@ def init_db() -> None:
     CREATE INDEX IF NOT EXISTS idx_events_timestamp ON events(timestamp);
     CREATE INDEX IF NOT EXISTS idx_tasks_due_date ON tasks(due_date);
     CREATE INDEX IF NOT EXISTS idx_transactions_date ON transactions(trans_date);
+    
+    -- Notification indexes
+    CREATE INDEX IF NOT EXISTS idx_notifications_status ON notifications(status);
+    CREATE INDEX IF NOT EXISTS idx_notifications_scheduled ON notifications(scheduled_for);
+    CREATE INDEX IF NOT EXISTS idx_notifications_entity ON notifications(entity_type, entity_id);
+    CREATE INDEX IF NOT EXISTS idx_notification_logs_notification ON notification_logs(notification_id);
+    CREATE INDEX IF NOT EXISTS idx_notification_logs_status ON notification_logs(status);
+    CREATE INDEX IF NOT EXISTS idx_push_subscriptions_user ON push_subscriptions(user_id);
+    CREATE INDEX IF NOT EXISTS idx_reminder_schedules_entity ON reminder_schedules(entity_type, entity_id);
+    CREATE INDEX IF NOT EXISTS idx_completion_history_entity ON completion_history(entity_type, entity_id);
+    CREATE INDEX IF NOT EXISTS idx_completion_history_completed ON completion_history(completed_at);
     """
     
     with db.transaction() as conn:

@@ -1,4 +1,4 @@
-# TrackLife Roadmap
+# veryfyn Roadmap
 
 This roadmap outlines the strategic direction for the TrackLife Personal Tracking System with integrated AI Brain architecture.
 
@@ -77,12 +77,14 @@ This roadmap outlines the strategic direction for the TrackLife Personal Trackin
 - [x] Security components
 - [x] Immune system
 
-### Phase 4: Reminders & Notifications 🔄 IN PROGRESS
+### Phase 4: Reminders & Notifications 📋 NOT STARTED
 - [ ] Browser notification system
 - [ ] Habit reminders
 - [ ] Task due date reminders
 - [ ] Goal deadline alerts
 - [ ] Customizable notification settings
+
+**Documentation:** [phases/PHASE_4_NOTIFICATIONS.md](phases/PHASE_4_NOTIFICATIONS.md) | [phases/PHASE_4_TODO.md](phases/PHASE_4_TODO.md)
 
 ### Phase 5: Data Management 📋 UPCOMING
 - [ ] Data export (CSV/JSON)

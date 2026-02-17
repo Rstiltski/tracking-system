@@ -16,7 +16,16 @@ const Storage = {
         GOALS: 'tracklife_goals',
         ACHIEVEMENTS: 'tracklife_achievements',
         USER_DATA: 'tracklife_user',
-        SETTINGS: 'tracklife_settings'
+        SETTINGS: 'tracklife_settings',
+        // Behavioral Module Keys (Phase 3)
+        HABIT_STACKS: 'tracklife_habit_stacks',
+        STACK_COMPLETIONS: 'tracklife_stack_completions',
+        SRBAI_RESULTS: 'tracklife_srbai_results',
+        IMPLEMENTATION_INTENTIONS: 'tracklife_implementation_intentions',
+        INTENTION_TRIGGERS: 'tracklife_intention_triggers',
+        REWARDS: 'tracklife_rewards',
+        USER_REWARDS: 'tracklife_user_rewards',
+        REWARD_HISTORY: 'tracklife_reward_history'
     },
 
     // Generic save method
@@ -476,6 +485,261 @@ const Storage = {
     isAchievementUnlocked(achievementId) {
         const achievements = this.getAchievements();
         return achievements.some(a => a.id === achievementId);
+    },
+
+    // ==========================================
+    // HABIT STACKING METHODS (Phase 3.1)
+    // ==========================================
+
+    getHabitStacks() {
+        return this.load(this.KEYS.HABIT_STACKS, []);
+    },
+
+    saveHabitStacks(stacks) {
+        return this.save(this.KEYS.HABIT_STACKS, stacks);
+    },
+
+    addHabitStack(stack) {
+        const stacks = this.getHabitStacks();
+        stack.id = this.generateId();
+        stack.createdAt = new Date().toISOString();
+        stack.is_active = true;
+        stacks.push(stack);
+        this.saveHabitStacks(stacks);
+        return stack;
+    },
+
+    updateHabitStack(id, updates) {
+        const stacks = this.getHabitStacks();
+        const index = stacks.findIndex(s => s.id === id);
+        if (index !== -1) {
+            stacks[index] = { ...stacks[index], ...updates };
+            this.saveHabitStacks(stacks);
+            return stacks[index];
+        }
+        return null;
+    },
+
+    deleteHabitStack(id) {
+        const stacks = this.getHabitStacks();
+        const filtered = stacks.filter(s => s.id !== id);
+        this.saveHabitStacks(filtered);
+        return true;
+    },
+
+    getStackCompletions() {
+        return this.load(this.KEYS.STACK_COMPLETIONS, []);
+    },
+
+    saveStackCompletions(completions) {
+        return this.save(this.KEYS.STACK_COMPLETIONS, completions);
+    },
+
+    addStackCompletion(completion) {
+        const completions = this.getStackCompletions();
+        completion.id = this.generateId();
+        completion.createdAt = new Date().toISOString();
+        completions.push(completion);
+        this.saveStackCompletions(completions);
+        return completion;
+    },
+
+    getSRBAIResults() {
+        return this.load(this.KEYS.SRBAI_RESULTS, []);
+    },
+
+    saveSRBAIResults(results) {
+        return this.save(this.KEYS.SRBAI_RESULTS, results);
+    },
+
+    addSRBAIResult(result) {
+        const results = this.getSRBAIResults();
+        result.id = this.generateId();
+        result.createdAt = new Date().toISOString();
+        results.push(result);
+        this.saveSRBAIResults(results);
+        return result;
+    },
+
+    // ==========================================
+    // IMPLEMENTATION INTENTIONS METHODS (Phase 3.2)
+    // ==========================================
+
+    getImplementationIntentions() {
+        return this.load(this.KEYS.IMPLEMENTATION_INTENTIONS, []);
+    },
+
+    saveImplementationIntentions(intentions) {
+        return this.save(this.KEYS.IMPLEMENTATION_INTENTIONS, intentions);
+    },
+
+    addImplementationIntention(intention) {
+        const intentions = this.getImplementationIntentions();
+        intention.id = this.generateId();
+        intention.createdAt = new Date().toISOString();
+        intention.is_active = true;
+        intention.trigger_count = 0;
+        intention.success_count = 0;
+        intentions.push(intention);
+        this.saveImplementationIntentions(intentions);
+        return intention;
+    },
+
+    updateImplementationIntention(id, updates) {
+        const intentions = this.getImplementationIntentions();
+        const index = intentions.findIndex(i => i.id === id);
+        if (index !== -1) {
+            intentions[index] = { ...intentions[index], ...updates };
+            this.saveImplementationIntentions(intentions);
+            return intentions[index];
+        }
+        return null;
+    },
+
+    deleteImplementationIntention(id) {
+        const intentions = this.getImplementationIntentions();
+        const filtered = intentions.filter(i => i.id !== id);
+        this.saveImplementationIntentions(filtered);
+        return true;
+    },
+
+    getIntentionTriggers() {
+        return this.load(this.KEYS.INTENTION_TRIGGERS, []);
+    },
+
+    saveIntentionTriggers(triggers) {
+        return this.save(this.KEYS.INTENTION_TRIGGERS, triggers);
+    },
+
+    addIntentionTrigger(trigger) {
+        const triggers = this.getIntentionTriggers();
+        trigger.id = this.generateId();
+        trigger.triggeredAt = new Date().toISOString();
+        triggers.push(trigger);
+        this.saveIntentionTriggers(triggers);
+        return trigger;
+    },
+
+    // ==========================================
+    // REWARDS METHODS (Phase 3.3)
+    // ==========================================
+
+    getRewards() {
+        return this.load(this.KEYS.REWARDS, this.getDefaultRewards());
+    },
+
+    saveRewards(rewards) {
+        return this.save(this.KEYS.REWARDS, rewards);
+    },
+
+    getDefaultRewards() {
+        return [
+            // Common rewards
+            { id: 'reward_1', name: 'Community Recognition', reward_type: 'tribe', rarity: 'common', value: 5, icon: '👋', description: 'Your progress is noticed by the community', is_active: true },
+            { id: 'reward_2', name: 'Small XP Boost', reward_type: 'hunt', rarity: 'common', value: 10, icon: '⭐', description: 'A small boost of experience points', is_active: true },
+            { id: 'reward_3', name: 'Progress Milestone', reward_type: 'self', rarity: 'common', value: 5, icon: '📈', description: 'You\'re making great progress!', is_active: true },
+            // Uncommon rewards
+            { id: 'reward_4', name: 'Bonus Points', reward_type: 'hunt', rarity: 'uncommon', value: 25, icon: '💎', description: 'Bonus points for your dedication', is_active: true },
+            { id: 'reward_5', name: 'Streak Shield', reward_type: 'self', rarity: 'uncommon', value: 50, icon: '🛡️', description: 'Protect your streak for one day', is_active: true },
+            // Rare rewards
+            { id: 'reward_6', name: 'Golden Badge', reward_type: 'hunt', rarity: 'rare', value: 100, icon: '🏆', description: 'A rare golden badge of achievement', is_active: true },
+            { id: 'reward_7', name: 'Leaderboard Feature', reward_type: 'tribe', rarity: 'rare', value: 75, icon: '🏅', description: 'Featured on the leaderboard', is_active: true },
+            // Legendary rewards
+            { id: 'reward_8', name: 'Legendary Status', reward_type: 'hunt', rarity: 'legendary', value: 500, icon: '👑', description: 'Legendary status achieved!', is_active: true },
+            { id: 'reward_9', name: 'Streak Master', reward_type: 'self', rarity: 'legendary', value: 300, icon: '🔥', description: 'Permanent streak multiplier bonus', is_active: true }
+        ];
+    },
+
+    getUserRewards() {
+        return this.load(this.KEYS.USER_REWARDS, []);
+    },
+
+    saveUserRewards(rewards) {
+        return this.save(this.KEYS.USER_REWARDS, rewards);
+    },
+
+    addUserReward(reward) {
+        const rewards = this.getUserRewards();
+        reward.id = this.generateId();
+        reward.receivedAt = new Date().toISOString();
+        rewards.push(reward);
+        this.saveUserRewards(rewards);
+        return reward;
+    },
+
+    getRewardHistory() {
+        return this.load(this.KEYS.REWARD_HISTORY, {
+            total_rolls: 0,
+            total_rewards: 0,
+            common_count: 0,
+            uncommon_count: 0,
+            rare_count: 0,
+            legendary_count: 0
+        });
+    },
+
+    saveRewardHistory(history) {
+        return this.save(this.KEYS.REWARD_HISTORY, history);
+    },
+
+    updateRewardStats(rewarded, rarity = null) {
+        const history = this.getRewardHistory();
+        history.total_rolls++;
+        if (rewarded) {
+            history.total_rewards++;
+            if (rarity) {
+                history[`${rarity}_count`]++;
+            }
+        }
+        this.saveRewardHistory(history);
+        return history;
+    },
+
+    // Roll for a reward (30% base chance)
+    rollForReward() {
+        const baseChance = 0.3;
+        const roll = Math.random();
+        
+        if (roll >= baseChance) {
+            // No reward
+            this.updateRewardStats(false);
+            return null;
+        }
+        
+        // Get rewards weighted by rarity
+        const rewards = this.getRewards().filter(r => r.is_active);
+        const rarityWeights = {
+            common: 60,
+            uncommon: 25,
+            rare: 12,
+            legendary: 3
+        };
+        
+        // Weighted random selection
+        const weightedRewards = [];
+        rewards.forEach(reward => {
+            const weight = rarityWeights[reward.rarity] || 1;
+            for (let i = 0; i < weight; i++) {
+                weightedRewards.push(reward);
+            }
+        });
+        
+        const selectedReward = weightedRewards[Math.floor(Math.random() * weightedRewards.length)];
+        
+        // Record the reward
+        this.addUserReward({
+            reward_id: selectedReward.id,
+            reward_name: selectedReward.name,
+            rarity: selectedReward.rarity,
+            value: selectedReward.value
+        });
+        
+        this.updateRewardStats(true, selectedReward.rarity);
+        
+        // Add XP
+        this.addXP(selectedReward.value);
+        
+        return selectedReward;
     }
 };
 

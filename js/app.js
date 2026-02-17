@@ -364,6 +364,15 @@ const App = {
             case 'achievements':
                 Achievements.init();
                 break;
+            case 'stacks':
+                HabitStacking.init();
+                break;
+            case 'intentions':
+                ImplementationIntentions.init();
+                break;
+            case 'rewards':
+                Rewards.init();
+                break;
             case 'dashboard':
                 this.updateDashboard();
                 break;

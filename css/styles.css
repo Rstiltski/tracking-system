@@ -1870,3 +1870,1148 @@ body {
 .mb-20 { margin-bottom: 20px; }
 .mt-10 { margin-top: 10px; }
 .mt-20 { margin-top: 20px; }
+
+/* ==========================================
+   Phase 3: Behavioral Modules Styles
+   ========================================== */
+
+/* Intro Text */
+.intro-text {
+    background: var(--bg-tertiary);
+    padding: 15px 20px;
+    border-radius: var(--radius-md);
+    margin-bottom: 20px;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    border-left: 4px solid var(--primary);
+}
+
+/* Analytics Grid */
+.analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.analytics-stat {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    padding: 15px;
+    text-align: center;
+    border: 1px solid var(--border-color);
+}
+
+.analytics-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.analytics-label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+/* ==========================================
+   Habit Stacking Styles
+   ========================================== */
+
+.stacks-container {
+    display: grid;
+    gap: 20px;
+}
+
+.stack-card {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    transition: all var(--transition-fast);
+}
+
+.stack-card:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+.stack-card.inactive {
+    opacity: 0.6;
+}
+
+.stack-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.stack-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.stack-info {
+    flex: 1;
+}
+
+.stack-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 3px;
+}
+
+.stack-trigger {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.stack-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Toggle Switch */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 26px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--bg-tertiary);
+    transition: 0.3s;
+    border-radius: 26px;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.3s;
+    border-radius: 50%;
+}
+
+input:checked + .toggle-slider {
+    background: linear-gradient(135deg, var(--primary), var(--accent-purple));
+}
+
+input:checked + .toggle-slider:before {
+    transform: translateX(24px);
+}
+
+/* Stack Chain Diagram */
+.stack-chain {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 15px;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+    margin-bottom: 15px;
+    overflow-x: auto;
+}
+
+.chain-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 70px;
+    position: relative;
+}
+
+.chain-node {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.chain-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    border: 2px solid var(--border-color);
+    transition: all var(--transition-fast);
+}
+
+.chain-item.completed .chain-icon {
+    background: var(--accent-green);
+    border-color: var(--accent-green);
+}
+
+.chain-arrow {
+    color: var(--text-muted);
+    font-size: 1rem;
+}
+
+.chain-label {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    text-align: center;
+    margin-top: 5px;
+    max-width: 60px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.chain-delay {
+    font-size: 0.65rem;
+    color: var(--accent-yellow);
+    margin-top: 2px;
+}
+
+.chain-check {
+    position: absolute;
+    top: -5px;
+    right: 5px;
+    background: var(--accent-green);
+    color: white;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    font-size: 0.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chain-empty {
+    color: var(--text-muted);
+    font-style: italic;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Stack Stats */
+.stack-stats {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 15px;
+}
+
+.stack-stat {
+    text-align: center;
+}
+
+.stack-stat .stat-value {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.stack-stat .stat-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+/* Stack Actions */
+.stack-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.stack-btn {
+    padding: 8px 15px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all var(--transition-fast);
+}
+
+.stack-btn:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+/* Habit Selector */
+.habit-selector {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 10px;
+}
+
+.habit-selector-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 5px;
+}
+
+.habit-selector-item:hover {
+    background: var(--bg-tertiary);
+}
+
+.habit-selector-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    cursor: pointer;
+}
+
+.habit-position {
+    width: 60px;
+    padding: 5px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+/* Selected Habits Preview */
+.selected-habits-chain {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+}
+
+.selected-habit-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+}
+
+.selected-habit-item .position {
+    background: var(--primary);
+    color: white;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.selected-habit-item .arrow {
+    color: var(--text-muted);
+}
+
+/* Stack Progress Modal */
+.stack-progress-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.stack-trigger-text {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+}
+
+.stack-progress-bar {
+    height: 10px;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.stack-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-green), var(--accent-cyan));
+    border-radius: var(--radius-full);
+    transition: width var(--transition-normal);
+}
+
+.stack-progress-text {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.current-habit-display {
+    text-align: center;
+    padding: 30px;
+}
+
+.current-habit-icon {
+    font-size: 4rem;
+    margin-bottom: 15px;
+}
+
+.current-habit-name {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.current-habit-prompt {
+    color: var(--text-secondary);
+}
+
+.stack-chain-mini {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.mini-chain-item {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    background: var(--bg-tertiary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    border: 2px solid var(--border-color);
+}
+
+.mini-chain-item.completed {
+    background: var(--accent-green);
+    border-color: var(--accent-green);
+}
+
+.mini-chain-item.current {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+}
+
+/* Weak Links Section */
+.weak-links-section {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(239, 68, 68, 0.1);
+    border-radius: var(--radius-md);
+    border-left: 4px solid var(--accent-red);
+}
+
+.weak-links-section h4 {
+    color: var(--accent-red);
+    margin-bottom: 10px;
+}
+
+.weak-links-list {
+    list-style: none;
+    font-size: 0.85rem;
+}
+
+.weak-links-list li {
+    padding: 5px 0;
+    color: var(--text-secondary);
+}
+
+/* ==========================================
+   Implementation Intentions Styles
+   ========================================== */
+
+.intentions-container {
+    display: grid;
+    gap: 20px;
+}
+
+.intention-card {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    transition: all var(--transition-fast);
+}
+
+.intention-card:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+.intention-card.inactive {
+    opacity: 0.6;
+}
+
+.intention-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.intention-icon {
+    font-size: 2rem;
+}
+
+.intention-info {
+    flex: 1;
+}
+
+.intention-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 3px;
+}
+
+.intention-description {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+/* Intention Rule Display */
+.intention-rule {
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.rule-part {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+}
+
+.rule-label {
+    font-weight: 700;
+    font-size: 0.8rem;
+    padding: 3px 8px;
+    border-radius: var(--radius-sm);
+}
+
+.if-part .rule-label {
+    background: rgba(59, 130, 246, 0.2);
+    color: var(--accent-blue);
+}
+
+.then-part .rule-label {
+    background: rgba(16, 185, 129, 0.2);
+    color: var(--accent-green);
+}
+
+.rule-icon {
+    font-size: 1.2rem;
+}
+
+.rule-text {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+.rule-arrow {
+    text-align: center;
+    font-size: 1.2rem;
+    color: var(--text-muted);
+}
+
+/* Intention Stats */
+.intention-stats {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 15px;
+}
+
+.intention-stat {
+    text-align: center;
+}
+
+.intention-stat .stat-value {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.intention-stat .stat-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+/* Intention Actions */
+.intention-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.intention-btn {
+    padding: 8px 15px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all var(--transition-fast);
+}
+
+.intention-btn:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+/* Form Section */
+.form-section {
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.form-section-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 15px;
+}
+
+/* Survey Styles */
+.survey-instruction {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+}
+
+.survey-questions {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.survey-question {
+    background: var(--bg-tertiary);
+    padding: 15px;
+    border-radius: var(--radius-md);
+}
+
+.survey-question p {
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+.survey-scale {
+    display: flex;
+    justify-content: space-between;
+    gap: 5px;
+}
+
+.scale-option {
+    cursor: pointer;
+}
+
+.scale-option input {
+    display: none;
+}
+
+.scale-option span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    transition: all var(--transition-fast);
+}
+
+.scale-option:hover span {
+    border-color: var(--primary);
+}
+
+.scale-option input:checked + span {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+}
+
+/* Intention Action Display */
+.intention-action-display {
+    text-align: center;
+    padding: 20px;
+}
+
+.intention-action-display .action-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.intention-action-display .action-message {
+    font-size: 1.1rem;
+    color: var(--text-primary);
+}
+
+/* ==========================================
+   Rewards Styles
+   ========================================== */
+
+.rewards-section {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+}
+
+.rewards-section h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: var(--text-secondary);
+}
+
+/* Rewards Grid */
+.rewards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 15px;
+}
+
+.reward-card {
+    position: relative;
+    cursor: pointer;
+}
+
+.reward-card-inner {
+    border-radius: var(--radius-md);
+    padding: 15px;
+    text-align: center;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast);
+}
+
+.reward-card:hover .reward-card-inner {
+    transform: translateY(-3px);
+}
+
+.reward-card.locked .reward-card-inner {
+    filter: grayscale(1);
+}
+
+.reward-card-icon {
+    font-size: 2rem;
+    margin-bottom: 8px;
+}
+
+.reward-card-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.reward-card-rarity {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.reward-card-count {
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-top: 5px;
+}
+
+.reward-card-locked {
+    font-size: 1.2rem;
+    margin-top: 5px;
+}
+
+/* Reward Card Tooltip */
+.reward-card-tooltip {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 10px;
+    width: 180px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all var(--transition-fast);
+    z-index: 100;
+    box-shadow: var(--shadow-lg);
+}
+
+.reward-card:hover .reward-card-tooltip {
+    opacity: 1;
+    visibility: visible;
+    bottom: calc(100% + 10px);
+}
+
+.tooltip-description {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 5px;
+}
+
+.tooltip-value {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--accent-yellow);
+}
+
+.tooltip-type {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* Reward History */
+.reward-history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.history-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+    border-left: 3px solid transparent;
+}
+
+.history-item.legendary {
+    border-left-color: var(--accent-yellow);
+    background: rgba(245, 158, 11, 0.1);
+}
+
+.history-item.rare {
+    border-left-color: var(--accent-blue);
+}
+
+.history-item.uncommon {
+    border-left-color: var(--accent-green);
+}
+
+.history-item.common {
+    border-left-color: var(--text-muted);
+}
+
+.history-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.history-info {
+    flex: 1;
+}
+
+.history-name {
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.history-date {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.history-value {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* Reward Stats */
+.reward-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.reward-stat {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--bg-tertiary);
+    padding: 15px;
+    border-radius: var(--radius-md);
+}
+
+.reward-stat .stat-icon {
+    font-size: 1.5rem;
+}
+
+.reward-stat .stat-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.reward-stat .stat-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+/* Rarity Breakdown */
+.rarity-breakdown {
+    margin-top: 20px;
+}
+
+.rarity-breakdown h4 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: var(--text-secondary);
+}
+
+.rarity-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.rarity-bar-item {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.rarity-bar-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+}
+
+.rarity-bar-label {
+    font-weight: 600;
+}
+
+.rarity-bar-count {
+    color: var(--text-muted);
+}
+
+.rarity-bar-track {
+    height: 8px;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+.rarity-bar-fill {
+    height: 100%;
+    border-radius: var(--radius-full);
+    transition: width var(--transition-normal);
+}
+
+/* Reward Reveal Animation */
+.reward-reveal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.reward-reveal-overlay.active {
+    opacity: 1;
+}
+
+.reward-reveal-container {
+    text-align: center;
+}
+
+.reward-reveal-card {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-xl);
+    padding: 40px;
+    min-width: 300px;
+    transform: scale(0.8);
+    transition: transform 0.5s ease;
+}
+
+.reward-reveal-overlay.active .reward-reveal-card {
+    transform: scale(1);
+}
+
+.reward-reveal-card.legendary {
+    box-shadow: 0 0 60px rgba(245, 158, 11, 0.5);
+    animation: legendaryPulse 2s infinite;
+}
+
+@keyframes legendaryPulse {
+    0%, 100% { box-shadow: 0 0 60px rgba(245, 158, 11, 0.5); }
+    50% { box-shadow: 0 0 80px rgba(245, 158, 11, 0.8); }
+}
+
+.reward-reveal-card.rare {
+    box-shadow: 0 0 40px rgba(59, 130, 246, 0.5);
+}
+
+.reward-reveal-card.uncommon {
+    box-shadow: 0 0 30px rgba(16, 185, 129, 0.5);
+}
+
+.reward-reveal-card.empty {
+    opacity: 0.8;
+}
+
+.reveal-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.legendary-particle {
+    position: absolute;
+    animation: particleFly 1s ease-out forwards;
+}
+
+@keyframes particleFly {
+    0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(var(--tx), var(--ty)) scale(0);
+        opacity: 0;
+    }
+}
+
+.reveal-content {
+    position: relative;
+    z-index: 1;
+}
+
+.reveal-icon {
+    font-size: 5rem;
+    margin-bottom: 15px;
+}
+
+.reveal-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.reveal-rarity {
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+}
+
+.reveal-description {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 15px;
+}
+
+.reveal-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--accent-yellow);
+}
+
+/* Mini Rewards Display */
+.mini-rewards-display {
+    display: flex;
+    gap: 15px;
+    padding: 10px;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+}
+
+.mini-reward-stat {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.85rem;
+}
+
+.mini-reward-stat.legendary {
+    color: var(--accent-yellow);
+    font-weight: 600;
+}
+
+/* Responsive Adjustments for Behavioral Modules */
+@media (max-width: 768px) {
+    .analytics-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .reward-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .stack-chain {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 10px;
+    }
+    
+    .rewards-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .analytics-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .reward-stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stack-stats {
+        flex-wrap: wrap;
+    }
+    
+    .intention-stats {
+        flex-wrap: wrap;
+    }
+}
