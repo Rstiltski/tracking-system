@@ -10,6 +10,20 @@
     --primary-light: #818cf8;
     --primary-dark: #4f46e5;
     
+    /* ==========================================
+       Emotion Color Palette (Chroma-Density)
+       ========================================== */
+    --emotion-euphoric: #39FF14;   /* Neon Green - Flow, High Velocity */
+    --emotion-optimistic: #00FFFF; /* Cyan - Growth, Forward Motion */
+    --emotion-stable: #4D4DFF;     /* Cyber Blue - Routine, Operations */
+    --emotion-stressed: #FFFF00;   /* Warning Yellow - Friction, Warning */
+    --emotion-anxious: #FF9900;    /* Risk Orange - High Risk, Instability */
+    --emotion-despair: #FF0000;    /* Critical Red - System Failure */
+    
+    /* Current System Mood (defaults to Stable) */
+    --current-mood: var(--emotion-stable);
+    --current-mood-glow: 0 0 20px var(--emotion-stable);
+    
     /* Accent Colors */
     --accent-pink: #ec4899;
     --accent-purple: #a855f7;
@@ -582,6 +596,171 @@ body {
 
 .streak-flame {
     color: var(--accent-orange);
+}
+
+/* ==========================================
+   Habit Score (Phase 1.1)
+   ========================================== */
+
+.habit-score-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.score-ring {
+    position: relative;
+    width: 60px;
+    height: 60px;
+}
+
+.score-ring svg {
+    transform: rotate(-90deg);
+    width: 100%;
+    height: 100%;
+}
+
+.score-bg {
+    fill: none;
+    stroke: var(--bg-tertiary);
+    stroke-width: 8;
+}
+
+.score-progress {
+    fill: none;
+    stroke: var(--score-color, var(--primary));
+    stroke-width: 8;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.5s ease, stroke 0.3s ease;
+}
+
+.score-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.score-percentage {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1;
+}
+
+.score-emoji {
+    font-size: 0.7rem;
+    line-height: 1;
+    margin-top: 2px;
+}
+
+.score-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Score trend indicator */
+.score-trend {
+    font-size: 0.7rem;
+    margin-top: 3px;
+}
+
+.score-trend.improving {
+    color: var(--accent-green);
+}
+
+.score-trend.declining {
+    color: var(--accent-red);
+}
+
+.score-trend.stable {
+    color: var(--text-secondary);
+}
+
+/* ==========================================
+   Streak Freeze (Phase 1.2)
+   ========================================== */
+
+.streak-freeze-widget {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    padding: 15px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    max-width: 200px;
+}
+
+.freeze-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.freeze-icon {
+    font-size: 1.5rem;
+}
+
+.freeze-count {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.freeze-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.freeze-progress {
+    height: 100%;
+    background: linear-gradient(90deg, #00d4ff, #0099cc);
+    border-radius: var(--radius-full);
+    transition: width 0.3s ease;
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+}
+
+.purchase-freeze-btn {
+    width: 100%;
+    padding: 8px;
+    border: 2px solid var(--primary);
+    background: transparent;
+    color: var(--primary);
+    font-weight: 600;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    font-size: 0.8rem;
+}
+
+.purchase-freeze-btn:hover {
+    background: var(--primary);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.purchase-freeze-btn:active {
+    transform: translateY(0);
+}
+
+/* Freeze usage indicator in habit cards */
+.freeze-usage-indicator {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 0.8rem;
+    opacity: 0.8;
 }
 
 .habit-actions {
@@ -1870,6 +2049,221 @@ body {
 .mb-20 { margin-bottom: 20px; }
 .mt-10 { margin-top: 10px; }
 .mt-20 { margin-top: 20px; }
+
+/* ==========================================
+   Emotion System UI Classes
+   ========================================== */
+
+/* Apply to UI elements that should reflect system mood */
+.emotion-border {
+    border: 2px solid var(--current-mood);
+    box-shadow: var(--current-mood-glow);
+    transition: all 0.5s ease;
+}
+
+.emotion-text {
+    color: var(--current-mood);
+    text-shadow: 0 0 5px var(--current-mood);
+    transition: color 0.5s ease;
+}
+
+.emotion-glow {
+    box-shadow: var(--current-mood-glow);
+    transition: box-shadow 0.5s ease;
+}
+
+.emotion-bg {
+    background-color: var(--current-mood);
+    transition: background-color 0.5s ease;
+}
+
+/* Emotion State Display Widget */
+.emotion-widget {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 15px;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    transition: all 0.5s ease;
+}
+
+.emotion-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: var(--current-mood);
+    box-shadow: 0 0 10px var(--current-mood);
+    animation: emotionPulse 2s infinite;
+}
+
+@keyframes emotionPulse {
+    0%, 100% { 
+        transform: scale(1); 
+        opacity: 1; 
+    }
+    50% { 
+        transform: scale(1.2); 
+        opacity: 0.7; 
+    }
+}
+
+.emotion-state-name {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--current-mood);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.emotion-density-bar {
+    flex: 1;
+    height: 6px;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+.emotion-density-fill {
+    height: 100%;
+    background: var(--current-mood);
+    border-radius: var(--radius-full);
+    transition: width 0.5s ease;
+}
+
+.emotion-percentage {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    min-width: 40px;
+    text-align: right;
+}
+
+/* Emotion Bitstream Visualization */
+.emotion-bitstream {
+    display: flex;
+    gap: 2px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.7rem;
+}
+
+.emotion-bit {
+    width: 14px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 2px;
+    font-weight: bold;
+}
+
+.emotion-bit.one {
+    background: rgba(57, 255, 20, 0.2);
+    color: var(--emotion-euphoric);
+}
+
+.emotion-bit.zero {
+    background: rgba(255, 0, 0, 0.2);
+    color: var(--emotion-despair);
+}
+
+/* Dashboard Emotion Card */
+.emotion-dashboard-card {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    box-shadow: var(--shadow-md);
+    border: 2px solid var(--current-mood);
+    transition: all 0.5s ease;
+}
+
+.emotion-dashboard-card:hover {
+    box-shadow: var(--current-mood-glow);
+}
+
+.emotion-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.emotion-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.emotion-badge {
+    padding: 4px 12px;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: var(--current-mood);
+    color: white;
+}
+
+/* State-specific overrides for better visibility */
+.emotion-badge.euphoric { background: var(--emotion-euphoric); color: #000; }
+.emotion-badge.optimistic { background: var(--emotion-optimistic); color: #000; }
+.emotion-badge.stable { background: var(--emotion-stable); }
+.emotion-badge.stressed { background: var(--emotion-stressed); color: #000; }
+.emotion-badge.anxious { background: var(--emotion-anxious); }
+.emotion-badge.despair { background: var(--emotion-despair); }
+
+/* Large emotion display for status pages */
+.emotion-large-display {
+    text-align: center;
+    padding: 40px;
+}
+
+.emotion-large-icon {
+    font-size: 5rem;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 0 20px var(--current-mood));
+}
+
+.emotion-large-state {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--current-mood);
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    margin-bottom: 10px;
+}
+
+.emotion-large-density {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* Sidebar emotion indicator */
+.sidebar-emotion {
+    padding: 10px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: auto;
+}
+
+.sidebar-emotion-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.8rem;
+}
+
+.sidebar-emotion-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--current-mood);
+    box-shadow: 0 0 8px var(--current-mood);
+    animation: emotionPulse 2s infinite;
+}
 
 /* ==========================================
    Phase 3: Behavioral Modules Styles

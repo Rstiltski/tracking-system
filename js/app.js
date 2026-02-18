@@ -591,3 +591,357 @@ document.addEventListener('DOMContentLoaded', () => {
 // Export for use in other modules
 window.App = App;
 
+/**
+ * Emotion System Module
+ * Handles the Chroma-Density emotional state visualization
+ */
+const EmotionSystem = {
+    // Current emotional state
+    currentState: null,
+    
+    // Emotion state icons
+    stateIcons: {
+        EUPHORIC: '🚀',
+        OPTIMISTIC: '📈',
+        STABLE: '⚖️',
+        STRESSED: '⚠️',
+        ANXIOUS: '😰',
+        DESPAIR: '🔴'
+    },
+    
+    // State descriptions
+    stateDescriptions: {
+        EUPHORIC: 'Flow state achieved! System is performing excellently.',
+        OPTIMISTIC: 'Great progress! Things are moving forward smoothly.',
+        STABLE: 'Normal operations. System is running as expected.',
+        STRESSED: 'Some friction detected. Consider reviewing recent activities.',
+        ANXIOUS: 'Warning! Multiple issues detected. Attention needed.',
+        DESPAIR: 'Critical state! Immediate intervention required.'
+    },
+    
+    // Initialize the emotion system
+    init() {
+        this.updateFromStorage();
+        this.startPolling();
+    },
+    
+    // Update CSS variables with the current mood color
+    updateSystemMood(hexColor, stateName = null) {
+        const root = document.documentElement;
+        
+        // Update the current-mood CSS variable
+        root.style.setProperty('--current-mood', hexColor);
+        root.style.setProperty('--current-mood-glow', `0 0 20px ${hexColor}`);
+        
+        // Update emotion widget if it exists
+        this.updateEmotionWidget(hexColor, stateName);
+        
+        // Store the current mood
+        const settings = Storage.getSettings();
+        settings.currentMood = hexColor;
+        settings.currentMoodState = stateName;
+        settings.lastMoodUpdate = new Date().toISOString();
+        Storage.saveSettings(settings);
+    },
+    
+    // Update the emotion widget in the UI
+    updateEmotionWidget(hexColor, stateName = null) {
+        const indicator = document.querySelector('.emotion-indicator');
+        const stateNameEl = document.querySelector('.emotion-state-name');
+        const densityFill = document.querySelector('.emotion-density-fill');
+        const percentage = document.querySelector('.emotion-percentage');
+        const badge = document.querySelector('.emotion-badge');
+        
+        if (indicator) {
+            indicator.style.backgroundColor = hexColor;
+            indicator.style.boxShadow = `0 0 10px ${hexColor}`;
+        }
+        
+        if (stateNameEl && stateName) {
+            stateNameEl.textContent = stateName;
+            stateNameEl.style.color = hexColor;
+        }
+        
+        if (badge && stateName) {
+            badge.textContent = stateName;
+            badge.className = `emotion-badge ${stateName.toLowerCase()}`;
+        }
+    },
+    
+    // Update the full emotion display
+    updateEmotionDisplay(state) {
+        if (!state) return;
+        
+        this.currentState = state;
+        
+        // Update CSS variables
+        this.updateSystemMood(state.hex_color, state.name);
+        
+        // Update density bar
+        const densityFill = document.querySelector('.emotion-density-fill');
+        const percentage = document.querySelector('.emotion-percentage');
+        
+        if (densityFill) {
+            densityFill.style.width = `${state.percentage}%`;
+        }
+        
+        if (percentage) {
+            percentage.textContent = `${state.percentage}%`;
+        }
+        
+        // Update bitstream visualization
+        this.updateBitstream(state.bitstream);
+        
+        // Update large display if present
+        const largeState = document.querySelector('.emotion-large-state');
+        const largeDensity = document.querySelector('.emotion-large-density');
+        const largeIcon = document.querySelector('.emotion-large-icon');
+        
+        if (largeState) {
+            largeState.textContent = state.name;
+            largeState.style.color = state.hex_color;
+        }
+        
+        if (largeDensity) {
+            largeDensity.textContent = `${state.percentage}%`;
+        }
+        
+        if (largeIcon) {
+            largeIcon.textContent = this.stateIcons[state.name] || '📊';
+        }
+    },
+    
+    // Update bitstream visualization
+    updateBitstream(bitstream) {
+        const container = document.querySelector('.emotion-bitstream');
+        if (!container || !bitstream) return;
+        
+        // Parse the bitstream (strip ANSI codes and get raw bits)
+        const bits = bitstream.replace(/\x1b\[[0-9;]*m/g, '').trim().split('');
+        
+        container.innerHTML = bits.map(bit => `
+            <span class="emotion-bit ${bit === '1' ? 'one' : 'zero'}">${bit}</span>
+        `).join('');
+    },
+    
+    // Get current state from storage or API
+    updateFromStorage() {
+        const settings = Storage.getSettings();
+        if (settings.currentMood) {
+            this.updateSystemMood(settings.currentMood, settings.currentMoodState);
+        }
+    },
+    
+    // Start polling for emotion updates (if backend is available)
+    startPolling() {
+        // Poll every 30 seconds for emotion updates
+        setInterval(() => {
+            this.fetchEmotionState();
+        }, 30000);
+        
+        // Initial fetch
+        this.fetchEmotionState();
+    },
+    
+    // Fetch emotion state from API
+    async fetchEmotionState() {
+        try {
+            // Try to fetch from the backend API
+            const response = await fetch('/api/emotion/state');
+            if (response.ok) {
+                const data = await response.json();
+                this.updateEmotionDisplay(data);
+            }
+        } catch (error) {
+            // Backend not available, use local simulation
+            this.simulateEmotionState();
+        }
+    },
+    
+    // Simulate emotion state based on local data (fallback)
+    simulateEmotionState() {
+        // Calculate a simulated emotion based on user activity
+        const habits = Storage.getHabits();
+        const tasks = Storage.getTasks();
+        const goals = Storage.getGoals();
+        
+        let successCount = 0;
+        let totalCount = 0;
+        
+        // Count completed habits today
+        const today = new Date().toDateString();
+        habits.forEach(habit => {
+            if (habit.completedDates && habit.completedDates.includes(today)) {
+                successCount++;
+            }
+            totalCount++;
+        });
+        
+        // Count completed tasks
+        tasks.forEach(task => {
+            if (task.completed) {
+                successCount++;
+            }
+            totalCount++;
+        });
+        
+        // Calculate density
+        const density = totalCount > 0 ? successCount / totalCount : 0.5;
+        
+        // Determine state
+        let stateName, hexColor;
+        if (density >= 0.90) {
+            stateName = 'EUPHORIC';
+            hexColor = '#39FF14';
+        } else if (density >= 0.75) {
+            stateName = 'OPTIMISTIC';
+            hexColor = '#00FFFF';
+        } else if (density >= 0.50) {
+            stateName = 'STABLE';
+            hexColor = '#4D4DFF';
+        } else if (density >= 0.30) {
+            stateName = 'STRESSED';
+            hexColor = '#FFFF00';
+        } else if (density >= 0.15) {
+            stateName = 'ANXIOUS';
+            hexColor = '#FF9900';
+        } else {
+            stateName = 'DESPAIR';
+            hexColor = '#FF0000';
+        }
+        
+        this.updateEmotionDisplay({
+            name: stateName,
+            density: density,
+            hex_color: hexColor,
+            percentage: Math.round(density * 100)
+        });
+    },
+    
+    // Record an event (for local emotion tracking)
+    recordEvent(eventType, success = true) {
+        const settings = Storage.getSettings();
+        
+        // Initialize event history if needed
+        if (!settings.emotionEvents) {
+            settings.emotionEvents = [];
+        }
+        
+        // Add event
+        settings.emotionEvents.push({
+            type: eventType,
+            success: success,
+            timestamp: new Date().toISOString()
+        });
+        
+        // Keep only last 64 events
+        if (settings.emotionEvents.length > 64) {
+            settings.emotionEvents = settings.emotionEvents.slice(-64);
+        }
+        
+        Storage.saveSettings(settings);
+        
+        // Recalculate emotion
+        this.recalculateFromEvents();
+    },
+    
+    // Recalculate emotion from event history
+    recalculateFromEvents() {
+        const settings = Storage.getSettings();
+        const events = settings.emotionEvents || [];
+        
+        if (events.length === 0) {
+            this.updateSystemMood('#4D4DFF', 'STABLE');
+            return;
+        }
+        
+        const successCount = events.filter(e => e.success).length;
+        const density = successCount / events.length;
+        
+        let stateName, hexColor;
+        if (density >= 0.90) {
+            stateName = 'EUPHORIC';
+            hexColor = '#39FF14';
+        } else if (density >= 0.75) {
+            stateName = 'OPTIMISTIC';
+            hexColor = '#00FFFF';
+        } else if (density >= 0.50) {
+            stateName = 'STABLE';
+            hexColor = '#4D4DFF';
+        } else if (density >= 0.30) {
+            stateName = 'STRESSED';
+            hexColor = '#FFFF00';
+        } else if (density >= 0.15) {
+            stateName = 'ANXIOUS';
+            hexColor = '#FF9900';
+        } else {
+            stateName = 'DESPAIR';
+            hexColor = '#FF0000';
+        }
+        
+        this.updateEmotionDisplay({
+            name: stateName,
+            density: density,
+            hex_color: hexColor,
+            percentage: Math.round(density * 100)
+        });
+    },
+    
+    // Get current state info
+    getCurrentState() {
+        return this.currentState;
+    },
+    
+    // Get state description
+    getStateDescription(stateName) {
+        return this.stateDescriptions[stateName] || 'System state unknown.';
+    },
+    
+    // Create emotion widget HTML
+    createWidget() {
+        return `
+            <div class="emotion-widget">
+                <div class="emotion-indicator"></div>
+                <span class="emotion-state-name">STABLE</span>
+                <div class="emotion-density-bar">
+                    <div class="emotion-density-fill" style="width: 50%"></div>
+                </div>
+                <span class="emotion-percentage">50%</span>
+            </div>
+        `;
+    },
+    
+    // Create dashboard card HTML
+    createDashboardCard() {
+        const state = this.currentState || { name: 'STABLE', percentage: 50, hex_color: '#4D4DFF' };
+        const icon = this.stateIcons[state.name] || '📊';
+        const description = this.stateDescriptions[state.name] || '';
+        
+        return `
+            <div class="emotion-dashboard-card">
+                <div class="emotion-header">
+                    <span class="emotion-title">System Mood</span>
+                    <span class="emotion-badge ${state.name.toLowerCase()}">${state.name}</span>
+                </div>
+                <div class="emotion-large-display" style="padding: 20px 0;">
+                    <div class="emotion-large-icon">${icon}</div>
+                    <div class="emotion-large-state" style="font-size: 1.5rem;">${state.name}</div>
+                    <div class="emotion-large-density" style="font-size: 2rem;">${state.percentage}%</div>
+                </div>
+                <p style="text-align: center; color: var(--text-secondary); font-size: 0.85rem;">
+                    ${description}
+                </p>
+                <div class="emotion-bitstream" style="justify-content: center; margin-top: 15px;"></div>
+            </div>
+        `;
+    }
+};
+
+// Initialize emotion system when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    EmotionSystem.init();
+});
+
+// Export for use in other modules
+window.EmotionSystem = EmotionSystem;
+

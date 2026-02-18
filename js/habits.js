@@ -77,6 +77,18 @@ const Habits = {
         const isCompleted = Storage.isHabitCompletedOnDate(habit.id);
         const streak = Storage.getHabitStreak(habit.id);
         
+        // Use Habit Score if available, otherwise fall back to streak display
+        let scoreHtml = '';
+        if (window.HabitScore) {
+            scoreHtml = HabitScore.renderScore(habit.id);
+        } else {
+            scoreHtml = `
+                <div class="habit-streak">
+                    ${streak > 0 ? `<span class="streak-flame">🔥 ${streak} day streak</span>` : 'Start your streak today!'}
+                </div>
+            `;
+        }
+
         return `
             <div class="habit-card ${isCompleted ? 'completed' : ''}" data-habit-id="${habit.id}">
                 <div class="habit-checkbox ${isCompleted ? 'checked' : ''}" data-habit-id="${habit.id}">
@@ -85,9 +97,7 @@ const Habits = {
                 <div class="habit-icon" style="color: ${habit.color}">${habit.icon}</div>
                 <div class="habit-info">
                     <div class="habit-name">${habit.name}</div>
-                    <div class="habit-streak">
-                        ${streak > 0 ? `<span class="streak-flame">🔥 ${streak} day streak</span>` : 'Start your streak today!'}
-                    </div>
+                    ${scoreHtml}
                 </div>
                 <div class="habit-actions">
                     <button class="habit-action-btn habit-edit" data-habit-id="${habit.id}" title="Edit">✏️</button>

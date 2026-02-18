@@ -14,3 +14,11 @@ requests>=2.31.0
 apscheduler>=3.10.0      # Temporal orchestration for recurring reminders
 pywebpush>=2.0.0         # Web Push API for browser notifications (optional)
 jinja2>=3.1.0            # Template engine for notification messages
+
+# Testing Dependencies (optional, for development)
+# Install with: pip install -r requirements.txt --extra-index-url https://test.pypi.org/simple/
+pytest>=7.4.0            # Test framework
+pytest-cov>=4.1.0        # Coverage reporting
+pytest-xdist>=3.5.0      # Parallel test execution
+pytest-watch>=4.2.0      # Watch mode for auto-rerun
+pytest-html>=4.1.0       # HTML test reports

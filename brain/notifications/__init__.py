@@ -57,6 +57,10 @@ from brain.notifications.templates import (
     get_achievement_context,
     get_reward_context,
 )
+from brain.notifications.preferences import (
+    PreferenceManager,
+    get_preference_manager,
+)
 
 __all__ = [
     # Models
@@ -94,4 +98,7 @@ __all__ = [
     "get_task_reminder_context",
     "get_achievement_context",
     "get_reward_context",
+    # Preferences
+    "PreferenceManager",
+    "get_preference_manager",
 ]

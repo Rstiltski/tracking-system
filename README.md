@@ -13,7 +13,7 @@
 | **Find a feature** | [FEATURE_MAP.md](FEATURE_MAP.md) |
 | **See roadmap** | [ROADMAP.md](ROADMAP.md) |
 | **Check tasks** | [TODO.md](TODO.md) |
-| **Read research** | [docs/research/](docs/research/) |
+| **Read research** | [docs/research/](docs/research/) - [Clone research repos](#research-repositories) |
 | **Understand Brain** | [brain/README.md](brain/README.md) |
 
 ---
@@ -71,7 +71,13 @@ Veryfyn is a **complete personal tracking system** with an integrated AI Brain a
 
 ### Quick Setup
 
-**1. Install dependencies:**
+**1. Clone the repository:**
+```bash
+git clone https://github.com/Rstiltski/tracking-system.git
+cd tracking-system
+```
+
+**2. Install dependencies:**
 ```bash
 pip install -r requirements.txt
 ```
@@ -567,6 +573,80 @@ docs: update README with new installation steps
 | Tool contracts | `brain/design/04_tool_contracts.md` |
 | State machines | `brain/design/01_state_machines.md` |
 | Command namespace | `brain/design/00_command_namespace.md` |
+
+---
+
+## Research Repositories
+
+The `docs/research/` directory contains research documents with references to open-source repositories. To clone these reference repositories for deeper analysis:
+
+### Phase 2.1: Correlation Engine Research
+
+```bash
+# Granger causality and VAR models
+git clone https://github.com/roqua/autovar.git
+
+# Automatic insights and NLG
+git clone https://github.com/p0lloc/perfice.git
+
+# Correlation matrix dashboard
+git clone https://github.com/markrai/fitbaus.git
+
+# Time-lagged cross-correlation
+git clone https://github.com/farhanaugustine/Temporal_Behavior_Analysis.git
+
+# ML for lag detection
+git clone https://github.com/gianlucatruda/quantified-sleep.git
+
+# Data unification infrastructure
+git clone https://github.com/karlicoss/HPI.git
+```
+
+### Phase 5.3: Backup & Restore Research
+
+```bash
+# Hard link deduplication
+git clone https://github.com/jedie/PyHardLinkBackup.git
+
+# Retention management
+git clone https://github.com/charles-001/backup-warden.git
+
+# JSON manifest patterns
+git clone https://github.com/mlgzackfly/CTFd-Backup-Tool.git
+
+# Checksum comparison
+git clone https://github.com/soerenkoehler/checksum-diff.git
+
+# Job scheduling
+git clone https://github.com/agronholm/apscheduler.git
+
+# Filesystem mocking for tests
+git clone https://github.com/pytest-dev/pyfakefs.git
+```
+
+### Habit Tracking Research
+
+```bash
+# Habit Score algorithm
+git clone https://github.com/iSoron/uhabits.git
+
+# RPG gamification
+git clone https://github.com/HabitRPG/habitica.git
+
+# Event sourcing
+git clone https://github.com/ActivityWatch/activitywatch.git
+
+# AI-native logging
+git clone https://github.com/mr-karan/gullak.git
+
+# Flexible tracking
+git clone https://github.com/open-nomie/nomie6-oss.git
+
+# N-of-1 trials
+git clone https://github.com/hpi-studyu/studyu.git
+```
+
+See [docs/research/](docs/research/) for detailed research documents.
 
 ---
 

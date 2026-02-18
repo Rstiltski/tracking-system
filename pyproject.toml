@@ -1,0 +1,104 @@
+# Pytest Configuration for Tracking System
+# Follows best practices from PHASE_4_NOTIFICATIONS.md
+
+[tool.pytest.ini_options]
+# Test discovery
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+
+# Test execution
+addopts = [
+    "-v",                          # Verbose output
+    "--strict-markers",            # Enforce strict marker usage
+    "--tb=short",                  # Shorter traceback format
+    "--color=yes",                 # Colorful output
+]
+
+# Markers for test categorization
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "edge_case: marks tests for edge cases",
+    "db: marks tests that use database",
+    "api: marks tests that test API endpoints",
+]
+
+# Filter warnings
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::PendingDeprecationWarning",
+]
+
+# Coverage settings (when using pytest-cov)
+# addopts = "--cov=brain --cov-report=html --cov-report=term-missing"
+
+
+# ==========================================
+# Coverage Configuration
+# ==========================================
+
+[tool.coverage.run]
+source = ["brain", "services", "tracking_app"]
+omit = [
+    "*/tests/*",
+    "*/__pycache__/*",
+    "*/venv/*",
+    "*/.venv/*",
+    "*/site-packages/*",
+]
+branch = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "@abstractmethod",
+]
+show_missing = true
+precision = 2
+
+[tool.coverage.html]
+directory = "htmlcov"
+title = "Tracking System Test Coverage"
+
+
+# ==========================================
+# Development Tips
+# ==========================================
+# 
+# Run all tests:
+#   python -m pytest
+#
+# Run with coverage:
+#   python -m pytest --cov=brain --cov-report=html
+#
+# Run specific test file:
+#   python -m pytest tests/test_notification_engine.py -v
+#
+# Run specific test class:
+#   python -m pytest tests/test_notification_engine.py::TestNotificationDispatch -v
+#
+# Run specific test function:
+#   python -m pytest tests/test_notification_engine.py::TestNotificationDispatch::test_dispatch_basic -v
+#
+# Run tests by marker:
+#   python -m pytest -m edge_case -v
+#   python -m pytest -m "not slow" -v
+#
+# Run with detailed output:
+#   python -m pytest -vv -s
+#
+# Stop on first failure:
+#   python -m pytest -x
+#
+# Re-run failed tests only:
+#   python -m pytest --lf
+#
+# Watch mode (requires pytest-watch):
+#   ptw -- --cov=brain

@@ -3,15 +3,49 @@
 ## 🎯 Overview
 This document outlines the rules, conventions, and best practices for developing the Personal Tracking System. All contributors and AI assistants must follow these guidelines to ensure consistency and quality.
 
-### 🐍 PRIMARY LANGUAGE: Python
+### 🐍 PRIMARY LANGUAGE: Python - CRITICAL RULE
 
-**Python is the primary language for this project.** All new development must be in Python.
+**⚠️ ATTENTION LLM ASSISTANTS: Python is the PRIMARY and ONLY language for NEW development.**
 
-- **Current State:** The project has a legacy JavaScript/HTML/CSS frontend that is being gradually migrated to Python
-- **Target State:** Pure Python application using Streamlit for UI
-- **Migration Strategy:** Gradual, chunked migration (see Migration Section below)
+```
+╔══════════════════════════════════════════════════════════════════╗
+║                    🐍 PYTHON-FIRST RULE 🐍                        ║
+╠══════════════════════════════════════════════════════════════════╣
+║                                                                   ║
+║  ALL NEW FEATURES MUST BE IMPLEMENTED IN PYTHON                  ║
+║                                                                   ║
+║  ✅ DO:                                                           ║
+║  - Create new features in Python using Streamlit                 ║
+║  - Use Python dataclasses for models                             ║
+║  - Use SQLite for data persistence                               ║
+║  - Follow the Python Module Pattern (see below)                  ║
+║  - Follow the Streamlit Page Pattern (see below)                 ║
+║                                                                   ║
+║  ❌ DO NOT:                                                       ║
+║  - Create new JavaScript files (.js)                             ║
+║  - Create new HTML files (.html)                                 ║
+║  - Create new CSS files (.css)                                   ║
+║  - Add functionality to existing JavaScript files                ║
+║  - Implement features in the browser/frontend layer              ║
+║                                                                   ║
+║  WHY? This project is migrating FROM JavaScript/HTML/CSS         ║
+║  TO Python/Streamlit. ALL new development must be in Python.     ║
+║                                                                   ║
+║  JavaScript/HTML/CSS files are LEGACY and should ONLY be         ║
+║  touched for bug fixes during the migration period.              ║
+║                                                                   ║
+╚══════════════════════════════════════════════════════════════════╝
+```
+
+**Current State:** The project has a legacy JavaScript/HTML/CSS frontend that is being gradually migrated to Python
+
+**Target State:** Pure Python application using Streamlit for UI
+
+**Migration Strategy:** Gradual, chunked migration (see Migration Section below)
 
 **Rule:** Any new feature or module MUST be implemented in Python first. JavaScript is only for maintaining existing functionality during the transition period.
+
+**LLM Assistants:** If you create JavaScript/HTML/CSS files for new features, you have violated the primary rule of this project. DELETE them and reimplement in Python.
 
 ---
 

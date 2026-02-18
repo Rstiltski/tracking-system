@@ -578,6 +578,21 @@ class NotificationPreferences:
             # Quiet hours within same day
             return self.quiet_hours_start <= check_time <= self.quiet_hours_end
     
+    def is_quiet_hours_at(self, check_time: time) -> bool:
+        """
+        Check if a specific time is within quiet hours.
+        
+        Alias for is_quiet_hours() with required time parameter.
+        Used for testing specific times.
+        
+        Args:
+            check_time: Time to check
+            
+        Returns:
+            True if within quiet hours, False otherwise
+        """
+        return self.is_quiet_hours(check_time)
+    
     def is_type_enabled(self, notification_type: NotificationType) -> bool:
         """Check if a specific notification type is enabled."""
         type_mapping = {
