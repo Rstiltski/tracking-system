@@ -137,7 +137,7 @@ python3 run_system.py
 ```
 
 **Access the application:**
-- Open your browser to: **http://localhost:8501**
+- Open your browser to: **http://localhost:5501**
 
 ---
 
