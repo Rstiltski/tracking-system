@@ -96,16 +96,23 @@ This roadmap outlines the strategic direction for the TrackLife Personal Trackin
 
 **Documentation:** [phases/PHASE_5_DATA_MANAGEMENT.md](phases/PHASE_5_DATA_MANAGEMENT.md) | [phases/PHASE_5_TODO.md](phases/PHASE_5_TODO.md)
 
-### Phase 6: Enhancement & Polish 📋 UPCOMING
+### Phase 6: Local AI Integration 📋 UPCOMING
+- [ ] RAG Foundation (ChromaDB, embeddings, multi-provider support)
+- [ ] AI Assistant (chat interface, context retrieval, insights)
+- [ ] Digital Coach (intervention engine, proactive suggestions)
+- [ ] Integration & Polish (Brain tools, weekly summaries)
+
+**Documentation:** [phases/PHASE_6_AI_INTEGRATION.md](phases/PHASE_6_AI_INTEGRATION.md)
+
+### Phase 7: Enhancement & Polish 📋 FUTURE
 - [ ] More achievement badges
 - [ ] Improve chart responsiveness
 - [ ] Sound effects for actions
 - [ ] More chart types
 - [ ] Weekly/Monthly views
-- [ ] Streak freeze feature
 - [ ] Calendar view
 
-### Phase 7: Advanced Features 📋 FUTURE
+### Phase 8: Advanced Features 📋 FUTURE
 - [ ] Habit templates
 - [ ] Recurring tasks
 - [ ] Budget goals
