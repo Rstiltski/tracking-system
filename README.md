@@ -118,9 +118,16 @@ No server required - runs entirely in the browser using LocalStorage.
 ## §3 Features
 
 ### 📊 Dashboard
-- Overview of all tracking metrics
-- Quick access to habits and tasks
-- Weekly progress charts
+- **Single unified dashboard** (`tracking_app/pages/dashboard.py`)
+- Overview of all tracking metrics with real data
+- Habit Scores using brain models (exponential smoothing algorithm)
+- Today's habits with quick completion
+- Active tasks with priority indicators
+- Goals progress visualization
+- Burnout risk indicator with wellbeing check
+- Weekly habit completion charts
+- Recent activity feed
+- Quick action buttons for common tasks
 - Motivational quotes
 
 ### ✅ Habits Tracker

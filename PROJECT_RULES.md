@@ -127,19 +127,33 @@ When working on this project, the LLM must:
 ```
 tracking-system/
 ├── tracking_app/               # 🐍 PRIMARY: Python Streamlit Application
-│   ├── app.py                  # Main Streamlit entry point
+│   ├── app.py                  # Main entry point (redirects to dashboard)
 │   ├── database.py             # SQLite database connection
 │   ├── models.py               # Data models (Habit, Task, etc.)
 │   ├── storage.py              # Storage API (replaces js/storage.js)
+│   ├── components/             # Shared UI components
+│   │   ├── sidebar.py          # Unified sidebar navigation
+│   │   ├── session.py          # Session state management
+│   │   ├── metrics.py          # Metric card components
+│   │   └── charts.py           # Chart components
 │   ├── pages/                  # Streamlit pages
-│   │   ├── dashboard.py        # Dashboard view
+│   │   ├── dashboard.py        # 📊 Main dashboard (comprehensive)
 │   │   ├── habits.py           # Habits tracking
 │   │   ├── tasks.py            # Tasks/Todos
 │   │   ├── finances.py         # Finances/Budget
 │   │   ├── health.py           # Health metrics
+│   │   ├── emotional_health.py # Emotional health (RGB model)
 │   │   ├── time.py             # Time tracking
 │   │   ├── goals.py            # Goals tracking
-│   │   └── achievements.py     # Achievements/Gamification
+│   │   ├── achievements.py     # Achievements/Gamification
+│   │   ├── data_export.py      # Data export functionality
+│   │   ├── data_import.py      # Data import functionality
+│   │   ├── backup_restore.py   # Backup and restore
+│   │   ├── data_lifecycle.py   # Data lifecycle management
+│   │   ├── notification_settings.py  # Notification preferences
+│   │   ├── habit_reminders.py  # Habit reminder settings
+│   │   ├── task_alerts.py      # Task deadline alerts
+│   │   └── goal_alerts.py      # Goal deadline alerts
 │   ├── charts.py               # Plotly chart definitions
 │   └── utils.py                # Utility functions
 │
