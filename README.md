@@ -13,7 +13,7 @@
 | **Find a feature** | [FEATURE_MAP.md](FEATURE_MAP.md) |
 | **See roadmap** | [ROADMAP.md](ROADMAP.md) |
 | **Check tasks** | [TODO.md](TODO.md) |
-| **Read research** | [docs/research/](docs/research/) - [Clone research repos](#research-repositories) |
+| **Read research** | [docs/research/](docs/research/) |
 | **Understand Brain** | [brain/README.md](brain/README.md) |
 
 ---
@@ -26,7 +26,7 @@
 | 2 | Quick Start | Get running in seconds |
 | 3 | Features | Core functionality |
 | 4 | Architecture | System design |
-| 5 | Brain System | AI-native architecture |
+| 5 | Brain System | Backend architecture |
 | 6 | Project Structure | File organization |
 | 7 | Technology Stack | Tools used |
 | 8 | Gamification | XP & achievements |
@@ -39,31 +39,16 @@
 
 ---
 
-## 🤖 LLM Operational Guide
-
-When working on this project, follow these principles:
-
-- **Assume the user doesn't know how to code** - The LLM must do everything: planning, coding, integration, and explanation
-- **Analyze every request holistically** - Consider purpose, context, integration points, and future extensibility
-- **Ask clarifying questions** - Build a bigger picture before implementing
-- **Provide clear explanations** - Describe what's being changed and why
-- **Take full responsibility** - Make all changes, tests, and documentation updates
-- **Suggest expansions** - Provide both linear (direct next steps) and non-linear (creative) ideas
-
-**See [PROJECT_RULES.md](PROJECT_RULES.md) for complete LLM guidelines.**
-
----
-
 ## §1 Overview
 
-Veryfyn is a **complete personal tracking system** with an integrated AI Brain architecture. Originally built as a habit tracker, it has evolved into a **comprehensive life management platform** with:
+Veryfyn is a **complete personal tracking system** with an integrated Brain backend architecture. Originally built as a habit tracker, it has evolved into a **comprehensive life management platform** with:
 
 - **Frontend**: Pure HTML/CSS/JavaScript (no framework dependencies)
-- **Backend**: Python-based Brain system for AI-native operations
+- **Backend**: Python-based Brain system for data management
 - **Storage**: Browser LocalStorage + SQLite for Brain operations
 - **Gamification**: XP, levels, achievements, and celebrations
 
-**The core idea:** Track every aspect of your life with immediate visual feedback, streaks, and rewards - all running locally in your browser with optional AI-enhanced features.
+**The core idea:** Track every aspect of your life with immediate visual feedback, streaks, and rewards - all running locally in your browser.
 
 ---
 
@@ -82,18 +67,18 @@ cd tracking-system
 pip install -r requirements.txt
 ```
 
-**2. Initialize the database:**
+**3. Initialize the database:**
 ```bash
 python3 init_db_script.py
 python3 force_admin_reset.py
 ```
 
-**3. Run the system:**
+**4. Run the system:**
 ```bash
 python3 run_system.py
 ```
 
-**4. Open http://localhost:8501 in your browser.**
+**5. Open http://localhost:8501 in your browser.**
 
 ---
 
@@ -102,9 +87,8 @@ python3 run_system.py
 | Entry Point | Description |
 |-------------|-------------|
 | `run_system.py` | Main admin interface |
-| `app/pages/` | Streamlit UI pages |
-| `brain/tools/` | LLM tools |
-| `overlay/pipeline/main_brain.py` | LLM pipeline orchestration |
+| `tracking_app/pages/` | Streamlit UI pages |
+| `brain/tools/` | Operation tools |
 | `modules_config.json` | Module management |
 
 ---
@@ -113,36 +97,8 @@ python3 run_system.py
 
 | Area | Location |
 |------|----------|
-| UI pages | `app/pages/` |
+| UI pages | `tracking_app/pages/` |
 | Business logic | `services/` and `database/queries/` |
-| LLM brains and tools | `brain/` and `overlay/pipeline/` |
-
----
-
-### LLM Integration
-
-The system is designed for safe, modular code editing via LLMs.
-
-- Use the **Brain pipeline** for multi-step code generation and review
-- **Audit logs** and **risk-tier gating** ensure safe changes
-
----
-
-### Useful Links
-
-| Document | Description |
-|----------|-------------|
-| [README.md](README.md) | Full documentation (this file) |
-| [FEATURE_MAP.md](FEATURE_MAP.md) | Feature-to-file mapping |
-
----
-
-### Troubleshooting
-
-| Issue | Solution |
-|-------|----------|
-| Errors | Enable debug mode (see README.md) |
-| Change history | Check audit logs |
 
 ---
 
@@ -190,6 +146,15 @@ No server required - runs entirely in the browser using LocalStorage.
 - Sleep hours logging
 - Mood tracking with emoji selector
 - Health score calculation
+
+### 🌈 Emotional Health (RGB Model)
+- **Scientific emotion tracking** based on neurotransmitter model
+- **Three primary emotions**: Dopamine (Joy), Norepinephrine (Stress), Serotonin (Satisfaction)
+- **Visual representation**: Emotions map to RGB colors
+- **15 quick presets**: Joyful, Excited, Content, Calm, Anxious, etc.
+- **Custom sliders**: Fine-tune neurotransmitter levels
+- **Pattern detection**: Analyze emotional trends over time
+- **Modifiers**: Track Oxytocin (bonding), Endorphins (euphoria), GABA (calm)
 
 ### ⏱️ Time & Productivity
 - Built-in timer/stopwatch
@@ -274,24 +239,13 @@ No server required - runs entirely in the browser using LocalStorage.
 
 ## §5 Brain System
 
-The Brain is the central nervous system for AI-native operations. Every command flows through the Brain:
+The Brain is the central nervous system for data operations. Every command flows through the Brain:
 
 1. **Router** validates and routes commands
 2. **Policies** check preconditions (security, integrity)
 3. **State Machines** validate transitions
 4. **Tools** execute operations
 5. **Audit Log** records everything
-
-### 🧠 Brain Context Protocol
-
-**IMPORTANT:** This project follows the Brain Context Protocol for AI interaction.
-
-**The Three Laws:**
-1. **README.md files are the source of truth** - Always load context from READMEs
-2. **The brain folder is the thinking process** - All operations flow through brain architecture
-3. **Simple prompts yield deep understanding** - AI interprets deeply, not literally
-
-**See [BRAIN_CONTEXT_PROTOCOL.md](BRAIN_CONTEXT_PROTOCOL.md) for the full protocol.**
 
 ### Key Components
 
@@ -341,7 +295,7 @@ tracking-system/
 │   ├── icons/              # Icon assets
 │   └── sounds/             # Sound effects
 │
-└── brain/                  # AI Brain System
+└── brain/                  # Backend System
     ├── core/               # Core brain components
     ├── tools/              # Operation tools
     ├── brains/             # Specialized brains
@@ -352,7 +306,6 @@ tracking-system/
     ├── invariants/         # Business rules
     ├── immune/             # Self-healing system
     ├── privacy/            # Privacy features
-    ├── fork/               # Fork engine
     └── design/             # Design documentation
 ```
 
@@ -563,8 +516,6 @@ docs: update README with new installation steps
 
 | If you need... | Read this file |
 |----------------|---------------|
-| **AI interaction rules** | `BRAIN_CONTEXT_PROTOCOL.md` |
-| Brain context module | `brain/context/README.md` |
 | Development guidelines | `PROJECT_RULES.md` |
 | Architecture design | `TRACKING_SYSTEM_DESIGN.md` |
 | Feature-to-file mapping | `FEATURE_MAP.md` |
@@ -576,80 +527,6 @@ docs: update README with new installation steps
 
 ---
 
-## Research Repositories
-
-The `docs/research/` directory contains research documents with references to open-source repositories. To clone these reference repositories for deeper analysis:
-
-### Phase 2.1: Correlation Engine Research
-
-```bash
-# Granger causality and VAR models
-git clone https://github.com/roqua/autovar.git
-
-# Automatic insights and NLG
-git clone https://github.com/p0lloc/perfice.git
-
-# Correlation matrix dashboard
-git clone https://github.com/markrai/fitbaus.git
-
-# Time-lagged cross-correlation
-git clone https://github.com/farhanaugustine/Temporal_Behavior_Analysis.git
-
-# ML for lag detection
-git clone https://github.com/gianlucatruda/quantified-sleep.git
-
-# Data unification infrastructure
-git clone https://github.com/karlicoss/HPI.git
-```
-
-### Phase 5.3: Backup & Restore Research
-
-```bash
-# Hard link deduplication
-git clone https://github.com/jedie/PyHardLinkBackup.git
-
-# Retention management
-git clone https://github.com/charles-001/backup-warden.git
-
-# JSON manifest patterns
-git clone https://github.com/mlgzackfly/CTFd-Backup-Tool.git
-
-# Checksum comparison
-git clone https://github.com/soerenkoehler/checksum-diff.git
-
-# Job scheduling
-git clone https://github.com/agronholm/apscheduler.git
-
-# Filesystem mocking for tests
-git clone https://github.com/pytest-dev/pyfakefs.git
-```
-
-### Habit Tracking Research
-
-```bash
-# Habit Score algorithm
-git clone https://github.com/iSoron/uhabits.git
-
-# RPG gamification
-git clone https://github.com/HabitRPG/habitica.git
-
-# Event sourcing
-git clone https://github.com/ActivityWatch/activitywatch.git
-
-# AI-native logging
-git clone https://github.com/mr-karan/gullak.git
-
-# Flexible tracking
-git clone https://github.com/open-nomie/nomie6-oss.git
-
-# N-of-1 trials
-git clone https://github.com/hpi-studyu/studyu.git
-```
-
-See [docs/research/](docs/research/) for detailed research documents.
-
----
-
 ## License
 
 This project is open source and available under the [MIT License](LICENSE).
@@ -658,4 +535,4 @@ This project is open source and available under the [MIT License](LICENSE).
 
 **Made with ❤️ for personal productivity**
 
-**LLM-native. Auditable. Production-ready.**
+**Auditable. Production-ready.**

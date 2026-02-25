@@ -1,0 +1,22 @@
+{
+  "backup_id": "f683c75a-f07b-4bfc-877f-7a484d133660",
+  "created_at": "2026-02-25T14:22:32.292277",
+  "backup_type": "full",
+  "database_checksum": "37a9e6e2c00e1e75c802f95cb687c2c152f5aad1ae87283ef2c6e3762f48326c",
+  "file_size_bytes": 122880,
+  "record_count": 2,
+  "tables": {
+    "ledger": 0,
+    "brain_confirmation_tokens": 0,
+    "backup_jobs": 2,
+    "backup_schedules": 0,
+    "retention_policies": 0,
+    "deleted_records": 0,
+    "lifecycle_jobs": 0,
+    "data_resets": 0,
+    "erasure_requests": 0
+  },
+  "previous_backup_id": null,
+  "checksum_algorithm": "sha256",
+  "version": "1.0"
+}

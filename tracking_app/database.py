@@ -70,8 +70,7 @@ class Database:
         
         conn = sqlite3.connect(
             str(self.db_path),
-            check_same_thread=False,
-            detect_types=sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES
+            check_same_thread=False
         )
         
         # Enable foreign keys

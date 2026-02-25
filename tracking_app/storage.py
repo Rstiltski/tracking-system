@@ -509,20 +509,30 @@ class Storage:
     def get_health_entry(self, entry_date: date) -> Optional[HealthEntry]:
         """Get health entry for a specific date."""
         row = self._db.fetch_one(
-            "SELECT * FROM health_entries WHERE entry_date = ?",
+            "SELECT id, entry_date, weight, sleep_hours, mood, notes, created_at FROM health_entries WHERE entry_date = ?",
             (entry_date.isoformat(),)
         )
-        return HealthEntry.from_dict(row) if row else None
+        if row:
+            # Convert row to dict and handle date
+            data = dict(row)
+            if isinstance(data.get('entry_date'), str):
+                data['entry_date'] = data['entry_date']
+            return HealthEntry.from_dict(data)
+        return None
     
     def create_health_entry(
         self,
-        entry_date: date,
+        entry_date,
         weight: Optional[float] = None,
         sleep_hours: Optional[float] = None,
         mood: str = "good",
         notes: str = ""
     ) -> HealthEntry:
         """Create or update a health entry."""
+        # Convert string to date if needed
+        if isinstance(entry_date, str):
+            entry_date = date.fromisoformat(entry_date)
+        
         entry = HealthEntry(
             entry_date=entry_date,
             weight=weight,

@@ -1,0 +1,238 @@
+# 🗺️ Veryfyn - Roadmap
+
+**Strategic development roadmap for the Veryfyn Personal Tracking System.**
+
+---
+
+## 🧭 Quick Navigation
+
+| Want to... | Go to... |
+|------------|----------|
+| **View tasks** | [TODO.md](TODO.md) |
+| **Understand rules** | [PROJECT_RULES.md](PROJECT_RULES.md) |
+| **Find features** | [FEATURE_MAP.md](FEATURE_MAP.md) |
+| **See research** | [docs/research/](docs/research/) |
+
+---
+
+## 📅 Development Timeline
+
+### Phase 1: Foundation (COMPLETE ✅)
+**Duration:** Completed  
+**Focus:** Core tracking modules
+
+| Module | Status | Description |
+|--------|--------|-------------|
+| Habits | ✅ | Daily habit tracking with streaks |
+| Tasks | ✅ | Todo management with priorities |
+| Finances | ✅ | Income/expense tracking |
+| Health | ✅ | Weight, sleep, mood tracking |
+| Time | ✅ | Built-in timer and time tracking |
+| Goals | ✅ | Goal setting and progress |
+| Dashboard | ✅ | Overview with quick actions |
+
+### Phase 2: Gamification (COMPLETE ✅)
+**Duration:** Completed  
+**Focus:** Motivation and engagement
+
+| Feature | Status | Description |
+|---------|--------|-------------|
+| XP System | ✅ | Earn XP for all activities |
+| Levels | ✅ | Level progression system |
+| Achievements | ✅ | Unlockable badges |
+| Celebrations | ✅ | Confetti and effects |
+| Streaks | ✅ | Consecutive day tracking |
+
+### Phase 3: Brain System (COMPLETE ✅)
+**Duration:** Completed  
+**Focus:** Backend architecture
+
+| Component | Status | Description |
+|-----------|--------|-------------|
+| Router | ✅ | Command routing |
+| Policies | ✅ | Validation rules |
+| State Machines | ✅ | Entity lifecycle |
+| Tools | ✅ | 100+ operation tools |
+| Audit Log | ✅ | Complete audit trail |
+| Security | ✅ | Encryption and access |
+
+### Phase 4: Notifications (COMPLETE ✅)
+**Duration:** Completed  
+**Focus:** Reminders and alerts
+
+| Feature | Status | Description |
+|---------|--------|-------------|
+| Habit Reminders | ✅ | Smart timing |
+| Task Alerts | ✅ | Deadline notifications |
+| Goal Alerts | ✅ | Progress reminders |
+| Quiet Hours | ✅ | Do not disturb |
+| Settings UI | ✅ | Full customization |
+
+### Phase 5: Data Management (COMPLETE ✅)
+**Duration:** Completed  
+**Focus:** Data portability
+
+| Feature | Status | Description |
+|---------|--------|-------------|
+| Export | ✅ | JSON, CSV, SQLite |
+| Import | ✅ | From previous exports |
+| Backup | ✅ | Automated backups |
+| Restore | ✅ | Point-in-time restore |
+| Lifecycle | ✅ | Retention policies |
+
+---
+
+## 🚀 Current Phase: Intelligence Layer
+
+### Phase 6: Intelligence Layer (IN PROGRESS)
+
+Based on comprehensive research analysis from `docs/research/`:
+
+#### Phase 6.1: Enhanced Habits (Q1 2026)
+**Priority:** HIGH  
+**Source:** Loop Habit Tracker, Habitica
+
+| Feature | Impact | Effort | Status |
+|---------|--------|--------|--------|
+| **Habit Score Algorithm** | High | Low | 🔴 Not Started |
+| **Streak Freeze System** | High | Low | 🔴 Not Started |
+| **HP System** | Medium | Medium | 🔴 Not Started |
+
+**Key Changes:**
+- Replace rigid streaks with weighted moving average (Habit Score)
+- Add inventory system for Streak Freeze items
+- Implement HP system where missed habits deal damage
+
+#### Phase 6.2: Correlation Engine (Q1 2026)
+**Priority:** HIGH  
+**Source:** `docs/research/CORRELATION_ENGINE_RESEARCH.md`
+
+| Feature | Impact | Effort | Status |
+|---------|--------|--------|--------|
+| **Pearson/Spearman Correlation** | High | Medium | 🔴 Not Started |
+| **Time-Lagged Correlation** | High | Medium | 🔴 Not Started |
+| **Natural Language Insights** | Medium | Low | 🔴 Not Started |
+
+**Key Features:**
+- Discover relationships between metrics (sleep ↔ mood)
+- Find delayed effects (sleep affects tomorrow's productivity)
+- Generate human-readable insights
+
+#### Phase 6.3: Predictive Analytics (Q2 2026)
+**Priority:** MEDIUM  
+**Source:** `docs/research/AI_AND_PREDICTION.md`
+
+| Feature | Impact | Effort | Status |
+|---------|--------|--------|--------|
+| **Burnout Prediction** | High | Medium | 🔴 Not Started |
+| **PCS Scoring** | Medium | Medium | 🔴 Not Started |
+
+**Key Features:**
+- Early warning system for burnout risk
+- Predictive Context Sensitivity (how "habitual" is a behavior)
+
+#### Phase 6.4: Variable Rewards (Q2 2026)
+**Priority:** MEDIUM  
+**Source:** `docs/research/BEHAVIORAL_SCIENCE.md`
+
+| Feature | Impact | Effort | Status |
+|---------|--------|--------|--------|
+| **Random Loot Drops** | Medium | Low | 🔴 Not Started |
+| **Mystery Achievements** | Medium | Low | 🔴 Not Started |
+
+**Key Features:**
+- Variable rewards for higher engagement
+- Hidden achievements for discovery
+
+---
+
+## 🔮 Future Phases
+
+### Phase 7: N-of-1 Trials (Q3 2026)
+**Priority:** Future  
+**Source:** StudyU, `docs/research/OPEN_SOURCE_PROJECTS.md`
+
+- Self-experimentation module
+- A-B-A withdrawal design
+- Statistical analysis
+- Causal insights
+
+### Phase 8: AI Integration (Q4 2026)
+**Priority:** Future  
+**Source:** `docs/research/AI_AND_PREDICTION.md`
+
+- Ollama integration for local LLM
+- ChromaDB for vector storage
+- RAG (Retrieval-Augmented Generation)
+- Digital Coach assistant
+- "Chat with your data" feature
+
+### Phase 9: Advanced Sync (2027)
+**Priority:** Future  
+**Source:** `docs/research/TECHNICAL_ARCHITECTURES.md`
+
+- IndexedDB migration
+- CRDT-based sync
+- Multi-device support
+- Cloud backup optional
+
+---
+
+## 📊 Research Summary
+
+The `docs/research/` directory contains comprehensive research on:
+
+| Document | Key Insights |
+|----------|--------------|
+| **AI_AND_PREDICTION.md** | Burnout prediction, PCS, Digital Coach, Local RAG |
+| **BEHAVIORAL_SCIENCE.md** | Four Laws of Behavior Change, Loss Aversion, Variable Rewards |
+| **CORRELATION_ENGINE_RESEARCH.md** | Granger causality, Time-lag analysis, Insight templates |
+| **OPEN_SOURCE_PROJECTS.md** | Loop (Habit Score), Habitica (RPG), ActivityWatch (Events) |
+| **TECHNICAL_ARCHITECTURES.md** | Local-First, Event Sourcing, CRDTs, IndexedDB |
+| **BACKUP_RESTORE_RESEARCH.md** | GFS retention, SHA-256 verification, APScheduler |
+| **BACKUP_REPOS_ANALYSIS.md** | Hard link deduplication, Enhanced retention options |
+
+---
+
+## 🎯 Key Metrics
+
+| Metric | Current | Target (v2.0) |
+|--------|---------|---------------|
+| Core Modules | 6 | 6 ✅ |
+| Gamification Features | 5 | 5 ✅ |
+| Intelligence Features | 0 | 8 |
+| AI Features | 0 | 4 |
+
+---
+
+## 📝 Notes
+
+### Implementation Principles
+
+1. **Python-First**: All new features in Python/Streamlit
+2. **Local-First**: Data stays on device by default
+3. **Privacy-Focused**: No data leaves without user consent
+4. **Research-Backed**: Features based on proven patterns
+
+### Decision Log
+
+| Date | Decision | Rationale |
+|------|----------|-----------|
+| Feb 2026 | Implement Habit Score | Research shows rigid streaks cause churn |
+| Feb 2026 | Add HP System | Loss aversion is 2x more powerful than gains |
+| Feb 2026 | Prioritize Correlation Engine | High impact on user insights |
+
+---
+
+## Cross-References
+
+| Related Document | Content |
+|------------------|---------|
+| [TODO.md](TODO.md) | Detailed task list |
+| [PROJECT_RULES.md](PROJECT_RULES.md) | Development guidelines |
+| [FEATURE_MAP.md](FEATURE_MAP.md) | Feature locations |
+
+---
+
+*Last updated: February 2026*
+*Updated with research-based roadmap*

@@ -1,5 +1,3 @@
-# 📋 Personal Tracking System - Project Rules & Guidelines
-
 ## 🎯 Overview
 This document outlines the rules, conventions, and best practices for developing the Personal Tracking System. All contributors and AI assistants must follow these guidelines to ensure consistency and quality.
 
@@ -145,7 +143,7 @@ tracking-system/
 │   ├── charts.py               # Plotly chart definitions
 │   └── utils.py                # Utility functions
 │
-├── brain/                      # 🧠 Python AI/Brain Module
+├── brain/                      # 🧠 Python Backend Module
 │   ├── core/                   # Core brain components
 │   ├── brains/                 # Specialized brain modules
 │   ├── tools/                  # Tool definitions
@@ -153,7 +151,7 @@ tracking-system/
 │   ├── state/                  # State machines
 │   ├── audit/                  # Audit logging
 │   ├── security/               # Security components
-│   └── design/                 # Design documents
+│
 │
 ├── landscaping_new/            # Landscaping management module (Python/Streamlit)
 │
@@ -714,6 +712,118 @@ Achievements should be defined with:
 ---
 
 ## 🔔 UI/UX Rules
+
+### 🔒 MANDATORY UI/UX Validation Protocol
+
+**⚠️ CRITICAL: All features MUST pass UI/UX validation before being marked complete.**
+
+```
+╔══════════════════════════════════════════════════════════════════╗
+║                 🖥️ UI/UX VALIDATION GATE 🖥️                       ║
+╠══════════════════════════════════════════════════════════════════╣
+║                                                                   ║
+║  NO FEATURE IS COMPLETE WITHOUT UI/UX VALIDATION                 ║
+║                                                                   ║
+║  Every phase TODO MUST include a UI/UX Validation section:       ║
+║                                                                   ║
+║  ### UI/UX Validation (MANDATORY)                                ║
+║  - [ ] Navigation Accessibility                                  ║
+║  - [ ] Functionality Validation (CRUD)                          ║
+║  - [ ] User Experience Validation                               ║
+║  - [ ] Integration Validation                                   ║
+║  - [ ] Issue Documentation                                      ║
+║                                                                   ║
+║  GATE ENFORCEMENT:                                               ║
+║  - A feature cannot be marked ✅ Complete without UI validation ║
+║  - All Critical/High issues must be resolved                    ║
+║  - UI validation checklist must be fully checked                ║
+║                                                                   ║
+║  See: phases/PHASE_UI_VALIDATION_TODO.md for full protocol      ║
+║                                                                   ║
+╚══════════════════════════════════════════════════════════════════╝
+```
+
+#### UI/UX Validation Checklist Template
+
+Every feature MUST include this validation section in its phase TODO:
+
+```markdown
+### UI/UX Validation (MANDATORY)
+
+#### Accessibility Validation
+- [ ] Page accessible from main navigation
+- [ ] Page loads without JavaScript/console errors
+- [ ] All sidebar elements render and function
+- [ ] Page title and headers are descriptive
+
+#### Functionality Validation (CRUD)
+- [ ] **Create**: Can add new items through UI
+- [ ] **Read**: Data displays correctly in UI
+- [ ] **Update**: Can edit existing items
+- [ ] **Delete**: Can remove items with confirmation
+
+#### User Experience Validation
+- [ ] Form validation shows clear error messages
+- [ ] Success operations show confirmation (toast/notification)
+- [ ] Error operations show helpful error messages
+- [ ] Loading states display during async operations
+- [ ] Session state persists across page interactions
+- [ ] Empty states show helpful guidance
+
+#### Integration Validation
+- [ ] Navigation to related pages works
+- [ ] Cross-module data access works correctly
+- [ ] User settings/preferences are respected
+- [ ] Feature works in both light and dark modes
+
+#### Issues Found
+| Issue | Severity | Status |
+|-------|----------|--------|
+| [Document any issues found] | | |
+
+**UI Validation Status:** [ ] Not Started | [ ] In Progress | [ ] Complete
+```
+
+#### Severity Levels for UI Issues
+
+| Severity | Definition | Action Required |
+|----------|------------|-----------------|
+| 🔴 **Critical** | Feature is completely inaccessible or non-functional | MUST be resolved before feature can be marked complete |
+| 🟠 **High** | Major functionality broken or user experience severely degraded | MUST be resolved or have remediation plan |
+| 🟡 **Medium** | Functionality works but UX could be improved | Should be addressed, can be tracked separately |
+| 🟢 **Low** | Minor polish or enhancement | Nice to have, can be deferred |
+
+#### Phase TODO Structure (Enhanced)
+
+All phase TODO documents MUST follow this structure:
+
+```markdown
+## Phase X.Y: [Feature Name]
+
+### Core Implementation
+- [ ] Backend implementation tasks...
+
+### UI Implementation
+- [ ] Streamlit page creation tasks...
+
+### UI/UX Validation (MANDATORY)
+- [ ] Accessibility Validation
+- [ ] Functionality Validation
+- [ ] User Experience Validation
+- [ ] Integration Validation
+- [ ] Issue Documentation
+
+### Testing
+- [ ] Unit tests...
+- [ ] Integration tests...
+
+### Implementation Files
+| File | Purpose | UI Validated |
+|------|---------|--------------|
+| `path/to/file.py` | Description | [ ] |
+
+**Status:** [ ] Not Started | [ ] In Progress | [ ] Complete
+```
 
 ### 📱 Responsive Design
 - Mobile-first approach

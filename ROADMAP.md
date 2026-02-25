@@ -1,6 +1,6 @@
-# veryfyn Roadmap
+# Veryfyn Roadmap
 
-This roadmap outlines the strategic direction for the TrackLife Personal Tracking System with integrated AI Brain architecture.
+This roadmap outlines the strategic direction for the Veryfyn Personal Tracking System.
 
 ---
 
@@ -9,7 +9,7 @@ This roadmap outlines the strategic direction for the TrackLife Personal Trackin
 ### Core System Completion
 - **Completed Modules**: Habits, Tasks, Finances, Health, Time, Goals tracking
 - **Gamification**: XP system, levels, achievements, celebrations
-- **Brain Integration**: AI-native architecture with 100+ tools
+- **Brain Integration**: Backend architecture with 100+ tools
 - **Status**: Core tracking features complete, gamification implemented
 
 ### Bug Fixes
@@ -29,8 +29,8 @@ This roadmap outlines the strategic direction for the TrackLife Personal Trackin
 - Time tracking and productivity
 - Goal setting and progress
 
-### AI Brain System
-- 100+ operation tools for autonomous actions
+### Brain System
+- 100+ operation tools
 - Policy engine for validation
 - State machines for entity lifecycle
 - Audit logging for compliance
@@ -85,8 +85,6 @@ This roadmap outlines the strategic direction for the TrackLife Personal Trackin
 - [x] Quiet hours and preferences
 - [x] Test suite (60+ tests passing)
 
-**Documentation:** [phases/PHASE_4_NOTIFICATIONS.md](phases/PHASE_4_NOTIFICATIONS.md) | [phases/PHASE_4_TODO.md](phases/PHASE_4_TODO.md)
-
 ### Phase 5: Data Management ✅ COMPLETE
 - [x] Data export (CSV/JSON/SQLite)
 - [x] Data import functionality
@@ -94,17 +92,7 @@ This roadmap outlines the strategic direction for the TrackLife Personal Trackin
 - [x] Data reset options
 - [x] Lifecycle management
 
-**Documentation:** [phases/PHASE_5_DATA_MANAGEMENT.md](phases/PHASE_5_DATA_MANAGEMENT.md) | [phases/PHASE_5_TODO.md](phases/PHASE_5_TODO.md)
-
-### Phase 6: Local AI Integration 📋 UPCOMING
-- [ ] RAG Foundation (ChromaDB, embeddings, multi-provider support)
-- [ ] AI Assistant (chat interface, context retrieval, insights)
-- [ ] Digital Coach (intervention engine, proactive suggestions)
-- [ ] Integration & Polish (Brain tools, weekly summaries)
-
-**Documentation:** [phases/PHASE_6_AI_INTEGRATION.md](phases/PHASE_6_AI_INTEGRATION.md)
-
-### Phase 7: Enhancement & Polish 📋 FUTURE
+### Phase 6: Enhancement & Polish 📋 CURRENT
 - [ ] More achievement badges
 - [ ] Improve chart responsiveness
 - [ ] Sound effects for actions
@@ -112,7 +100,7 @@ This roadmap outlines the strategic direction for the TrackLife Personal Trackin
 - [ ] Weekly/Monthly views
 - [ ] Calendar view
 
-### Phase 8: Advanced Features 📋 FUTURE
+### Phase 7: Advanced Features 📋 FUTURE
 - [ ] Habit templates
 - [ ] Recurring tasks
 - [ ] Budget goals
@@ -125,11 +113,7 @@ This roadmap outlines the strategic direction for the TrackLife Personal Trackin
 
 ---
 
-## Brain System Roadmap
-
-See [BRAIN_DEVELOPMENT_ROADMAP.md](BRAIN_DEVELOPMENT_ROADMAP.md) for detailed Brain development phases.
-
-### Brain Components Status
+## Brain System Components Status
 
 | Component | Status | Description |
 |-----------|--------|-------------|
@@ -151,7 +135,6 @@ See [BRAIN_DEVELOPMENT_ROADMAP.md](BRAIN_DEVELOPMENT_ROADMAP.md) for detailed Br
 ### Immediate Tasks
 - [ ] Add more achievement badges
 - [ ] Improve chart responsiveness
-- [ ] Fix timer persistence across page refreshes
 - [ ] Add unit tests for JavaScript modules
 
 ### Long-term Goals
@@ -209,7 +192,6 @@ See [PROJECT_RULES.md](PROJECT_RULES.md) for development guidelines. All changes
 | [TODO.md](TODO.md) | Task tracking |
 | [PROJECT_RULES.md](PROJECT_RULES.md) | Development guidelines |
 | [FEATURE_MAP.md](FEATURE_MAP.md) | Feature-to-file mapping |
-| [BRAIN_DEVELOPMENT_ROADMAP.md](BRAIN_DEVELOPMENT_ROADMAP.md) | Brain system roadmap |
 | [brain/README.md](brain/README.md) | Brain documentation |
 
 ---

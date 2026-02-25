@@ -1,6 +1,6 @@
-# 📍 Feature Map - TrackLife Tracking System
+# 📍 Feature Map - Veryfyn Tracking System
 
-**Feature-to-file mapping for developers and LLMs.**
+**Feature-to-file mapping for developers.**
 
 ---
 
@@ -32,14 +32,6 @@
 
 This document maps features to their implementation files. Use it to quickly find where functionality is implemented.
 
-### For LLMs
-
-When using this map:
-1. **Start with the feature type** - Identify what category the feature belongs to
-2. **Find the file** - Use the tables to locate implementation files
-3. **Check related files** - Look for dependencies and integration points
-4. **Read the docs** - Check `docs/` for specifications and guides
-
 ---
 
 ## §2 Documentation Structure
@@ -61,7 +53,6 @@ When using this map:
 | `BEHAVIORAL_SCIENCE.md` | Habit formation science | Building habit features |
 | `TECHNICAL_ARCHITECTURES.md` | System architectures | Architecture decisions |
 | `OPEN_SOURCE_PROJECTS.md` | Similar project analysis | Feature inspiration |
-| `AI_AND_PREDICTION.md` | AI and prediction features | Adding AI features |
 
 ### Specification Documents (`docs/specs/`)
 | Document | Content | When to Use |
@@ -85,7 +76,7 @@ When using this map:
 
 ---
 
-## §2 Frontend Features
+## §3 Frontend Features
 
 ### Dashboard
 | Feature | File | Description |
@@ -123,6 +114,17 @@ When using this map:
 | Weight Tracking | `js/health.js` | Weight charts |
 | Mood Tracking | `js/health.js` | Mood selector |
 
+### Emotional Health (RGB Model)
+| Feature | File | Description |
+|---------|------|-------------|
+| Emotional Health Page | `tracking_app/pages/emotional_health.py` | Streamlit page for emotion tracking |
+| Emotion Model | `brain/models/emotional_state.py` | RGB neurotransmitter model |
+| Emotion Spec | `docs/specs/EMOTIONAL_STATE_SPEC.md` | Full specification |
+| Quick Presets | `tracking_app/pages/emotional_health.py` | 15 emotion presets |
+| Custom Sliders | `tracking_app/pages/emotional_health.py` | Fine-tune neurotransmitters |
+| Color Visualization | `brain/models/emotional_state.py` | Emotion to color mapping |
+| Pattern Detection | `brain/models/emotional_state.py` | `EmotionAnalyzer` class |
+
 ### Time & Productivity
 | Feature | File | Description |
 |---------|------|-------------|
@@ -158,7 +160,7 @@ When using this map:
 
 ---
 
-## §3 Backend Features (Brain System)
+## §4 Backend Features (Brain System)
 
 ### Core Components
 | Feature | File | Description |
@@ -227,7 +229,6 @@ When using this map:
 | Crypto | `brain/security/crypto_engine.py` | Encryption |
 | Neural Link | `brain/security/neural_link.py` | Secure channel |
 | Export Guard | `brain/security/export_guard.py` | Data protection |
-| AI Policy | `brain/security/ai_policy_enforcer.py` | AI operation policies |
 
 ### Invariants
 | Feature | File | Description |
@@ -275,31 +276,31 @@ When using this map:
 
 ---
 
-## §4 Database
+## §5 Database
 
 ### Connection & Queries
 | Feature | File | Description |
 |---------|------|-------------|
-| Connection | `landscaping_new/database/connection.py` | DB connection |
-| Init | `landscaping_new/database/__init__.py` | Database init |
-| Queries | `landscaping_new/database/queries/` | Query modules |
+| Connection | `database/connection.py` | DB connection |
+| Init | `database/__init__.py` | Database init |
+| Queries | `database/queries/` | Query modules |
 
 ### Schema
 | Feature | File | Description |
 |---------|------|-------------|
-| Database File | `landscaping_new/landscaping.db` | SQLite database |
-| DB Facade | `landscaping_new/db.py` | Database switchboard |
+| Database File | `tracking.db` | SQLite database |
+| DB Facade | `db.py` | Database switchboard |
 
 ---
 
-## §5 Configuration
+## §6 Configuration
 
 | Config | File | Description |
 |--------|------|-------------|
 | Project Rules | `PROJECT_RULES.md` | Development guidelines |
 | Design Doc | `TRACKING_SYSTEM_DESIGN.md` | Architecture design |
 | TODO | `TODO.md` | Project tracking |
-| Workspace | `tracking-system.code-workspace` | VS Code workspace |
+| Workspace | `veryfyn.code-workspace` | VS Code workspace |
 
 ---
 
@@ -317,10 +318,10 @@ When using this map:
 → `brain/state/` and register in `brain/state/manager.py`
 
 **Want to add a new UI page?**
-→ `js/` for frontend modules or `landscaping_new/app/pages/` for Streamlit
+→ `js/` for frontend modules or `tracking_app/pages/` for Streamlit
 
 **Want to modify database queries?**
-→ `landscaping_new/database/queries/`
+→ `database/queries/`
 
 **Want to understand the architecture?**
 → `brain/design/` for design documents

@@ -1,6 +1,6 @@
-# 🧠 Brain System - AI-Native Architecture
+# 🧠 Brain System - Backend Architecture
 
-**The central nervous system for the Tracking System.**
+**The central nervous system for the Veryfyn Tracking System.**
 
 ---
 
@@ -12,30 +12,6 @@
 | **Understand rules** | [PROJECT_RULES.md](../PROJECT_RULES.md) |
 | **Find features** | [FEATURE_MAP.md](../FEATURE_MAP.md) |
 | **See research** | [docs/research/](../docs/research/) |
-
----
-
-## 🤖 LLM Operational Guide for Brain Module
-
-When working with the Brain system, the LLM must:
-
-### Non-Linear, Holistic Reasoning
-- **Assume the user doesn't know how to code** - Explain all changes in plain language
-- **Analyze every request holistically** - Consider impact on entire Brain architecture
-- **Ask clarifying questions** - Understand the broader goal before implementing
-- **Take full responsibility** - Make all changes, tests, and documentation updates
-
-### Brain-Specific Rules
-1. **NO direct database access** - All operations through Tools
-2. **NO auto-editing scripts** - Scripts detect only, never modify
-3. **NO placeholders** - Complete implementations only
-4. **ALWAYS log to audit** - Every command recorded
-5. **ALWAYS validate transitions** - State machines enforced
-
-### Expansion Ideas
-When adding features to the Brain:
-- **Linear**: Add new tools, policies, or state machines following existing patterns
-- **Non-linear**: Consider AI-native features, self-healing capabilities, or cross-brain coordination
 
 ---
 
@@ -60,7 +36,7 @@ When adding features to the Brain:
 
 ## §1 Overview
 
-The Brain is the **central nervous system** of the Tracking System. It provides:
+The Brain is the **central nervous system** of the Veryfyn Tracking System. It provides:
 
 - **Command Routing**: Validates and routes all commands
 - **Policy Enforcement**: Security, integrity, and business rules
@@ -131,6 +107,15 @@ Every command follows this 10-step lifecycle:
 | `cerebellum.py` | Coordination and timing |
 | `command_event.py` | Command event structure |
 
+### Models (`brain/models/`)
+| File | Purpose |
+|------|---------|
+| `habit.py` | Habit entity with scientific scoring |
+| `entry.py` | Habit entry/completion tracking |
+| `frequency.py` | Habit frequency definitions |
+| `streak.py` | Streak calculation |
+| `emotional_state.py` | RGB neurotransmitter emotion model |
+
 ### Tools (`brain/tools/`)
 100+ tools organized by domain:
 - `job_tools.py` - Job operations
@@ -171,7 +156,6 @@ Every command follows this 10-step lifecycle:
 | `crypto_engine.py` | Encryption |
 | `neural_link.py` | Secure command channel |
 | `export_guard.py` | Data export protection |
-| `ai_policy_enforcer.py` | AI operation policies |
 
 ### Invariants (`brain/invariants/`)
 | File | Purpose |
@@ -216,12 +200,6 @@ Every command follows this 10-step lifecycle:
 | `validator_brain.py` | Validation |
 | `meta_brain.py` | Meta-operations |
 | `docs_brain.py` | Documentation |
-
-### Context Module (`brain/context/`)
-| File | Purpose |
-|------|---------|
-| `context_loader.py` | Loads README.md files as AI context |
-| `thinking_brain.py` | Processes prompts through brain architecture |
 
 ---
 
