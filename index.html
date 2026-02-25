@@ -1,296 +1,320 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Veryfyn - Personal Tracking System</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        gray: {
+                            850: '#1f2937',
+                            900: '#111827',
+                            950: '#030712',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+    
+    <style>
+        .glass-panel {
+            background: rgba(31, 41, 55, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .view { display: none; }
+        .view.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
 </head>
-<body>
-    <!-- Sidebar Navigation -->
-    <nav class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
-        <div class="sidebar-header">
-            <div class="logo">🎯 Veryfyn</div>
-            <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+<body class="bg-gray-950 text-gray-100 font-sans antialiased overflow-hidden flex h-screen">
+
+    <nav id="sidebar" class="w-64 glass-panel border-r border-gray-800 flex flex-col justify-between transition-all duration-300">
+        <div>
+            <div class="h-16 flex items-center px-6 border-b border-gray-800">
+                <span class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-cyan-400">🎯 Veryfyn</span>
+            </div>
+            <ul class="py-4 space-y-1" id="navMenu">
+                <li>
+                    <a href="#" data-view="dashboard" class="nav-link flex items-center px-6 py-3 text-gray-400 hover:bg-gray-800 hover:text-white transition-colors border-r-4 border-transparent hover:border-emerald-400 active:border-emerald-400 active:text-white active:bg-gray-800">
+                        <span class="mr-3 text-xl">📊</span> Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-view="habits" class="nav-link flex items-center px-6 py-3 text-gray-400 hover:bg-gray-800 hover:text-white transition-colors border-r-4 border-transparent hover:border-emerald-400">
+                        <span class="mr-3 text-xl">✅</span> Habits
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-view="tasks" class="nav-link flex items-center px-6 py-3 text-gray-400 hover:bg-gray-800 hover:text-white transition-colors border-r-4 border-transparent hover:border-emerald-400">
+                        <span class="mr-3 text-xl">📋</span> Tasks
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-view="finances" class="nav-link flex items-center px-6 py-3 text-gray-400 hover:bg-gray-800 hover:text-white transition-colors border-r-4 border-transparent hover:border-emerald-400">
+                        <span class="mr-3 text-xl">💰</span> Finances
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-view="health" class="nav-link flex items-center px-6 py-3 text-gray-400 hover:bg-gray-800 hover:text-white transition-colors border-r-4 border-transparent hover:border-emerald-400">
+                        <span class="mr-3 text-xl">❤️</span> Health
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-view="time" class="nav-link flex items-center px-6 py-3 text-gray-400 hover:bg-gray-800 hover:text-white transition-colors border-r-4 border-transparent hover:border-emerald-400">
+                        <span class="mr-3 text-xl">⏱️</span> Time
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-view="goals" class="nav-link flex items-center px-6 py-3 text-gray-400 hover:bg-gray-800 hover:text-white transition-colors border-r-4 border-transparent hover:border-emerald-400">
+                        <span class="mr-3 text-xl">🎯</span> Goals
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-view="achievements" class="nav-link flex items-center px-6 py-3 text-gray-400 hover:bg-gray-800 hover:text-white transition-colors border-r-4 border-transparent hover:border-emerald-400">
+                        <span class="mr-3 text-xl">🏆</span> Achievements
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-view="stacks" class="nav-link flex items-center px-6 py-3 text-gray-400 hover:bg-gray-800 hover:text-white transition-colors border-r-4 border-transparent hover:border-emerald-400">
+                        <span class="mr-3 text-xl">🔗</span> Stacks
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-view="intentions" class="nav-link flex items-center px-6 py-3 text-gray-400 hover:bg-gray-800 hover:text-white transition-colors border-r-4 border-transparent hover:border-emerald-400">
+                        <span class="mr-3 text-xl">🎯</span> Intentions
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-view="rewards" class="nav-link flex items-center px-6 py-3 text-gray-400 hover:bg-gray-800 hover:text-white transition-colors border-r-4 border-transparent hover:border-emerald-400">
+                        <span class="mr-3 text-xl">🎁</span> Rewards
+                    </a>
+                </li>
+            </ul>
         </div>
-        <ul class="nav-menu" role="menubar">
-            <li class="nav-item active" data-view="dashboard" role="none">
-                <a href="#" class="nav-link" data-view="dashboard" role="menuitem" tabindex="0" aria-label="Dashboard">
-                    <span class="nav-icon">📊</span>
-                    <span class="nav-text">Dashboard</span>
-                </a>
-            </li>
-            <li class="nav-item" data-view="habits" role="none">
-                <a href="#" class="nav-link" data-view="habits" role="menuitem" tabindex="0" aria-label="Habits">
-                    <span class="nav-icon">✅</span>
-                    <span class="nav-text">Habits</span>
-                </a>
-            </li>
-            <li class="nav-item" data-view="tasks" role="none">
-                <a href="#" class="nav-link" data-view="tasks" role="menuitem" tabindex="0" aria-label="Tasks">
-                    <span class="nav-icon">📋</span>
-                    <span class="nav-text">Tasks</span>
-                </a>
-            </li>
-            <li class="nav-item" data-view="finances" role="none">
-                <a href="#" class="nav-link" data-view="finances" role="menuitem" tabindex="0" aria-label="Finances">
-                    <span class="nav-icon">💰</span>
-                    <span class="nav-text">Finances</span>
-                </a>
-            </li>
-            <li class="nav-item" data-view="health" role="none">
-                <a href="#" class="nav-link" data-view="health" role="menuitem" tabindex="0" aria-label="Health">
-                    <span class="nav-icon">❤️</span>
-                    <span class="nav-text">Health</span>
-                </a>
-            </li>
-            <li class="nav-item" data-view="time" role="none">
-                <a href="#" class="nav-link" data-view="time" role="menuitem" tabindex="0" aria-label="Time">
-                    <span class="nav-icon">⏱️</span>
-                    <span class="nav-text">Time</span>
-                </a>
-            </li>
-            <li class="nav-item" data-view="goals" role="none">
-                <a href="#" class="nav-link" data-view="goals" role="menuitem" tabindex="0" aria-label="Goals">
-                    <span class="nav-icon">🎯</span>
-                    <span class="nav-text">Goals</span>
-                </a>
-            </li>
-            <li class="nav-item" data-view="achievements" role="none">
-                <a href="#" class="nav-link" data-view="achievements" role="menuitem" tabindex="0" aria-label="Achievements">
-                    <span class="nav-icon">🏆</span>
-                    <span class="nav-text">Achievements</span>
-                </a>
-            </li>
-            <li class="nav-item" data-view="stacks" role="none">
-                <a href="#" class="nav-link" data-view="stacks" role="menuitem" tabindex="0" aria-label="Habit Stacks">
-                    <span class="nav-icon">🔗</span>
-                    <span class="nav-text">Stacks</span>
-                </a>
-            </li>
-            <li class="nav-item" data-view="intentions" role="none">
-                <a href="#" class="nav-link" data-view="intentions" role="menuitem" tabindex="0" aria-label="Intentions">
-                    <span class="nav-icon">🎯</span>
-                    <span class="nav-text">Intentions</span>
-                </a>
-            </li>
-            <li class="nav-item" data-view="rewards" role="none">
-                <a href="#" class="nav-link" data-view="rewards" role="menuitem" tabindex="0" aria-label="Rewards">
-                    <span class="nav-icon">🎁</span>
-                    <span class="nav-text">Rewards</span>
-                </a>
-            </li>
-        </ul>
-        <div class="sidebar-footer">
-            <div class="user-level" aria-label="User level information">
-                <div class="level-badge" id="levelBadge" aria-live="polite">Level 1</div>
-                <div class="xp-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Experience points progress">
-                    <div class="xp-fill" id="xpFill" style="width: 0%"></div>
-                </div>
-                <div class="xp-text" id="xpText" aria-live="polite">0 / 100 XP</div>
+        
+        <div class="p-6 border-t border-gray-800 bg-gray-900/50">
+            <div class="flex justify-between items-center mb-2">
+                <span id="levelBadge" class="text-xs font-bold px-2 py-1 rounded bg-indigo-500/20 text-indigo-400">Level 1</span>
+                <span id="xpText" class="text-xs text-gray-400">0 / 100 XP</span>
+            </div>
+            <div class="w-full bg-gray-800 rounded-full h-2">
+                <div id="xpFill" class="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
             </div>
         </div>
     </nav>
 
-    <!-- Main Content -->
-    <main class="main-content">
-        <!-- Header -->
-        <header class="header" role="banner">
-            <div class="header-left">
-                <button class="menu-btn" id="menuBtn" aria-label="Open menu">☰</button>
-                <h1 class="page-title" id="pageTitle" aria-label="Current page: Dashboard">Dashboard</h1>
+    <main class="flex-1 flex flex-col h-screen overflow-hidden relative">
+        <header class="h-16 glass-panel border-b border-gray-800 flex items-center justify-between px-8 z-10">
+            <div class="flex items-center space-x-4">
+                <button id="menuBtn" class="text-gray-400 hover:text-white md:hidden">☰</button>
+                <h1 id="pageTitle" class="text-xl font-semibold tracking-wide text-gray-100">Dashboard</h1>
             </div>
-            <div class="header-right">
-                <div class="date-display" id="dateDisplay" aria-label="Current date"></div>
-                <div class="view-toggle" role="group" aria-label="View options">
-                    <button class="view-btn active" data-view-type="daily" aria-label="Daily view">Daily</button>
-                    <button class="view-btn" data-view-type="weekly" aria-label="Weekly view">Weekly</button>
-                    <button class="view-btn" data-view-type="monthly" aria-label="Monthly view">Monthly</button>
+            <div class="flex items-center space-x-4">
+                <span id="dateDisplay" class="text-sm text-gray-400 hidden md:block"></span>
+                <div class="bg-gray-900 rounded-lg p-1 hidden md:flex border border-gray-700">
+                    <button class="view-toggle-btn px-3 py-1 text-xs rounded-md bg-gray-700 text-white shadow">Daily</button>
+                    <button class="view-toggle-btn px-3 py-1 text-xs rounded-md text-gray-400 hover:text-white">Weekly</button>
+                    <button class="view-toggle-btn px-3 py-1 text-xs rounded-md text-gray-400 hover:text-white">Monthly</button>
                 </div>
-                <button class="data-btn" id="exportBtn" aria-label="Export Data">📤</button>
-                <button class="data-btn" id="importBtn" aria-label="Import Data">📥</button>
-                <button class="data-btn" id="backupRestoreBtn" aria-label="Backup & Restore">💾</button>
-                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">🌙</button>
-                <button class="settings-btn" id="notificationsSettingsBtn" aria-label="Notification settings">🔔</button>
-            </div>
-        </div>
+                <div class="flex space-x-2">
+                    <button id="exportBtn" class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition" title="Export">📤</button>
+                    <button id="importBtn" class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition" title="Import">📥</button>
+                    <button id="backupRestoreBtn" class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition" title="Backup">💾</button>
+                    <button id="notificationsSettingsBtn" class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition" title="Notifications">🔔</button>
+                </div>
             </div>
         </header>
 
-        <!-- Dashboard View -->
-        <section class="view active" id="dashboardView">
-            <div class="stats-grid">
-                <div class="stat-card streak-card">
-                    <div class="stat-icon">🔥</div>
-                    <div class="stat-info">
-                        <div class="stat-value" id="totalStreaks">0</div>
-                        <div class="stat-label">Current Streaks</div>
+        <div class="flex-1 overflow-y-auto p-8">
+            
+            <section id="dashboardView" class="view active space-y-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="glass-panel p-6 rounded-2xl flex items-center space-x-4">
+                        <div class="p-3 bg-amber-500/20 rounded-xl text-2xl">🔥</div>
+                        <div>
+                            <div id="totalStreaks" class="text-2xl font-bold text-gray-100">0</div>
+                            <div class="text-sm text-gray-400">Active Streaks</div>
+                        </div>
+                    </div>
+                    <div class="glass-panel p-6 rounded-2xl flex items-center space-x-4">
+                        <div class="p-3 bg-emerald-500/20 rounded-xl text-2xl">✅</div>
+                        <div>
+                            <div id="tasksCompleted" class="text-2xl font-bold text-gray-100">0</div>
+                            <div class="text-sm text-gray-400">Tasks Done</div>
+                        </div>
+                    </div>
+                    <div class="glass-panel p-6 rounded-2xl flex items-center space-x-4">
+                        <div class="p-3 bg-cyan-500/20 rounded-xl text-2xl">💰</div>
+                        <div>
+                            <div id="currentBalance" class="text-2xl font-bold text-gray-100">$0</div>
+                            <div class="text-sm text-gray-400">Balance</div>
+                        </div>
+                    </div>
+                    <div class="glass-panel p-6 rounded-2xl flex items-center space-x-4">
+                        <div class="p-3 bg-rose-500/20 rounded-xl text-2xl">❤️</div>
+                        <div>
+                            <div id="healthScore" class="text-2xl font-bold text-gray-100">--</div>
+                            <div class="text-sm text-gray-400">Health Score</div>
+                        </div>
                     </div>
                 </div>
-                <div class="stat-card tasks-card">
-                    <div class="stat-icon">📋</div>
-                    <div class="stat-info">
-                        <div class="stat-value" id="tasksCompleted">0</div>
-                        <div class="stat-label">Tasks Done Today</div>
-                    </div>
-                </div>
-                <div class="stat-card balance-card">
-                    <div class="stat-icon">💰</div>
-                    <div class="stat-info">
-                        <div class="stat-value" id="currentBalance">$0</div>
-                        <div class="stat-label">Balance</div>
-                    </div>
-                </div>
-                <div class="stat-card health-card">
-                    <div class="stat-icon">❤️</div>
-                    <div class="stat-info">
-                        <div class="stat-value" id="healthScore">--</div>
-                        <div class="stat-label">Health Score</div>
-                    </div>
-                </div>
-            </div>
 
-            <div class="dashboard-grid">
-                <div class="dashboard-section">
-                    <h3>Today's Habits</h3>
-                    <div class="quick-habits" id="quickHabits"></div>
-                </div>
-                <div class="dashboard-section">
-                    <h3>Upcoming Tasks</h3>
-                    <div class="quick-tasks" id="quickTasks"></div>
-                </div>
-                <div class="dashboard-section">
-                    <h3>Weekly Progress</h3>
-                    <canvas id="weeklyChart"></canvas>
-                </div>
-                <div class="dashboard-section">
-                    <h3>Goals Progress</h3>
-                    <div class="goals-overview" id="goalsOverview"></div>
-                </div>
-            </div>
-
-            <div class="motivation-card">
-                <div class="motivation-text" id="motivationText">"The secret of getting ahead is getting started." - Mark Twain</div>
-            </div>
-        </section>
-
-        <!-- Habits View -->
-        <section class="view" id="habitsView">
-            <div class="view-header">
-                <h2>Daily Habits</h2>
-                <button class="add-btn" id="addHabitBtn">+ Add Habit</button>
-            </div>
-            <div class="habits-container" id="habitsContainer"></div>
-        </section>
-
-        <!-- Tasks View -->
-        <section class="view" id="tasksView">
-            <div class="view-header">
-                <h2>Tasks & Todos</h2>
-                <button class="add-btn" id="addTaskBtn">+ Add Task</button>
-            </div>
-            <div class="tasks-filters">
-                <button class="filter-btn active" data-filter="all">All</button>
-                <button class="filter-btn" data-filter="active">Active</button>
-                <button class="filter-btn" data-filter="completed">Completed</button>
-            </div>
-            <div class="tasks-container" id="tasksContainer"></div>
-        </section>
-
-        <!-- Finances View -->
-        <section class="view" id="financesView">
-            <div class="view-header">
-                <h2>Finances & Budget</h2>
-                <button class="add-btn" id="addTransactionBtn">+ Add Transaction</button>
-            </div>
-            <div class="finance-summary">
-                <div class="finance-card income">
-                    <div class="finance-label">Income</div>
-                    <div class="finance-value" id="totalIncome">$0.00</div>
-                </div>
-                <div class="finance-card expenses">
-                    <div class="finance-label">Expenses</div>
-                    <div class="finance-value" id="totalExpenses">$0.00</div>
-                </div>
-                <div class="finance-card balance">
-                    <div class="finance-label">Balance</div>
-                    <div class="finance-value" id="totalBalance">$0.00</div>
-                </div>
-            </div>
-            <div class="finance-content">
-                <div class="transactions-section">
-                    <h3>Recent Transactions</h3>
-                    <div class="transactions-list" id="transactionsList"></div>
-                </div>
-                <div class="budget-section">
-                    <h3>Budget Categories</h3>
-                    <div class="budget-categories" id="budgetCategories"></div>
-                    <canvas id="expensesChart"></canvas>
-                </div>
-                <div class="financial-trends-section">
-                    <h3>Financial Trends</h3>
-                    <canvas id="financialTrendsChart"></canvas>
-                </div>
-            </div>
-        </section>
-
-        <!-- Health View -->
-        <section class="view" id="healthView">
-            <div class="view-header">
-                <h2>Health Metrics</h2>
-                <button class="add-btn" id="addHealthBtn">+ Log Health</button>
-            </div>
-            <div class="health-metrics">
-                <div class="metric-card weight">
-                    <div class="metric-header">
-                        <span class="metric-icon">⚖️</span>
-                        <span class="metric-title">Weight</span>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2 space-y-8">
+                        <div class="glass-panel rounded-2xl p-6">
+                            <h3 class="text-lg font-semibold mb-4 flex items-center"><span class="mr-2">📈</span> Weekly Progress</h3>
+                            <div class="h-64 w-full">
+                                <canvas id="weeklyChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="glass-panel rounded-2xl p-6">
+                            <h3 class="text-lg font-semibold mb-4">Goals Overview</h3>
+                            <div id="goalsOverview" class="space-y-4"></div>
+                        </div>
                     </div>
-                    <div class="metric-value" id="currentWeight">-- kg</div>
-                    <canvas id="weightChart"></canvas>
-                </div>
-                <div class="metric-card sleep">
-                    <div class="metric-header">
-                        <span class="metric-icon">😴</span>
-                        <span class="metric-title">Sleep</span>
+                    <div class="space-y-8">
+                        <div class="glass-panel rounded-2xl p-6">
+                            <h3 class="text-lg font-semibold mb-4">Today's Habits</h3>
+                            <div id="quickHabits" class="space-y-3">
+                                <div class="text-sm text-gray-500 italic">No habits scheduled for today.</div>
+                            </div>
+                        </div>
+                        <div class="glass-panel rounded-2xl p-6">
+                            <h3 class="text-lg font-semibold mb-4">Upcoming Tasks</h3>
+                            <div id="quickTasks" class="space-y-3">
+                                <div class="text-sm text-gray-500 italic">No pending tasks.</div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="metric-value" id="avgSleep">-- hrs</div>
-                    <canvas id="sleepChart"></canvas>
                 </div>
-                <div class="metric-card mood">
-                    <div class="metric-header">
-                        <span class="metric-icon">😊</span>
-                        <span class="metric-title">Mood</span>
-                    </div>
-                    <div class="mood-selector" id="moodSelector">
-                        <button class="mood-btn" data-mood="5">😄</button>
-                        <button class="mood-btn" data-mood="4">🙂</button>
-                        <button class="mood-btn" data-mood="3">😐</button>
-                        <button class="mood-btn" data-mood="2">😕</button>
-                        <button class="mood-btn" data-mood="1">😢</button>
-                    </div>
-                    <canvas id="moodChart"></canvas>
-                </div>
-            </div>
-        </section>
 
-        <!-- Time View -->
-        <section class="view" id="timeView">
-            <div class="view-header">
-                <h2>Time & Productivity</h2>
-                <button class="add-btn" id="addTimeEntryBtn">+ Log Time</button>
-            </div>
-            <div class="time-tracker">
-                <div class="timer-display">
-                    <div class="timer-time" id="timerDisplay">00:00:00</div>
-                    <div class="timer-controls">
-                        <button class="timer-btn" id="timerStart">▶️ Start</button>
-                        <button class="timer-btn" id="timerPause">⏸️ Pause</button>
-                        <button class="timer-btn" id="timerReset">🔄 Reset</button>
+                <div class="glass-panel rounded-2xl p-6 bg-gradient-to-r from-emerald-600 to-cyan-600 border-0">
+                    <div id="motivationText" class="text-center text-white text-lg italic">"The secret of getting ahead is getting started." - Mark Twain</div>
+                </div>
+            </section>
+
+            <!-- Habits View -->
+            <section id="habitsView" class="view">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-2xl font-semibold">Habit Engineering</h2>
+                    <button id="addHabitBtn" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg shadow-lg shadow-emerald-900/20 transition">+ Add Habit</button>
+                </div>
+                <div id="habitsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            </section>
+
+            <!-- Tasks View -->
+            <section id="tasksView" class="view">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-2xl font-semibold">Tasks & Todos</h2>
+                    <button id="addTaskBtn" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg shadow-lg shadow-emerald-900/20 transition">+ Add Task</button>
+                </div>
+                <div class="flex gap-4 mb-6">
+                    <button class="filter-btn px-4 py-2 rounded-lg bg-emerald-600 text-white" data-filter="all">All</button>
+                    <button class="filter-btn px-4 py-2 rounded-lg bg-gray-800 text-gray-400 hover:text-white" data-filter="active">Active</button>
+                    <button class="filter-btn px-4 py-2 rounded-lg bg-gray-800 text-gray-400 hover:text-white" data-filter="completed">Completed</button>
+                </div>
+                <div id="tasksContainer" class="space-y-4"></div>
+            </section>
+
+            <!-- Finances View -->
+            <section id="financesView" class="view">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-2xl font-semibold">Finances & Budget</h2>
+                    <button id="addTransactionBtn" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg shadow-lg shadow-emerald-900/20 transition">+ Add Transaction</button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="glass-panel rounded-2xl p-6 text-center">
+                        <div class="text-sm text-gray-400 mb-2">Income</div>
+                        <div id="totalIncome" class="text-3xl font-bold text-emerald-400">$0.00</div>
                     </div>
-                    <select class="timer-category" id="timerCategory">
+                    <div class="glass-panel rounded-2xl p-6 text-center">
+                        <div class="text-sm text-gray-400 mb-2">Expenses</div>
+                        <div id="totalExpenses" class="text-3xl font-bold text-red-400">$0.00</div>
+                    </div>
+                    <div class="glass-panel rounded-2xl p-6 text-center">
+                        <div class="text-sm text-gray-400 mb-2">Balance</div>
+                        <div id="totalBalance" class="text-3xl font-bold text-cyan-400">$0.00</div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="glass-panel rounded-2xl p-6">
+                        <h3 class="text-lg font-semibold mb-4">Recent Transactions</h3>
+                        <div id="transactionsList" class="space-y-3"></div>
+                    </div>
+                    <div class="glass-panel rounded-2xl p-6">
+                        <h3 class="text-lg font-semibold mb-4">Financial Trends</h3>
+                        <canvas id="financialTrendsChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Health View -->
+            <section id="healthView" class="view">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-2xl font-semibold">Health Metrics</h2>
+                    <button id="addHealthBtn" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg shadow-lg shadow-emerald-900/20 transition">+ Log Health</button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="glass-panel rounded-2xl p-6">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="text-2xl">⚖️</span>
+                            <span class="font-semibold">Weight</span>
+                        </div>
+                        <div id="currentWeight" class="text-3xl font-bold mb-4">-- kg</div>
+                        <canvas id="weightChart"></canvas>
+                    </div>
+                    <div class="glass-panel rounded-2xl p-6">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="text-2xl">😴</span>
+                            <span class="font-semibold">Sleep</span>
+                        </div>
+                        <div id="avgSleep" class="text-3xl font-bold mb-4">-- hrs</div>
+                        <canvas id="sleepChart"></canvas>
+                    </div>
+                    <div class="glass-panel rounded-2xl p-6">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="text-2xl">😊</span>
+                            <span class="font-semibold">Mood</span>
+                        </div>
+                        <div id="moodSelector" class="flex justify-center gap-2 mb-4">
+                            <button class="mood-btn w-10 h-10 rounded-lg bg-gray-800 hover:bg-gray-700 text-xl" data-mood="5">😄</button>
+                            <button class="mood-btn w-10 h-10 rounded-lg bg-gray-800 hover:bg-gray-700 text-xl" data-mood="4">🙂</button>
+                            <button class="mood-btn w-10 h-10 rounded-lg bg-gray-800 hover:bg-gray-700 text-xl" data-mood="3">😐</button>
+                            <button class="mood-btn w-10 h-10 rounded-lg bg-gray-800 hover:bg-gray-700 text-xl" data-mood="2">😕</button>
+                            <button class="mood-btn w-10 h-10 rounded-lg bg-gray-800 hover:bg-gray-700 text-xl" data-mood="1">😢</button>
+                        </div>
+                        <canvas id="moodChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Time View -->
+            <section id="timeView" class="view">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-2xl font-semibold">Time & Productivity</h2>
+                    <button id="addTimeEntryBtn" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg shadow-lg shadow-emerald-900/20 transition">+ Log Time</button>
+                </div>
+                <div class="glass-panel rounded-2xl p-8 text-center mb-8">
+                    <div id="timerDisplay" class="text-5xl font-mono font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-cyan-400 mb-6">00:00:00</div>
+                    <div class="flex justify-center gap-4 mb-6">
+                        <button id="timerStart" class="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-lg transition">▶️ Start</button>
+                        <button id="timerPause" class="px-6 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition">⏸️ Pause</button>
+                        <button id="timerReset" class="px-6 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition">🔄 Reset</button>
+                    </div>
+                    <select id="timerCategory" class="bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-gray-100">
                         <option value="work">💼 Work</option>
                         <option value="study">📚 Study</option>
                         <option value="exercise">🏃 Exercise</option>
@@ -298,150 +322,122 @@
                         <option value="other">📌 Other</option>
                     </select>
                 </div>
-            </div>
-            <div class="time-entries">
-                <h3>Today's Activities</h3>
-                <div class="time-entries-list" id="timeEntriesList"></div>
-            </div>
-            <div class="time-chart-section">
-                <h3>Time Distribution</h3>
-                <canvas id="timeChart"></canvas>
-            </div>
-        </section>
-
-        <!-- Goals View -->
-        <section class="view" id="goalsView">
-            <div class="view-header">
-                <h2>Goals & Progress</h2>
-                <button class="add-btn" id="addGoalBtn">+ Add Goal</button>
-            </div>
-            <div class="goals-container" id="goalsContainer"></div>
-        </section>
-
-        <!-- Achievements View -->
-        <section class="view" id="achievementsView">
-            <div class="view-header">
-                <h2>Achievements & Rewards</h2>
-            </div>
-            <div class="achievements-stats">
-                <div class="achievement-stat">
-                    <div class="achievement-stat-value" id="totalPoints">0</div>
-                    <div class="achievement-stat-label">Total Points</div>
+                <div class="glass-panel rounded-2xl p-6">
+                    <h3 class="text-lg font-semibold mb-4">Today's Activities</h3>
+                    <div id="timeEntriesList" class="space-y-3"></div>
                 </div>
-                <div class="achievement-stat">
-                    <div class="achievement-stat-value" id="badgesEarned">0</div>
-                    <div class="achievement-stat-label">Badges Earned</div>
+            </section>
+
+            <!-- Goals View -->
+            <section id="goalsView" class="view">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-2xl font-semibold">Goals & Progress</h2>
+                    <button id="addGoalBtn" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg shadow-lg shadow-emerald-900/20 transition">+ Add Goal</button>
                 </div>
-            </div>
-            <div class="achievements-grid" id="achievementsGrid"></div>
-        </section>
+                <div id="goalsContainer" class="space-y-6"></div>
+            </section>
 
-        <!-- Habit Stacks View (Phase 3.1) -->
-        <section class="view" id="stacksView">
-            <div class="view-header">
-                <h2>Habit Stacks</h2>
-                <button class="add-btn" id="addStackBtn">+ Create Stack</button>
-            </div>
-            <div class="stacks-intro">
-                <p class="intro-text">🔗 Chain habits together using BJ Fogg's Tiny Habits methodology: "After I [Current Habit], I will [New Habit]"</p>
-            </div>
-            <div class="stacks-analytics" id="stackAnalytics"></div>
-            <div class="stacks-container" id="stacksContainer"></div>
-        </section>
+            <!-- Achievements View -->
+            <section id="achievementsView" class="view">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-2xl font-semibold">Achievements & Rewards</h2>
+                </div>
+                <div class="flex justify-center gap-16 mb-8">
+                    <div class="text-center">
+                        <div id="totalPoints" class="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-orange-400">0</div>
+                        <div class="text-sm text-gray-400">Total Points</div>
+                    </div>
+                    <div class="text-center">
+                        <div id="badgesEarned" class="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-orange-400">0</div>
+                        <div class="text-sm text-gray-400">Badges Earned</div>
+                    </div>
+                </div>
+                <div id="achievementsGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4"></div>
+            </section>
 
-        <!-- Implementation Intentions View (Phase 3.2) -->
-        <section class="view" id="intentionsView">
-            <div class="view-header">
-                <h2>Implementation Intentions</h2>
-                <button class="add-btn" id="addIntentionBtn">+ New Intention</button>
-            </div>
-            <div class="intentions-intro">
-                <p class="intro-text">🎯 Create If-Then rules to automate your behavior: "If [situation X], then I will [response Y]"</p>
-            </div>
-            <div class="intentions-analytics" id="intentionsAnalytics"></div>
-            <div class="intentions-container" id="intentionsContainer"></div>
-        </section>
+            <!-- Habit Stacks View -->
+            <section id="stacksView" class="view">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-2xl font-semibold">Habit Stacks</h2>
+                    <button id="addStackBtn" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg shadow-lg shadow-emerald-900/20 transition">+ Create Stack</button>
+                </div>
+                <div class="glass-panel rounded-2xl p-4 mb-8 border-l-4 border-emerald-400">
+                    <p class="text-gray-300">🔗 Chain habits together using BJ Fogg's Tiny Habits methodology: "After I [Current Habit], I will [New Habit]"</p>
+                </div>
+                <div id="stacksContainer" class="space-y-6"></div>
+            </section>
 
-        <!-- Rewards View (Phase 3.3) -->
-        <section class="view" id="rewardsView">
-            <div class="view-header">
-                <h2>Rewards</h2>
-                <button class="add-btn" id="rollRewardBtn">🎲 Roll for Reward</button>
-            </div>
-            <div class="rewards-intro">
-                <p class="intro-text">🎁 Variable rewards based on Skinner's Operant Conditioning. Complete habits for a chance to earn rewards!</p>
-            </div>
-            <div class="rewards-stats" id="rewardStats"></div>
-            <div class="rewards-section">
-                <h3>Collection</h3>
-                <div class="rewards-collection" id="rewardsCollection"></div>
-            </div>
-            <div class="rewards-section">
-                <h3>Recent Rewards</h3>
-                <div class="reward-history" id="rewardHistory"></div>
-            </div>
-        </section>
+            <!-- Implementation Intentions View -->
+            <section id="intentionsView" class="view">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-2xl font-semibold">Implementation Intentions</h2>
+                    <button id="addIntentionBtn" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg shadow-lg shadow-emerald-900/20 transition">+ New Intention</button>
+                </div>
+                <div class="glass-panel rounded-2xl p-4 mb-8 border-l-4 border-cyan-400">
+                    <p class="text-gray-300">🎯 Create If-Then rules to automate your behavior: "If [situation X], then I will [response Y]"</p>
+                </div>
+                <div id="intentionsContainer" class="space-y-6"></div>
+            </section>
+
+            <!-- Rewards View -->
+            <section id="rewardsView" class="view">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-2xl font-semibold">Rewards</h2>
+                    <button id="rollRewardBtn" class="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white rounded-lg shadow-lg transition">🎲 Roll for Reward</button>
+                </div>
+                <div class="glass-panel rounded-2xl p-4 mb-8 border-l-4 border-amber-400">
+                    <p class="text-gray-300">🎁 Variable rewards based on Skinner's Operant Conditioning. Complete habits for a chance to earn rewards!</p>
+                </div>
+                <div id="rewardsCollection" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-8"></div>
+                <div class="glass-panel rounded-2xl p-6">
+                    <h3 class="text-lg font-semibold mb-4">Recent Rewards</h3>
+                    <div id="rewardHistory" class="space-y-3"></div>
+                </div>
+            </section>
+        </div>
     </main>
 
-    <!-- Modal Template -->
-    <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-hidden="true">
-        <div class="modal" id="modal">
-            <div class="modal-header">
-                <h3 class="modal-title" id="modalTitle">Modal Title</h3>
-                <button class="modal-close" id="modalClose" aria-label="Close modal">×</button>
+    <div id="modalOverlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden z-50 flex items-center justify-center">
+        <div id="modal" class="bg-gray-900 border border-gray-700 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden transform scale-95 transition-transform">
+            <div class="px-6 py-4 border-b border-gray-800 flex justify-between items-center">
+                <h3 id="modalTitle" class="text-lg font-semibold text-gray-100">Modal Title</h3>
+                <button id="modalClose" class="text-gray-400 hover:text-white text-2xl">&times;</button>
             </div>
-            <div class="modal-body" id="modalBody"></div>
-            <div class="modal-footer" id="modalFooter"></div>
+            <div id="modalBody" class="p-6"></div>
+            <div id="modalFooter" class="px-6 py-4 border-t border-gray-800 bg-gray-850 flex justify-end"></div>
         </div>
     </div>
 
-    <!-- Confetti Canvas -->
-    <canvas id="confettiCanvas"></canvas>
-
-    <!-- Toast Notifications -->
-    <div class="toast-container" id="toastContainer"></div>
-
     <!-- Notification Settings Modal -->
-    <div class="modal-overlay" id="notificationsSettingsModal" role="dialog" aria-modal="true" aria-labelledby="notificationsSettingsTitle" aria-hidden="true">
-        <div class="modal" id="notificationsSettings">
-            <div class="modal-header">
-                <h3 class="modal-title" id="notificationsSettingsTitle">Notification Settings</h3>
-                <button class="modal-close" id="notificationsSettingsClose" aria-label="Close settings">×</button>
+    <div id="notificationsSettingsModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden z-50 flex items-center justify-center">
+        <div class="bg-gray-900 border border-gray-700 rounded-2xl w-full max-w-md shadow-2xl">
+            <div class="px-6 py-4 border-b border-gray-800 flex justify-between items-center">
+                <h3 class="text-lg font-semibold text-gray-100">Notification Settings</h3>
+                <button id="notificationsSettingsClose" class="text-gray-400 hover:text-white text-2xl">&times;</button>
             </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label class="form-label">Enable Desktop Notifications</label>
-                    <div class="form-check">
-                        <input type="checkbox" id="enableDesktopNotifications" class="form-check-input">
-                        <label class="form-check-label" for="enableDesktopNotifications">Show desktop notifications for important events</label>
-                    </div>
+            <div class="p-6 space-y-4">
+                <div class="flex items-center justify-between">
+                    <span class="text-gray-300">Enable Desktop Notifications</span>
+                    <input type="checkbox" id="enableDesktopNotifications" class="w-5 h-5 accent-emerald-500">
                 </div>
-                <div class="form-group">
-                    <label class="form-label">Notification Sound</label>
-                    <select class="form-select" id="notificationSound">
+                <div>
+                    <label class="block text-gray-300 mb-2">Notification Sound</label>
+                    <select id="notificationSound" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-gray-100">
                         <option value="default">Default</option>
                         <option value="chime">Chime</option>
                         <option value="bell">Bell</option>
                     </select>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">Notification Style</label>
-                    <div class="form-check">
-                        <input type="radio" class="form-check-input" id="notificationStyleDefault" name="notificationStyle" value="default" checked>
-                        <label class="form-check-label" for="notificationStyleDefault">Standard</label>
-                    </div>
-                    <div class="form-check">
-                        <input type="radio" class="form-check-input" id="notificationStyleUrgent" name="notificationStyle" value="urgent">
-                        <label class="form-check-label" for="notificationStyleUrgent">Urgent (with sound)</label>
-                    </div>
-                </div>
             </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" id="notificationsSettingsCancel">Cancel</button>
-                <button class="btn btn-primary" id="notificationsSettingsSave">Save</button>
+            <div class="px-6 py-4 border-t border-gray-800 flex justify-end gap-3">
+                <button id="notificationsSettingsCancel" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition">Cancel</button>
+                <button id="notificationsSettingsSave" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-lg transition">Save</button>
             </div>
         </div>
     </div>
+
+    <canvas id="confettiCanvas" class="fixed inset-0 pointer-events-none z-40"></canvas>
+    <div id="toastContainer" class="fixed bottom-6 right-6 z-50 space-y-3"></div>
 
     <!-- Scripts -->
     <script src="js/storage.js"></script>
