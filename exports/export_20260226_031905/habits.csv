@@ -1,0 +1,7 @@
+id,name,description,frequency,frequency_data,habit_type,color,icon,target_value,target_type,archived,created_at,updated_at
+148f7cb4-d2fb-4f5d-ad8b-e6bc3799b960,Test Habit,,daily,{},boolean,#6366f1,🎯,0.0,at_least,0,2026-02-25T15:40:40.819224,2026-02-25T15:40:40.819236
+88feb2ce-dc50-40b9-99c8-e26f37a2d16a,kmndflkajf,dfadfasdf,daily,{},boolean,#10b981,🏃,0.0,at_least,0,2026-02-25T15:49:59.790490,2026-02-25T15:49:59.790502
+3fcb96b0-144e-4a0d-9078-6d2fb442f312,Test Habit,,daily,{},boolean,#6366f1,🎯,0.0,at_least,0,2026-02-25T16:00:25.369016,2026-02-25T16:00:25.369031
+9401d076-50b8-40f8-b6fc-8da7ed5f3edc,Test Habit,,daily,{},boolean,#6366f1,🎯,0.0,at_least,0,2026-02-25T16:04:05.301224,2026-02-25T16:04:05.301244
+a5254d35-54b9-4b02-bf04-85624fca8d4b,can you run,"this is to ask the questions can you run early in the morning tommorow
+",daily,{},boolean,#6366f1,🏃,0.0,at_least,0,2026-02-25T16:07:23.202948,2026-02-25T18:31:03.595869

@@ -18,6 +18,7 @@ import time as time_module
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 from tracking_app.storage import Storage, get_storage
+from tracking_app.components.sidebar import render_sidebar
 
 
 # =============================================================================
@@ -89,39 +90,6 @@ def get_current_elapsed() -> int:
 # =============================================================================
 # RENDER FUNCTIONS
 # =============================================================================
-
-def render_sidebar():
-    """Render sidebar with navigation."""
-    with st.sidebar:
-        st.title("🎯 Veryfyn")
-        st.caption("Personal Tracking System")
-        st.divider()
-        
-        # User Stats
-        storage = st.session_state.storage
-        xp = storage.get_xp()
-        level = storage.get_level()
-        
-        col1, col2 = st.columns(2)
-        with col1:
-            st.metric("Level", level)
-        with col2:
-            st.metric("XP", xp)
-        
-        st.divider()
-        
-        # Navigation
-        st.subheader("📊 Tracking")
-        st.page_link("pages/dashboard.py", label="🏠 Dashboard", icon="🏠")
-        st.page_link("pages/habits.py", label="✅ Habits", icon="✅")
-        st.page_link("pages/tasks.py", label="📋 Tasks", icon="📋")
-        st.page_link("pages/finances.py", label="💰 Finances", icon="💰")
-        st.page_link("pages/health.py", label="❤️ Health", icon="❤️")
-        st.page_link("pages/emotional_health.py", label="🌈 Emotional Health", icon="🌈")
-        st.page_link("pages/time.py", label="⏱️ Time", icon="⏱️")
-        st.page_link("pages/goals.py", label="🎯 Goals", icon="🎯")
-        st.page_link("pages/achievements.py", label="🏆 Achievements", icon="🏆")
-
 
 def render_header():
     """Render page header."""

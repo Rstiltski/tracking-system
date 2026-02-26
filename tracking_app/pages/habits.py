@@ -1,15 +1,21 @@
 """
 Habits Page - Habit Tracking
 
-Streamlit page for creating, tracking, and managing daily habits with streaks.
+Streamlit page for creating, tracking, and managing daily habits with streaks
+and scientific habit scoring using exponential smoothing algorithm.
 
 Usage:
     streamlit run tracking_app/pages/habits.py
-"""
 
+Features:
+- Habit Score: 0-100% using exponential smoothing (forgiving, gradual decay)
+- Score Categories: Excellent, Strong, Developing, Building, Starting
+- Trend Indicators: Shows if habit is improving or declining
+- Streak Tracking: Current and best streak counts
+"""
 import streamlit as st
 from datetime import datetime, date, timedelta
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 import sys
 import os
 
@@ -18,6 +24,18 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspa
 
 from tracking_app.storage import Storage, get_storage
 from tracking_app.models import Habit, HabitEntry, FrequencyType
+
+# Import brain modules for habit scoring
+from brain.models.habit import HabitScore, ScoreList
+from brain.models.frequency import Frequency
+from brain.models.entry import EntryList, Entry, EntryType
+
+# Import brain modules for streak freeze
+from brain.models.streak import StreakFreeze, UserInventory
+
+# Import UI components
+from tracking_app.components.metrics import render_habit_score_card
+from tracking_app.components.sidebar import render_sidebar
 
 
 # =============================================================================
@@ -49,6 +67,27 @@ def init_session_state():
     
     if 'editing_habit' not in st.session_state:
         st.session_state.editing_habit = None
+    
+    # Streak freeze inventory
+    if 'streak_freeze' not in st.session_state:
+        st.session_state.streak_freeze = load_streak_freeze()
+
+
+def load_streak_freeze() -> StreakFreeze:
+    """Load streak freeze inventory from storage."""
+    storage = st.session_state.storage
+    freeze_data = storage.get_user_data("streak_freeze", None)
+    
+    if freeze_data:
+        return StreakFreeze.from_dict(freeze_data)
+    return StreakFreeze(count=1)  # Start with 1 free freeze
+
+
+def save_streak_freeze(freeze: StreakFreeze) -> None:
+    """Save streak freeze inventory to storage."""
+    storage = st.session_state.storage
+    storage.set_user_data("streak_freeze", freeze.to_dict())
+    st.session_state.streak_freeze = freeze
 
 
 def get_xp_for_level(level: int) -> int:
@@ -101,38 +140,157 @@ def get_completion_rate(storage: Storage, habit_id: str, days: int = 30) -> floa
     return (completed / days) * 100
 
 
+def calculate_habit_score(storage: Storage, habit_id: str, lookback_days: int = 90) -> HabitScore:
+    """
+    Calculate habit score using exponential smoothing algorithm.
+    
+    This uses the scientific scoring system from brain/models/habit.py:
+    - Score from 0.0 to 1.0 (displayed as 0-100%)
+    - Frequency-aware multiplier: 0.5^(√frequency / 13)
+    - Recent days have higher weight
+    - Gradual decay on misses, not reset to zero
+    
+    Args:
+        storage: Storage instance for data access
+        habit_id: ID of the habit to calculate score for
+        lookback_days: Number of days to consider (default: 90)
+    
+    Returns:
+        HabitScore with value, trend, and timestamp
+    """
+    today = date.today()
+    from_date = today - timedelta(days=lookback_days)
+    
+    # Build entry list for score computation
+    entries = EntryList(habit_id=habit_id)
+    
+    # Populate entries from storage
+    # HabitEntry has: value (1.0 for completed), skipped (bool)
+    for i in range(lookback_days + 1):
+        check_date = from_date + timedelta(days=i)
+        entry = storage.get_habit_entry(habit_id, check_date)
+        
+        if entry:
+            if entry.skipped:
+                entries.mark_skipped(check_date)
+            elif entry.value > 0:  # value > 0 means completed
+                entries.mark_completed(check_date)
+    
+    # Create frequency (assume daily for now)
+    frequency = Frequency.daily()
+    
+    # Create score list and recompute
+    score_list = ScoreList()
+    score_list.recompute(
+        frequency=frequency,
+        entries=entries,
+        from_date=from_date,
+        to_date=today
+    )
+    
+    return score_list.current
+
+
+def get_score_category(score: float) -> Dict[str, str]:
+    """
+    Get the score category for display.
+    
+    Args:
+        score: Score value (0.0 to 1.0)
+        
+    Returns:
+        Dict with 'label', 'color', and 'emoji' keys
+    """
+    if score >= 0.85:
+        return {"label": "Excellent", "color": "#4CAF50", "emoji": "🌟"}
+    elif score >= 0.70:
+        return {"label": "Strong", "color": "#8BC34A", "emoji": "💪"}
+    elif score >= 0.50:
+        return {"label": "Developing", "color": "#FFC107", "emoji": "🌱"}
+    elif score >= 0.30:
+        return {"label": "Building", "color": "#FF9800", "emoji": "🔧"}
+    else:
+        return {"label": "Starting", "color": "#F44336", "emoji": "🆕"}
+
+
+def get_trend_indicator(trend: float) -> Dict[str, str]:
+    """
+    Get trend indicator for display.
+    
+    Args:
+        trend: Trend value (-1.0 to 1.0)
+        
+    Returns:
+        Dict with 'icon' and 'color' keys
+    """
+    if trend > 0.01:
+        return {"icon": "↑", "color": "green", "label": "improving"}
+    elif trend < -0.01:
+        return {"icon": "↓", "color": "red", "label": "declining"}
+    else:
+        return {"icon": "→", "color": "gray", "label": "stable"}
+
+
+def check_streak_break_yesterday(storage: Storage, habit_id: str) -> bool:
+    """
+    Check if streak was broken yesterday (can be frozen).
+    
+    Returns True if:
+    - Yesterday was NOT completed
+    - There was a streak before yesterday
+    """
+    today = date.today()
+    yesterday = today - timedelta(days=1)
+    
+    # Check if yesterday was NOT completed
+    yesterday_entry = storage.get_habit_entry(habit_id, yesterday)
+    if yesterday_entry and not yesterday_entry.skipped and yesterday_entry.value > 0:
+        return False  # Yesterday was completed, no break
+    
+    # Check if there was a streak before yesterday
+    streak_before = 0
+    for i in range(2, 367):  # Start from day before yesterday
+        check_date = today - timedelta(days=i)
+        entry = storage.get_habit_entry(habit_id, check_date)
+        
+        if entry and not entry.skipped and entry.value > 0:
+            streak_before += 1
+        else:
+            break
+    
+    # If there was a streak of at least 1 day before yesterday, the break can be frozen
+    return streak_before >= 1
+
+
+def use_streak_freeze_for_habit(habit_id: str) -> bool:
+    """
+    Use a streak freeze for a habit.
+    
+    Marks yesterday as "skipped" to preserve the streak.
+    
+    Returns True if freeze was used successfully.
+    """
+    streak_freeze = st.session_state.streak_freeze
+    yesterday = date.today() - timedelta(days=1)
+    
+    if not streak_freeze.is_available:
+        return False
+    
+    if streak_freeze.use_freeze(habit_id, yesterday):
+        # Mark yesterday as skipped in storage
+        storage = st.session_state.storage
+        storage.mark_habit_skipped(habit_id, yesterday)
+        
+        # Save updated freeze inventory
+        save_streak_freeze(streak_freeze)
+        return True
+    
+    return False
+
+
 # =============================================================================
 # RENDER FUNCTIONS
 # =============================================================================
-
-def render_sidebar():
-    """Render sidebar with navigation."""
-    with st.sidebar:
-        st.title("🎯 Veryfyn")
-        st.caption("Personal Tracking System")
-        st.divider()
-        
-        # User Stats
-        col1, col2 = st.columns(2)
-        with col1:
-            st.metric("Level", st.session_state.user_level)
-        with col2:
-            st.metric("XP", st.session_state.user_xp)
-        
-        st.divider()
-        
-        # Navigation
-        st.subheader("📊 Tracking")
-        st.page_link("pages/dashboard.py", label="🏠 Dashboard", icon="🏠")
-        st.page_link("pages/habits.py", label="✅ Habits", icon="✅")
-        st.page_link("pages/tasks.py", label="📋 Tasks", icon="📋")
-        st.page_link("pages/finances.py", label="💰 Finances", icon="💰")
-        st.page_link("pages/health.py", label="❤️ Health", icon="❤️")
-        st.page_link("pages/emotional_health.py", label="🌈 Emotional Health", icon="🌈")
-        st.page_link("pages/time.py", label="⏱️ Time", icon="⏱️")
-        st.page_link("pages/goals.py", label="🎯 Goals", icon="🎯")
-        st.page_link("pages/achievements.py", label="🏆 Achievements", icon="🏆")
-
 
 def render_header():
     """Render page header."""
@@ -291,17 +449,36 @@ def render_habits_list():
 
 
 def render_habit_card(habit: Habit, storage: Storage, today: date):
-    """Render a single habit card."""
+    """
+    Render a single habit card with score, streak, and actions.
+    
+    Displays:
+    - Habit icon and name
+    - Habit Score (0-100%) with category badge and trend
+    - Current streak
+    - Streak freeze option for broken streaks
+    - Completion actions (complete/edit/delete)
+    """
     entry = storage.get_habit_entry(habit.id, today)
     is_complete = entry and not entry.skipped
     streak = calculate_streak(storage, habit.id)
     completion_rate = get_completion_rate(storage, habit.id)
     
+    # Calculate habit score using exponential smoothing
+    habit_score = calculate_habit_score(storage, habit.id)
+    score_category = get_score_category(habit_score.value)
+    trend_indicator = get_trend_indicator(habit_score.trend)
+    
+    # Check if streak was broken yesterday and can be frozen
+    can_use_freeze = check_streak_break_yesterday(storage, habit.id)
+    streak_freeze = st.session_state.streak_freeze
+    
     with st.container():
+        # Main row with habit info
         col1, col2, col3, col4 = st.columns([1, 4, 2, 2])
         
         with col1:
-            # Color indicator
+            # Color indicator with icon
             st.markdown(
                 f"""
                 <div style="
@@ -319,14 +496,43 @@ def render_habit_card(habit: Habit, storage: Storage, today: date):
             )
         
         with col2:
+            # Name and description
             status = "✅" if is_complete else "⬜"
             st.markdown(f"### {status} {habit.name}")
             if habit.description:
                 st.caption(habit.description)
+            
+            # Show streak freeze warning if streak was broken yesterday
+            if can_use_freeze and streak_freeze.is_available:
+                st.warning("⚠️ Streak broken yesterday! Use a freeze to save it.")
         
         with col3:
-            st.metric("Streak", f"{streak} 🔥")
-            st.caption(f"{completion_rate:.0f}% completion (30d)")
+            # Habit Score with category badge and trend
+            score_percentage = habit_score.percentage
+            st.markdown(
+                f"""
+                <div style="
+                    padding: 0.5rem;
+                    border-radius: 0.5rem;
+                    border-left: 4px solid {score_category['color']};
+                    background: rgba(255,255,255,0.05);
+                    margin-bottom: 0.5rem;
+                ">
+                    <div style="font-size: 1.3rem; font-weight: bold;">
+                        {score_category['emoji']} {score_percentage}%
+                        <span style="font-size: 0.9rem; color: {trend_indicator['color']};">
+                            {trend_indicator['icon']}
+                        </span>
+                    </div>
+                    <div style="font-size: 0.75rem; color: gray;">
+                        {score_category['label']} · {trend_indicator['label']}
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+            # Streak below score
+            st.caption(f"🔥 {streak} day streak · {completion_rate:.0f}% (30d)")
         
         with col4:
             # Actions
@@ -353,6 +559,18 @@ def render_habit_card(habit: Habit, storage: Storage, today: date):
                 if st.button("🗑️", key=f"delete_{habit.id}", help="Delete habit"):
                     storage.archive_habit(habit.id)
                     st.rerun()
+        
+        # Streak freeze action row (if applicable)
+        if can_use_freeze and streak_freeze.is_available:
+            if st.button(f"❄️ Use Streak Freeze ({streak_freeze.count} available)", 
+                        key=f"freeze_{habit.id}",
+                        help="Preserve your streak by using a freeze",
+                        use_container_width=True):
+                if use_streak_freeze_for_habit(habit.id):
+                    st.success("❄️ Streak frozen! Your streak is preserved.")
+                    st.rerun()
+                else:
+                    st.error("Could not use freeze. Please try again.")
         
         st.divider()
 
@@ -404,8 +622,8 @@ def main():
     # Initialize
     init_session_state()
     
-    # Render sidebar
-    render_sidebar()
+    # Render sidebar with streak freeze section
+    render_sidebar(show_streak_freeze=True)
     
     # Main content
     render_header()

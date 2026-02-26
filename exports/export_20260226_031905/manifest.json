@@ -1,0 +1,84 @@
+{
+  "exported_at": "2026-02-26T03:19:05.799393",
+  "version": "1.0.0",
+  "format": "csv",
+  "tables": {
+    "habits": {
+      "file": "habits.csv",
+      "records": 5,
+      "columns": [
+        "id",
+        "name",
+        "description",
+        "frequency",
+        "frequency_data",
+        "habit_type",
+        "color",
+        "icon",
+        "target_value",
+        "target_type",
+        "archived",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    "tasks": {
+      "file": "tasks.csv",
+      "records": 1,
+      "columns": [
+        "id",
+        "title",
+        "description",
+        "due_date",
+        "priority",
+        "category",
+        "completed",
+        "completed_at",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    "goals": {
+      "file": "goals.csv",
+      "records": 1,
+      "columns": [
+        "id",
+        "title",
+        "description",
+        "target",
+        "current",
+        "unit",
+        "deadline",
+        "completed",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    "transactions": {
+      "file": "transactions.csv",
+      "records": 4,
+      "columns": [
+        "id",
+        "description",
+        "amount",
+        "type",
+        "category",
+        "trans_date",
+        "created_at"
+      ]
+    },
+    "health_entries": {
+      "file": "health_entries.csv",
+      "records": 1,
+      "columns": [
+        "id",
+        "entry_date",
+        "weight",
+        "sleep_hours",
+        "mood",
+        "notes",
+        "created_at"
+      ]
+    }
+  }
+}

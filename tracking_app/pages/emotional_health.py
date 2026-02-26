@@ -31,6 +31,7 @@ from brain.models.emotional_state import (
     EmotionalStateManager,
     EmotionAnalyzer
 )
+from tracking_app.components.sidebar import render_sidebar
 
 
 # =============================================================================
@@ -414,44 +415,6 @@ def render_analytics():
                 st.info(f"💡 {pattern['recommendation']}")
             elif pattern['type'] == 'positive':
                 st.success(f"**{pattern['label']}**: {pattern['description']}")
-
-
-def render_sidebar():
-    """Render sidebar with navigation and info."""
-    with st.sidebar:
-        st.title("🌈 Emotional Health")
-        st.caption("RGB Neurotransmitter Model")
-        
-        st.divider()
-        
-        # Quick stats
-        analyzer = st.session_state.emotion_analyzer
-        summary = analyzer.get_weekly_summary()
-        
-        st.metric("This Week", summary['total_entries'])
-        
-        if summary['total_entries'] > 0:
-            dominant = summary['dominant_emotion']
-            st.metric("Most Common", f"{dominant['label']}")
-        
-        st.divider()
-        
-        # Navigation links
-        st.subheader("Navigation")
-        st.page_link("app.py", label="🏠 Dashboard", icon="🏠")
-        st.page_link("pages/health.py", label="❤️ Health", icon="❤️")
-        
-        st.divider()
-        
-        # Color legend
-        st.subheader("Color Legend")
-        st.markdown("""
-        - 🔴 **Red tones**: High dopamine (joy)
-        - 🔵 **Blue tones**: High stress/energy
-        - 🟢 **Green tones**: High satisfaction
-        - 🟡 **Yellow tones**: Joy + satisfaction
-        - 🟣 **Purple tones**: Joy + stress
-        """)
 
 
 # =============================================================================

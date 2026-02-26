@@ -1,0 +1,5 @@
+id,description,amount,type,category,trans_date,created_at
+d5a3aca8-cea7-476e-914d-2bac69119d11,5000,5000.0,income,Salary,2026-02-25,2026-02-25T15:49:27.089590
+4f527c7e-7ebe-4761-93a2-d18606e02910,Test,10.0,expense,Food,2026-02-25,2026-02-25T16:00:25.896277
+8ee86b90-3d97-4549-a54f-31d1ffcee137,Test,10.0,expense,Food,2026-02-25,2026-02-25T16:04:07.149345
+b8b84be5-3e21-45e5-a201-c5ccb681acd3,Test,10.0,expense,Food,2026-02-25,2026-02-25T16:07:25.793813

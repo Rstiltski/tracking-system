@@ -19,6 +19,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspa
 
 from tracking_app.storage import Storage, get_storage
 from tracking_app.models import Task, Priority
+from tracking_app.components.sidebar import render_sidebar
 
 
 # =============================================================================
@@ -114,35 +115,6 @@ def is_due_today(due_date: Optional[datetime]) -> bool:
 # =============================================================================
 # RENDER FUNCTIONS
 # =============================================================================
-
-def render_sidebar():
-    """Render sidebar with navigation."""
-    with st.sidebar:
-        st.title("🎯 Veryfyn")
-        st.caption("Personal Tracking System")
-        st.divider()
-        
-        # User Stats
-        col1, col2 = st.columns(2)
-        with col1:
-            st.metric("Level", st.session_state.user_level)
-        with col2:
-            st.metric("XP", st.session_state.user_xp)
-        
-        st.divider()
-        
-        # Navigation
-        st.subheader("📊 Tracking")
-        st.page_link("pages/dashboard.py", label="🏠 Dashboard", icon="🏠")
-        st.page_link("pages/habits.py", label="✅ Habits", icon="✅")
-        st.page_link("pages/tasks.py", label="📋 Tasks", icon="📋")
-        st.page_link("pages/finances.py", label="💰 Finances", icon="💰")
-        st.page_link("pages/health.py", label="❤️ Health", icon="❤️")
-        st.page_link("pages/emotional_health.py", label="🌈 Emotional Health", icon="🌈")
-        st.page_link("pages/time.py", label="⏱️ Time", icon="⏱️")
-        st.page_link("pages/goals.py", label="🎯 Goals", icon="🎯")
-        st.page_link("pages/achievements.py", label="🏆 Achievements", icon="🏆")
-
 
 def render_header():
     """Render page header."""

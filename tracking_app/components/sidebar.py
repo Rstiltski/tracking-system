@@ -8,9 +8,10 @@ Usage:
 """
 import streamlit as st
 from datetime import datetime
+from typing import Optional
 
 
-def render_sidebar():
+def render_sidebar(show_streak_freeze: bool = False):
     """
     Render the main sidebar with navigation.
     
@@ -18,7 +19,11 @@ def render_sidebar():
     - App title and logo
     - User stats (Level, XP)
     - Navigation links to all pages
+    - Optional Streak Freeze section (for habits page)
     - Theme toggle
+    
+    Args:
+        show_streak_freeze: If True, show streak freeze inventory section
     """
     with st.sidebar:
         # Logo/Title
@@ -27,18 +32,19 @@ def render_sidebar():
         st.divider()
         
         # User Stats
+        level = st.session_state.get('user_level', 1)
+        xp = st.session_state.get('user_xp', 0)
+        
         col1, col2 = st.columns(2)
         with col1:
-            level = st.session_state.get('user_level', 1)
             st.metric("Level", level)
         with col2:
-            xp = st.session_state.get('user_xp', 0)
             st.metric("XP", xp)
         
         # XP Progress Bar
         from tracking_app.components.session import get_xp_for_level
-        current_xp = st.session_state.get('user_xp', 0)
-        current_level = st.session_state.get('user_level', 1)
+        current_xp = xp
+        current_level = level
         next_level_xp = get_xp_for_level(current_level + 1)
         current_level_xp = get_xp_for_level(current_level)
         
@@ -47,6 +53,11 @@ def render_sidebar():
             st.progress(min(progress, 1.0), text=f"Progress to Level {current_level + 1}")
         
         st.divider()
+        
+        # Streak Freeze Inventory (optional - shown on habits page)
+        if show_streak_freeze:
+            _render_streak_freeze_section()
+            st.divider()
         
         # Main Navigation
         st.subheader("📊 Tracking")
@@ -113,6 +124,55 @@ def render_sidebar():
         st.divider()
         st.caption(f"Version 2.0.0")
         st.caption(f"© {datetime.now().year} Veryfyn")
+
+
+def _render_streak_freeze_section():
+    """Render streak freeze inventory section."""
+    try:
+        from brain.models.streak import StreakFreeze
+    except ImportError:
+        st.caption("❄️ Streak Freeze unavailable")
+        return
+    
+    # Load streak freeze inventory
+    storage = st.session_state.get('storage')
+    if not storage:
+        return
+    
+    freeze_data = storage.get_user_data("streak_freeze", None)
+    
+    if freeze_data:
+        streak_freeze = StreakFreeze.from_dict(freeze_data)
+    else:
+        streak_freeze = StreakFreeze(count=1)  # Start with 1 free freeze
+    
+    st.subheader("❄️ Streak Freezes")
+    
+    # Display freeze count with visual indicator
+    freeze_progress = streak_freeze.count / streak_freeze.max_freezes
+    st.progress(freeze_progress, text=f"{streak_freeze.count}/{streak_freeze.max_freezes} available")
+    
+    # Purchase freeze button
+    if not streak_freeze.is_maxed:
+        xp = st.session_state.get('user_xp', 0)
+        if st.button(f"🛒 Buy Freeze ({streak_freeze.xp_cost} XP)", 
+                    help="Purchase a streak freeze to protect your streaks",
+                    use_container_width=True):
+            success, new_xp = streak_freeze.purchase_freeze(xp)
+            if success:
+                st.session_state.user_xp = new_xp
+                storage.set_user_data("streak_freeze", streak_freeze.to_dict())
+                if 'storage' in st.session_state:
+                    st.session_state.storage.set_xp(new_xp)
+                st.success("❄️ Streak Freeze purchased!")
+                st.rerun()
+            else:
+                st.error(f"Not enough XP! Need {streak_freeze.xp_cost} XP.")
+    else:
+        st.caption("✅ Max freezes reached!")
+    
+    # Update session state for use in other functions
+    st.session_state.streak_freeze = streak_freeze
 
 
 __all__ = ["render_sidebar"]
