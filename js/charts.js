@@ -15,37 +15,71 @@ const Charts = {
     // Last data state for change detection
     lastDataState: null,
 
-    // Default chart options
+    // Default chart options - Enhanced for better visuals
     defaultOptions: {
         responsive: true,
         maintainAspectRatio: false,
+        animation: {
+            duration: 750,
+            easing: 'easeInOutQuart'
+        },
         plugins: {
             legend: {
                 display: false
+            },
+            tooltip: {
+                backgroundColor: 'rgba(17, 24, 39, 0.95)',
+                titleColor: '#f9fafb',
+                bodyColor: '#9ca3af',
+                borderColor: 'rgba(16, 185, 129, 0.3)',
+                borderWidth: 1,
+                cornerRadius: 8,
+                padding: 12,
+                displayColors: true,
+                boxPadding: 4
             }
         },
         scales: {
             x: {
                 grid: {
                     display: false
+                },
+                ticks: {
+                    color: '#6b7280',
+                    font: {
+                        size: 11,
+                        weight: '500'
+                    }
                 }
             },
             y: {
                 beginAtZero: true,
                 grid: {
-                    color: 'rgba(0, 0, 0, 0.05)'
+                    color: 'rgba(16, 185, 129, 0.1)',
+                    drawBorder: false
+                },
+                ticks: {
+                    color: '#6b7280',
+                    font: {
+                        size: 11
+                    },
+                    padding: 8
                 }
             }
         }
     },
 
-    // Color palette
+    // Color palette - Green-focused theme
     colors: {
-        primary: '#6366f1',
+        primary: '#10b981',
+        primaryLight: '#34d399',
+        primaryDark: '#059669',
         purple: '#a855f7',
         blue: '#3b82f6',
         cyan: '#06b6d4',
         green: '#10b981',
+        greenLight: '#34d399',
+        greenDark: '#059669',
         yellow: '#f59e0b',
         orange: '#f97316',
         red: '#ef4444',
@@ -164,6 +198,10 @@ const Charts = {
             }
         }
 
+        // Create gradient for habits line
+        const habitGradient = this.getGradient(ctx, 'rgba(16, 185, 129, 0.3)', 'rgba(16, 185, 129, 0.02)');
+        const taskGradient = this.getGradient(ctx, 'rgba(6, 182, 212, 0.2)', 'rgba(6, 182, 212, 0.02)');
+
         this.instances.weekly = new Chart(ctx, {
             type: 'line',
             data: {
@@ -173,30 +211,55 @@ const Charts = {
                         label: 'Habits %',
                         data: habitData,
                         borderColor: this.colors.primary,
-                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                        backgroundColor: habitGradient,
                         fill: true,
                         tension: 0.4,
-                        pointRadius: 4,
-                        pointBackgroundColor: this.colors.primary
+                        borderWidth: 3,
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                        pointBackgroundColor: this.colors.primary,
+                        pointBorderColor: '#030712',
+                        pointBorderWidth: 2,
+                        pointHoverBackgroundColor: this.colors.primaryLight,
+                        pointHoverBorderColor: '#ffffff'
                     },
                     {
                         label: 'Tasks',
                         data: taskData,
-                        borderColor: this.colors.green,
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        borderColor: this.colors.cyan,
+                        backgroundColor: taskGradient,
                         fill: true,
                         tension: 0.4,
+                        borderWidth: 2,
                         pointRadius: 4,
-                        pointBackgroundColor: this.colors.green
+                        pointHoverRadius: 6,
+                        pointBackgroundColor: this.colors.cyan,
+                        pointBorderColor: '#030712',
+                        pointBorderWidth: 2
                     }
                 ]
             },
             options: {
                 ...this.defaultOptions,
+                interaction: {
+                    mode: 'index',
+                    intersect: false
+                },
                 plugins: {
+                    ...this.defaultOptions.plugins,
                     legend: {
                         display: true,
-                        position: 'bottom'
+                        position: 'bottom',
+                        labels: {
+                            color: '#9ca3af',
+                            usePointStyle: true,
+                            pointStyle: 'circle',
+                            padding: 20,
+                            font: {
+                                size: 12,
+                                weight: '500'
+                            }
+                        }
                     }
                 },
                 scales: {
@@ -205,6 +268,7 @@ const Charts = {
                         ...this.defaultOptions.scales.y,
                         max: 100,
                         ticks: {
+                            ...this.defaultOptions.scales.y.ticks,
                             callback: value => value + '%'
                         }
                     }

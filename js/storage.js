@@ -246,6 +246,20 @@ const Storage = {
         return logs[dateStr]?.includes(habitId) || false;
     },
 
+    // Get all completion dates for a habit
+    getHabitCompletions(habitId) {
+        const logs = this.getHabitLogs();
+        const completions = [];
+        
+        for (const [dateStr, habitIds] of Object.entries(logs)) {
+            if (habitIds.includes(habitId)) {
+                completions.push(dateStr);
+            }
+        }
+        
+        return completions;
+    },
+
     getHabitStreak(habitId) {
         const logs = this.getHabitLogs();
         let streak = 0;

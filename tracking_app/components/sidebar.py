@@ -50,7 +50,9 @@ def render_sidebar(show_streak_freeze: bool = False):
         
         if next_level_xp > current_level_xp:
             progress = (current_xp - current_level_xp) / (next_level_xp - current_level_xp)
-            st.progress(min(progress, 1.0), text=f"Progress to Level {current_level + 1}")
+            # Ensure progress is always between 0 and 1
+            progress = max(0.0, min(1.0, progress))
+            st.progress(progress, text=f"Progress to Level {current_level + 1}")
         
         st.divider()
         

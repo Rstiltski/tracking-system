@@ -1,6 +1,15 @@
-# Phase 6.3 & 6.4 - Testing Guide
+# Phase 6 - Complete Testing Guide
 
-**Purpose:** Step-by-step instructions to test the new habit score and streak freeze features.
+**Purpose:** Step-by-step instructions to test all Phase 6 UI-Backend Integration features.
+
+**Phases Covered:**
+- 6.3: Habit Score UI
+- 6.4: Streak Freeze UI
+- 6.5: Intelligence Dashboard
+- 6.6: Habit Stacking UI
+- 6.7: Variable Rewards UI
+
+**Last Updated:** February 26, 2026
 
 ---
 
@@ -173,11 +182,11 @@ On each habit card, verify you see:
 ## 📋 Test Checklist
 
 ### Habit Score Tests
-- [ ] Can create new habit
-- [ ] Score displays with percentage
-- [ ] Score category emoji appears
-- [ ] Score category label shows (Excellent/Strong/etc.)
-- [ ] Trend indicator shows (↑↓→)
+- [x] Can create new habit
+- [x] Score displays with percentage
+- [x] Score category emoji appears
+- [x] Score category label shows (Excellent/Strong/etc.)
+- [x] Trend indicator shows (↑↓→)
 - [ ] Trend label shows (improving/declining/stable)
 - [ ] Streak count displays correctly
 - [ ] 30-day completion rate shows
@@ -185,8 +194,8 @@ On each habit card, verify you see:
 ### Streak Freeze Tests
 - [ ] Freeze inventory shows in sidebar
 - [ ] Progress bar displays correctly
-- [ ] Can purchase freeze (if XP >= 100)
-- [ ] Error shows if not enough XP
+- [x] Can purchase freeze (if XP >= 100)
+- [x] Error shows if not enough XP
 - [ ] Max freeze message when at 10/10
 - [ ] Broken streak warning appears
 - [ ] "Use Freeze" button appears for broken streaks
@@ -255,6 +264,207 @@ Developing · declining
 [✓] [✏️] [🗑️]
 
 [❄️ Use Streak Freeze (2 available)]
+```
+
+---
+
+## 🧠 Feature 3: Intelligence Dashboard Testing
+
+### What It Does
+- Displays burnout risk assessment
+- Shows habit correlations
+- Calculates PCS fragility scores
+- Provides personalized recommendations
+
+### Step-by-Step Test
+
+#### Step 1: Open the Insights Page
+```bash
+streamlit run tracking_app/pages/insights.py
+```
+
+#### Step 2: Check Key Insights Summary
+1. Look at the "💡 Key Insights" section
+2. **Expected:** 
+   - Burnout risk status (low/moderate/high/critical)
+   - Completion trend insights
+   - Sleep deficit warnings (if applicable)
+
+#### Step 3: Test Burnout Risk Tab
+1. Click on "Burnout Risk" tab
+2. **Expected:**
+   - Risk score (0-100%)
+   - Risk level with emoji
+   - Contributing factors list
+   - Intervention recommendations
+
+#### Step 4: Test Correlations Tab
+1. Click on "Correlations" tab
+2. **Prerequisites:** At least 2 habits with 7+ days of data
+3. **Expected:**
+   - List of habit correlations
+   - Correlation coefficients (r values)
+   - Strength and direction indicators
+
+#### Step 5: Test Habit Fragility Tab
+1. Click on "Habit Fragility" tab
+2. **Prerequisites:** At least 14 days of habit data
+3. **Expected:**
+   - PCS scores for each habit
+   - Fragility index (0-100)
+   - AUC score (predictability)
+   - Habit strength classification
+
+---
+
+## 📚 Feature 4: Habit Stacking Testing
+
+### What It Does
+- Create habit stacks with anchors
+- Add habits to stacks in sequence
+- Track stack completion
+- View stack analytics
+
+### Step-by-Step Test
+
+#### Step 1: Open the Stacks Page
+```bash
+streamlit run tracking_app/pages/stacks.py
+```
+
+#### Step 2: Create a New Stack
+1. Fill in the "Create New Stack" form:
+   - **Name:** "Morning Routine"
+   - **Category:** Select "Morning"
+   - **Anchor:** Select "Wake up" or custom
+2. Click "Create Stack"
+3. **Expected:** Stack appears in "Your Stacks" section
+
+#### Step 3: Add Habits to Stack
+1. Find your newly created stack
+2. Click "➕ Add Habit to Stack"
+3. Select a habit from dropdown
+4. Enable "Tiny version" checkbox
+5. Click "Add to Stack"
+6. **Expected:** Habit appears in stack chain
+
+#### Step 4: Verify Stack Display
+- Stack shows anchor description
+- Habits display in numbered sequence
+- Tiny habits show 🌱 indicator
+- Tiny version descriptions appear
+
+#### Step 5: Test Analytics
+1. Click "📊 View Analytics" on a stack
+2. **Expected:**
+   - Stack depth count
+   - Conversion rate percentage
+   - Weak links warnings (if any)
+
+---
+
+## 🎁 Feature 5: Variable Rewards Testing
+
+### What It Does
+- Roll for random rewards
+- Display rarity badges (Common/Uncommon/Rare/Legendary)
+- Track reward inventory
+- Show statistics
+
+### Step-by-Step Test
+
+#### Step 1: Open the Rewards Page
+```bash
+streamlit run tracking_app/pages/rewards.py
+```
+
+#### Step 2: Test Roll for Rewards
+1. Click "🎲 Roll for Reward" button
+2. **Expected:**
+   - Spinner animation
+   - Result displays (reward or "No reward")
+   - XP added if reward won
+
+#### Step 3: Check Roll Result
+- **If reward won:**
+  - Green success box with reward name
+  - Reward description
+  - XP earned display
+- **If near miss:**
+  - Warning "So close! Try again!"
+- **If no reward:**
+  - Info "No reward this time"
+
+#### Step 4: Test Inventory Tab
+1. Click "Inventory" tab
+2. **Expected:**
+   - Rewards grouped by rarity
+   - Count of each rarity collected
+
+#### Step 5: Test Catalog Tab
+1. Click "Catalog" tab
+2. Use rarity filter dropdown
+3. **Expected:**
+   - All available rewards displayed
+   - Filter by rarity works
+   - Shows icon, name, description, XP value
+
+#### Step 6: Test Statistics Tab
+1. Click "Statistics" tab
+2. **Expected:**
+   - Total rolls count
+   - Rewards won count
+   - Win rate percentage
+   - XP from rewards total
+
+---
+
+## 📋 Complete Test Checklist
+
+### Phase 6.3: Habit Score ✅
+- [ ] Score displays with percentage
+- [ ] Score category emoji appears
+- [ ] Trend indicator shows (↑↓→)
+- [ ] Streak count displays
+
+### Phase 6.4: Streak Freeze ✅
+- [ ] Freeze inventory shows in sidebar
+- [ ] Can purchase freeze (if XP >= 100)
+- [ ] Broken streak warning appears
+- [ ] Using freeze preserves streak
+
+### Phase 6.5: Intelligence Dashboard ✅
+- [ ] Burnout risk displays correctly
+- [ ] Correlations show when data available
+- [ ] PCS fragility scores calculate
+- [ ] Key insights update
+
+### Phase 6.6: Habit Stacking ✅
+- [ ] Can create stack with anchor
+- [ ] Can add habits to stack
+- [ ] Tiny habit indicators show
+- [ ] Analytics display correctly
+
+### Phase 6.7: Variable Rewards ✅
+- [ ] Roll button works
+- [ ] Rewards display with rarity
+- [ ] XP added correctly
+- [ ] Inventory tracks collected rewards
+- [ ] Statistics display accurately
+
+---
+
+## 🚀 Run All Pages
+
+```bash
+# Main app
+streamlit run tracking_app/app.py
+
+# Individual pages
+streamlit run tracking_app/pages/habits.py      # Score + Streak Freeze
+streamlit run tracking_app/pages/insights.py    # Intelligence Dashboard
+streamlit run tracking_app/pages/stacks.py      # Habit Stacking
+streamlit run tracking_app/pages/rewards.py     # Variable Rewards
 ```
 
 ---
