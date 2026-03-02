@@ -243,6 +243,7 @@ def init_db() -> None:
         habit_type TEXT DEFAULT 'boolean',
         color TEXT DEFAULT '#6366f1',
         icon TEXT DEFAULT '🎯',
+        category TEXT DEFAULT 'general',
         target_value REAL DEFAULT 0,
         target_type TEXT DEFAULT 'at_least',
         archived INTEGER DEFAULT 0,

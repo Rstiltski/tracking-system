@@ -47,6 +47,48 @@ This document outlines the rules, conventions, and best practices for developing
 
 ---
 
+### 🎯 TARGETED PAGE UPDATES - CRITICAL RULE
+
+**⚠️ ATTENTION LLM ASSISTANTS: Only modify the specific file being worked on.**
+
+```
+╔══════════════════════════════════════════════════════════════════╗
+║              🎯 SINGLE-PAGE MODIFICATION RULE 🎯                  ║
+╠══════════════════════════════════════════════════════════════════╣
+║                                                                   ║
+║  When working on a page/module, ONLY modify that specific file.  ║
+║                                                                   ║
+║  ✅ DO:                                                           ║
+║  - Modify only the file you are explicitly working on            ║
+║  - Keep changes isolated to the target file                       ║
+║  - Test the single page independently                             ║
+║  - Use existing interfaces/APIs from other modules                ║
+║                                                                   ║
+║  ❌ DO NOT:                                                       ║
+║  - Modify multiple pages in a single task                         ║
+║  - Change shared components while working on a page               ║
+║  - Update requirements.txt unless absolutely necessary            ║
+║  - Modify other pages "while you're at it"                        ║
+║                                                                   ║
+║  WHY? This prevents:                                              ║
+║  - Cascading bugs across multiple pages                           ║
+║  - Difficulty tracking what changed                               ║
+║  - Breaking working features accidentally                         ║
+║  - Merge conflicts in team environments                           ║
+║                                                                   ║
+║  EXCEPTION: If a shared component MUST change, do it in a         ║
+║  separate, dedicated task with full testing.                      ║
+║                                                                   ║
+╚══════════════════════════════════════════════════════════════════╝
+```
+
+**Example:**
+- Working on `habits.py` → Only modify `tracking_app/pages/habits.py`
+- Working on `sidebar.py` → Only modify `tracking_app/components/sidebar.py`
+- NEVER modify both in the same task unless explicitly required
+
+---
+
 ## 🤖 LLM Operational Guide
 
 ### Non-Linear, Holistic LLM Reasoning Principles

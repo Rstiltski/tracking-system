@@ -106,6 +106,7 @@ class Storage:
         icon: str = "🎯",
         color: str = "#6366f1",
         habit_type: str = "boolean",
+        category: str = "general",
         target_value: float = 0.0,
         target_type: str = "at_least"
     ) -> Habit:
@@ -119,6 +120,7 @@ class Storage:
             icon: Emoji icon
             color: Hex color code
             habit_type: Boolean or numerical
+            category: Category for grouping (general, health, productivity, mindfulness, learning, social, finance, creativity)
             target_value: Target for numerical habits
             target_type: "at_least" or "at_most"
             
@@ -132,18 +134,19 @@ class Storage:
             icon=icon,
             color=color,
             habit_type=habit_type,
+            category=category,
             target_value=target_value,
             target_type=target_type
         )
         
         self._db.execute(
             """INSERT INTO habits 
-               (id, name, description, frequency, habit_type, color, icon, 
+               (id, name, description, frequency, habit_type, color, icon, category,
                 target_value, target_type, archived, created_at, updated_at)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?)""",
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?)""",
             (
                 habit.id, habit.name, habit.description, habit.frequency,
-                habit.habit_type, habit.color, habit.icon,
+                habit.habit_type, habit.color, habit.icon, habit.category,
                 habit.target_value, habit.target_type,
                 habit.created_at.isoformat(), habit.updated_at.isoformat()
             )
@@ -170,7 +173,7 @@ class Storage:
         # Build update query
         valid_fields = {
             'name', 'description', 'frequency', 'frequency_data',
-            'habit_type', 'color', 'icon', 'target_value', 'target_type', 'archived'
+            'habit_type', 'color', 'icon', 'category', 'target_value', 'target_type', 'archived'
         }
         
         update_fields = []

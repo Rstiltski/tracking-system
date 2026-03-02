@@ -125,7 +125,8 @@ def render_suggestion_card(
 def render_suggestions_section(
     storage: Any,
     user_id: str = "",
-    limit: int = 3
+    limit: int = 3,
+    key_prefix: str = ""
 ) -> None:
     """
     Render suggestions section.
@@ -134,6 +135,7 @@ def render_suggestions_section(
         storage: Storage instance
         user_id: User ID
         limit: Number of suggestions to show
+        key_prefix: Prefix for unique element keys
     """
     from brain.ai.suggestion_engine import SuggestionEngine
 
@@ -148,15 +150,28 @@ def render_suggestions_section(
     st.markdown("**💡 Smart Suggestions**")
 
     # Show suggestions
-    for suggestion in suggestions:
+    for idx, suggestion in enumerate(suggestions):
         # Convert to dict if object
+        suggestion_dict: Dict[str, Any]
         if hasattr(suggestion, 'to_dict'):
-            suggestion = suggestion.to_dict()
-        render_suggestion_card(storage, suggestion, user_id)
+            suggestion_dict = suggestion.to_dict()
+        elif isinstance(suggestion, dict):
+            suggestion_dict = suggestion
+        else:
+            suggestion_dict = {'id': f'{idx}', 'title': str(suggestion)}
+        
+        # Add prefix to suggestion ID for unique keys
+        suggestion_id = suggestion_dict.get('id', f'{idx}')
+        suggestion_with_prefix = {
+            **suggestion_dict,
+            'id': f"{key_prefix}_{suggestion_id}"
+        }
+        render_suggestion_card(storage, suggestion_with_prefix, user_id)
 
     # View all button
     if len(suggestions) >= limit:
-        if st.button("📋 View All Suggestions"):
+        button_key = f"{key_prefix}_view_all_suggestions" if key_prefix else "view_all_suggestions"
+        if st.button("📋 View All Suggestions", key=button_key):
             st.session_state.show_all_suggestions = True
 
 

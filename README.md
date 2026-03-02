@@ -67,18 +67,12 @@ cd tracking-system
 pip install -r requirements.txt
 ```
 
-**3. Initialize the database:**
+**3. Run the system:**
 ```bash
-python3 init_db_script.py
-python3 force_admin_reset.py
+python3 run.py
 ```
 
-**4. Run the system:**
-```bash
-python3 run_system.py
-```
-
-**5. Open http://localhost:8501 in your browser.**
+**4. Open http://localhost:8501 in your browser.**
 
 ---
 
@@ -86,10 +80,11 @@ python3 run_system.py
 
 | Entry Point | Description |
 |-------------|-------------|
-| `run_system.py` | Main admin interface |
+| `run.py` | Main Streamlit application launcher |
+| `tracking_app/app.py` | Streamlit app entry point |
 | `tracking_app/pages/` | Streamlit UI pages |
 | `brain/tools/` | Operation tools |
-| `modules_config.json` | Module management |
+| `index.html` | Browser-only interface |
 
 ---
 
@@ -203,6 +198,39 @@ No server required - runs entirely in the browser using LocalStorage.
 - Gamification elements
 - Celebration effects (confetti!)
 
+### 🧠 Intelligence & Insights
+- **Correlation Engine** - Discover relationships between habits/health/mood
+- **Burnout Prediction** - Early warning system with risk indicators
+- **Predictive Context Sensitivity** - Understand what influences your habits
+- **Natural Language Insights** - Readable analysis of your data
+- **Weekly Review** - Automated weekly summary and reflection
+
+### 📊 Habit Analytics
+- **Habit Score Algorithm** - Weighted moving average (forgiving, no instant streak reset)
+- **Streak Freeze System** - Preserve streaks on missed days
+- **Habit Stacking** - Link habits together for chain completion
+- **Difficulty Adjustment** - Dynamic difficulty based on performance
+- **Habit Templates** - Pre-built habit plans for common goals
+- **Self-Experiments** - A/B testing for personal habits
+
+### 🎯 Challenges & Competitions
+- Create personal challenges with targets
+- Track challenge progress
+- Compete with friends
+- Challenge completion rewards
+
+### 👥 Social Features
+- **Friends System** - Add and manage friends
+- **Leaderboards** - Compare progress with friends
+- **Template Sharing** - Share habit templates with others
+- **Accountability Partners** - Social commitment mechanisms
+
+### 🎁 Variable Rewards
+- **Random Loot Drops** - Variable rewards on habit completion
+- **Rarity Tiers** - Common, Rare, Epic, Legendary items
+- **Mystery Achievements** - Hidden unlockable achievements
+- **Bonus XP Events** - Surprise multiplier events
+
 ---
 
 ## §4 Architecture
@@ -266,6 +294,21 @@ The Brain is the central nervous system for data operations. Every command flows
 | Security | `brain/security/` | Encryption & access |
 | Invariants | `brain/invariants/` | Business rules |
 | Immune System | `brain/immune/` | Self-healing |
+| Analysis | `brain/analysis/` | Correlation, prediction, burnout detection |
+| Behavioral | `brain/behavioral/` | Habit stacking, rewards, accountability |
+| Models | `brain/models/` | Habit, streak, emotional state models |
+| Notifications | `brain/notifications/` | Reminder engine and scheduling |
+| AI | `brain/ai/` | AI suggestion engine |
+| Analytics | `brain/analytics/` | Event tracking, heatmaps, timing optimization |
+| Backup | `brain/backup/` | Backup management and restoration |
+| Lifecycle | `brain/lifecycle/` | Data lifecycle and GDPR compliance |
+| Social | `brain/social/` | Friends, competitions, sharing |
+| Monitoring | `brain/monitoring/` | System health and anomaly detection |
+| Context | `brain/context/` | Context loading and thinking brain |
+| Data Export/Import | `brain/data_export/`, `brain/data_import/` | Data portability |
+| Rules | `brain/rules/` | Rule engine |
+| Fork | `brain/fork/` | Brain forking capabilities |
+| Assets | `brain/assets/` | Brain static assets |
 
 **See [brain/README.md](brain/README.md) for detailed Brain documentation.**
 
@@ -275,11 +318,97 @@ The Brain is the central nervous system for data operations. Every command flows
 
 ```
 tracking-system/
-├── index.html              # Main HTML entry point
+├── run.py                  # Main Streamlit launcher
+├── index.html              # Browser-only HTML entry point
+├── requirements.txt        # Python dependencies
+├── pyproject.toml          # Project configuration
+│
 ├── README.md               # This file
 ├── PROJECT_RULES.md        # Development guidelines
 ├── TRACKING_SYSTEM_DESIGN.md  # Architecture design
+├── ROADMAP.md              # Development roadmap
+├── FEATURE_MAP.md          # Feature-to-file mapping
+├── GETTING_STARTED.md      # Onboarding guide
+├── ARCHITECTURAL_MAP.md    # System architecture map
 ├── TODO.md                 # Project tracking
+│
+├── tracking_app/           # Streamlit Application
+│   ├── app.py              # Main app entry point
+│   ├── models.py           # Data models
+│   ├── storage.py          # Storage layer
+│   ├── database.py         # Database connection
+│   ├── migration.py        # Migration utilities
+│   ├── pages/              # Streamlit UI pages
+│   │   ├── dashboard.py    # Main dashboard
+│   │   ├── habits.py       # Habits tracker
+│   │   ├── tasks.py        # Tasks/Todos
+│   │   ├── finances.py     # Finances/Budget
+│   │   ├── health.py       # Health metrics
+│   │   ├── emotional_health.py  # Emotional tracking
+│   │   ├── time.py         # Time tracking
+│   │   ├── goals.py        # Goals management
+│   │   ├── achievements.py # Achievements page
+│   │   ├── challenges.py   # Challenges system
+│   │   ├── friends.py      # Social features
+│   │   ├── leaderboards.py # Leaderboards
+│   │   ├── insights.py     # Intelligence insights
+│   │   ├── stacks.py       # Habit stacking
+│   │   ├── rewards.py      # Variable rewards
+│   │   ├── habit_analytics.py   # Habit analytics
+│   │   ├── habit_experiments.py # Self-experiments
+│   │   ├── weekly_review.py     # Weekly review
+│   │   ├── backup_restore.py    # Backup management
+│   │   ├── data_export.py       # Data export
+│   │   ├── data_import.py       # Data import
+│   │   ├── data_lifecycle.py    # Data lifecycle
+│   │   ├── goal_alerts.py       # Goal alerts
+│   │   ├── habit_reminders.py   # Habit reminders
+│   │   ├── notification_settings.py  # Notification config
+│   │   ├── task_alerts.py       # Task alerts
+│   │   └── template_sharing.py  # Template sharing
+│   ├── components/         # Reusable UI components
+│   │   ├── session.py      # Session management
+│   │   ├── sidebar.py      # Sidebar component
+│   │   ├── metrics.py      # Metric displays
+│   │   ├── charts.py       # Chart components
+│   │   ├── achievement_card.py  # Achievement cards
+│   │   ├── burnout_card.py      # Burnout indicator
+│   │   ├── difficulty_widget.py # Difficulty selector
+│   │   ├── relapse_plan_wizard.py  # Relapse planning
+│   │   ├── srbai_survey.py      # SRBAI survey
+│   │   ├── stack_visualizer.py  # Habit stack viz
+│   │   ├── suggestion_card.py   # Suggestion cards
+│   │   ├── template_browser.py  # Template browser
+│   │   ├── timing_indicator.py  # Timing display
+│   │   └── tip_card.py          # Tip display
+│   └── database_migrations/  # Database migrations
+│       ├── achievement_migration.py
+│       ├── burnout_migration.py
+│       ├── challenge_migration.py
+│       ├── difficulty_migration.py
+│       ├── experiment_migration.py
+│       ├── friend_migration.py
+│       ├── habit_stack_migration.py
+│       ├── infrastructure_migration.py
+│       ├── intention_migration.py
+│       ├── note_migration.py
+│       ├── relapse_migration.py
+│       ├── social_features_migration.py
+│       ├── srbai_migration.py
+│       ├── suggestion_migration.py
+│       ├── template_migration.py
+│       └── tip_migration.py
+│
+├── services/               # Business logic services
+│   ├── notifications.py    # Notification service
+│   ├── email.py            # Email service
+│   ├── ai_provider.py      # AI integration
+│   ├── debug_console.py    # Debug console service
+│   └── github_cortex_client.py  # GitHub integration
+│
+├── database/               # Database layer
+│   ├── connection.py       # DB connection
+│   └── queries/            # Query modules
 │
 ├── css/
 │   └── styles.css          # All styles (organized by sections)
@@ -296,13 +425,36 @@ tracking-system/
 │   ├── achievements.js     # Achievements/gamification
 │   ├── charts.js           # Chart visualization
 │   ├── notifications.js    # Notification system
-│   └── dataExport.js       # Import/export functionality
+│   ├── dataExport.js       # Import/export functionality
+│   ├── habit-stacking.js   # Habit stacking (frontend)
+│   ├── implementation-intentions.js  # Implementation intentions
+│   ├── rewards.js          # Variable rewards (frontend)
+│   ├── validation.js       # Form validation
+│   ├── enhanced-charts.js  # Advanced charts
+│   ├── enhanced-goals.js   # Enhanced goals module
+│   ├── enhanced-goal-model.js  # Enhanced goal model
+│   └── variable-goal-tracker.js  # Variable goal tracking
 │
-├── assets/
+├── assets/                 # Static assets
 │   ├── icons/              # Icon assets
 │   └── sounds/             # Sound effects
 │
+├── backups/                # Backup storage
+├── exports/                # Exported data
+├── templates/              # Habit templates
+│
+├── docs/                   # Documentation
+│   ├── research/           # Research documents
+│   ├── specs/              # Specifications
+│   ├── schemas/            # Data schemas
+│   └── guides/             # User guides
+│
+├── tests/                  # Test suite
+│
+├── phases/                 # Phase documentation
+│
 └── brain/                  # Backend System
+    ├── nervous_system.py   # Main brain orchestrator
     ├── core/               # Core brain components
     ├── tools/              # Operation tools
     ├── brains/             # Specialized brains
@@ -313,7 +465,23 @@ tracking-system/
     ├── invariants/         # Business rules
     ├── immune/             # Self-healing system
     ├── privacy/            # Privacy features
-    └── design/             # Design documentation
+    ├── design/             # Design documentation
+    ├── analysis/           # Correlation & prediction
+    ├── behavioral/         # Behavioral science features
+    ├── models/             # Data models
+    ├── notifications/      # Notification engine
+    ├── ai/                 # AI suggestion engine
+    ├── analytics/          # Analytics components
+    ├── backup/             # Backup management
+    ├── lifecycle/          # Data lifecycle
+    ├── social/             # Social features
+    ├── monitoring/         # System monitoring
+    ├── context/            # Context loading
+    ├── data_export/        # Data export
+    ├── data_import/        # Data import
+    ├── rules/              # Rule engine
+    ├── fork/               # Brain forking
+    └── assets/             # Brain assets
 ```
 
 ---
@@ -497,7 +665,7 @@ python force_admin_reset.py
 ```bash
 # Kill existing process
 pkill -f streamlit
-streamlit run run_system.py --server.port=8502
+streamlit run run.py --server.port=8502
 ```
 
 ---
@@ -543,3 +711,7 @@ This project is open source and available under the [MIT License](LICENSE).
 **Made with ❤️ for personal productivity**
 
 **Auditable. Production-ready.**
+
+---
+
+**Last Updated:** March 2026

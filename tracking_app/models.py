@@ -29,6 +29,16 @@ class HabitType(str, Enum):
     NUMERICAL = "numerical"  # Track a number (e.g., glasses of water)
 
 
+class HabitCategory(str, Enum):
+    """Categories for habits."""
+    HEALTH = "health"
+    PRODUCTIVITY = "productivity"
+    MINDFULNESS = "mindfulness"
+    FITNESS = "fitness"
+    LEARNING = "learning"
+    OTHER = "other"
+
+
 class Priority(str, Enum):
     """Priority levels for tasks."""
     LOW = "low"
@@ -81,6 +91,7 @@ class Habit:
     target_value: float = 0.0
     target_type: str = "at_least"
     archived: bool = False
+    category: str = HabitCategory.OTHER.value
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
     
@@ -108,6 +119,7 @@ class Habit:
             "target_value": self.target_value,
             "target_type": self.target_type,
             "archived": self.archived,
+            "category": self.category,
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "updated_at": self.updated_at.isoformat() if self.updated_at else None,
         }
@@ -139,6 +151,7 @@ class Habit:
             target_value=data.get("target_value", 0.0),
             target_type=data.get("target_type", "at_least"),
             archived=data.get("archived", False),
+            category=data.get("category", HabitCategory.OTHER.value),
             created_at=created_at,
             updated_at=updated_at,
         )
@@ -591,6 +604,7 @@ __all__ = [
     # Enums
     "FrequencyType",
     "HabitType",
+    "HabitCategory",
     "Priority",
     "TransactionType",
     "Mood",

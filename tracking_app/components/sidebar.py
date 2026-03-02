@@ -9,6 +9,20 @@ Usage:
 import streamlit as st
 from datetime import datetime
 from typing import Optional
+import os
+
+
+def _render_nav_link(label: str, page_file: str):
+    """
+    Render a navigation link using link_button for universal compatibility.
+    
+    Args:
+        label: Display label for the link
+        page_file: Page filename without extension
+    """
+    # Use link_button which works in both multi-page and standalone contexts
+    # The href points to the page route
+    st.link_button(label, f"/{page_file}", use_container_width=True)
 
 
 def render_sidebar(show_streak_freeze: bool = False):
@@ -78,7 +92,7 @@ def render_sidebar(show_streak_freeze: bool = False):
         ]
         
         for page_name, page_file in tracking_pages:
-            st.page_link(f"pages/{page_file}.py", label=page_name)
+            _render_nav_link(page_name, page_file)
         
         st.divider()
         
@@ -93,7 +107,7 @@ def render_sidebar(show_streak_freeze: bool = False):
         ]
         
         for page_name, page_file in data_pages:
-            st.page_link(f"pages/{page_file}.py", label=page_name)
+            _render_nav_link(page_name, page_file)
         
         st.divider()
         
@@ -108,7 +122,7 @@ def render_sidebar(show_streak_freeze: bool = False):
         ]
         
         for page_name, page_file in notification_pages:
-            st.page_link(f"pages/{page_file}.py", label=page_name)
+            _render_nav_link(page_name, page_file)
         
         st.divider()
         

@@ -148,7 +148,7 @@ def _render_plan_intro(
 
     # Option to create custom plan
     with st.expander("✏️ Create Custom Plan"):
-        _render_custom_plan_form(manager, on_plan_created)
+        _render_custom_plan_form(manager, on_plan_created, habit_id)
 
 
 def _render_template_card(
@@ -211,7 +211,8 @@ def _render_template_card(
 
 def _render_custom_plan_form(
     manager: RelapsePlanManager,
-    on_plan_created: Optional[Callable] = None
+    on_plan_created: Optional[Callable] = None,
+    habit_id: Optional[str] = None
 ) -> None:
     """
     Render custom plan creation form.
@@ -219,8 +220,10 @@ def _render_custom_plan_form(
     Args:
         manager: RelapsePlanManager instance
         on_plan_created: Optional callback
+        habit_id: Optional habit ID for unique form key
     """
-    with st.form("custom_plan_form"):
+    form_key = f"custom_plan_form_{habit_id}" if habit_id else "custom_plan_form"
+    with st.form(form_key):
         # Category selection
         category = st.selectbox(
             "Plan Category",
@@ -566,7 +569,8 @@ def _render_plan_usage_history(
     st.markdown("**📜 Recent Plan Usage**")
 
     for usage in usage_history[:5]:
-        used_date = usage.used_at[:10] if hasattr(usage.used_at, '__str__') else str(usage.used_at)[:10]
+        used_at_str = str(usage.used_at)
+        used_date = used_at_str[:10]
 
         with st.container():
             col1, col2 = st.columns([4, 1])
