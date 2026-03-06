@@ -44,6 +44,13 @@ from brain.analysis.burnout import (
     BurnoutRisk,
     BurnoutMonitor
 )
+from brain.analysis.time_views import (
+    TimeViewsProcessor,
+    CalendarProcessor,
+    DayData,
+    WeekData,
+    MonthData,
+)
 
 __all__ = [
     # Correlation
@@ -62,6 +69,13 @@ __all__ = [
     'BurnoutIndicators',
     'BurnoutRisk',
     'BurnoutMonitor',
+    
+    # Time Views
+    'TimeViewsProcessor',
+    'CalendarProcessor',
+    'DayData',
+    'WeekData',
+    'MonthData',
 ]
 
 __version__ = '1.0.0'
