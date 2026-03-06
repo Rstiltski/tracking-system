@@ -1,6 +1,20 @@
 """
 Phase 3: The Nervous System - Event Bus
 
+## 🔗 Neural Synapse
+
+**Rule IDs:** EVENT_001-005  
+**Core File:** [CORE_RULES.md](./CORE_RULES.md)  
+**Neural Hub:** [NEURAL_HUB.md](./NEURAL_HUB.md)
+
+| Connection | Target | Purpose |
+|------------|--------|---------|
+| Motor | [core/brain.py](./core/brain.py) | Command execution |
+| Logic | [rules/schema.py](./rules/schema.py) | Rule definitions |
+| Event | [brains/](./brains/) | Specialized brains |
+
+---
+
 The Nervous System is the ONLY way the 3 Brains communicate with each other.
 
 Rules:

@@ -11,13 +11,21 @@ const Health = {
 
     // Bind event listeners
     bindEvents() {
-        document.getElementById('addHealthBtn')?.addEventListener('click', () => {
-            this.showAddModal();
-        });
+        const addHealthBtn = document.getElementById('addHealthBtn');
+        if (addHealthBtn) {
+            const newBtn = addHealthBtn.cloneNode(true);
+            addHealthBtn.parentNode.replaceChild(newBtn, addHealthBtn);
+            newBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.showAddModal();
+            });
+        }
 
-        // Mood selector
-        document.querySelectorAll('.mood-btn').forEach(btn => {
+        // Mood selector - only bind once
+        document.querySelectorAll('.mood-btn:not([data-bound])').forEach(btn => {
+            btn.setAttribute('data-bound', 'true');
             btn.addEventListener('click', (e) => {
+                e.preventDefault();
                 const mood = parseInt(e.target.dataset.mood);
                 this.logMood(mood);
             });

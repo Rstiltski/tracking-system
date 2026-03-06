@@ -58,8 +58,10 @@ const App = {
         document.querySelectorAll('.nav-link').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
+                e.stopPropagation();
                 const view = link.dataset.view;
                 this.navigateTo(view);
+                return false;
             });
         });
     },
@@ -141,13 +143,19 @@ const App = {
 
     // Setup view toggle (daily/weekly/monthly)
     setupViewToggle() {
-        document.querySelectorAll('.view-toggle .view-btn').forEach(btn => {
+        // Fixed selector to match actual HTML class "view-toggle-btn"
+        document.querySelectorAll('.view-toggle-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                document.querySelectorAll('.view-toggle .view-btn').forEach(b => b.classList.remove('active'));
-                e.target.classList.add('active');
+                e.preventDefault();
+                document.querySelectorAll('.view-toggle-btn').forEach(b => {
+                    b.classList.remove('active', 'bg-gray-700', 'text-white', 'shadow');
+                    b.classList.add('text-gray-400');
+                });
+                e.target.classList.add('active', 'bg-gray-700', 'text-white', 'shadow');
+                e.target.classList.remove('text-gray-400');
 
                 // Get the selected view type
-                const viewType = e.target.dataset.viewType;
+                const viewType = e.target.textContent.toLowerCase();
 
                 // Update dashboard based on view type
                 this.updateDashboardForView(viewType);
@@ -305,11 +313,18 @@ const App = {
 
     // Navigate to a view
     navigateTo(view) {
-        // Update nav items
+        // Update nav items - apply active state directly to nav-link
         document.querySelectorAll('.nav-link').forEach(link => {
-            const parentLi = link.closest('.nav-item');
-            if (parentLi) {
-                parentLi.classList.toggle('active', link.dataset.view === view);
+            if (link.dataset.view === view) {
+                link.classList.add('active');
+                link.style.borderRightColor = 'var(--neon-emerald)';
+                link.style.color = 'white';
+                link.style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
+            } else {
+                link.classList.remove('active');
+                link.style.borderRightColor = 'transparent';
+                link.style.color = '';
+                link.style.backgroundColor = '';
             }
         });
 
@@ -393,8 +408,11 @@ const App = {
         if (modalBody) modalBody.innerHTML = content.body || '';
         if (modalFooter) modalFooter.innerHTML = content.footer || '';
 
-        modalOverlay?.classList.add('active');
-        modalOverlay?.setAttribute('aria-hidden', 'false');
+        if (modalOverlay) {
+            modalOverlay.style.display = 'flex';
+            modalOverlay.classList.add('active');
+            modalOverlay.setAttribute('aria-hidden', 'false');
+        }
         document.body.style.overflow = 'hidden';
         
         // Focus on the modal for accessibility
@@ -407,8 +425,11 @@ const App = {
     // Close modal
     closeModal() {
         const modalOverlay = document.getElementById('modalOverlay');
-        modalOverlay?.classList.remove('active');
-        modalOverlay?.setAttribute('aria-hidden', 'true');
+        if (modalOverlay) {
+            modalOverlay.style.display = 'none';
+            modalOverlay.classList.remove('active');
+            modalOverlay.setAttribute('aria-hidden', 'true');
+        }
         document.body.style.overflow = '';
         
         // Return focus to the trigger element if possible

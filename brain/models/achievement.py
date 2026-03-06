@@ -321,6 +321,246 @@ DEFAULT_ACHIEVEMENTS: List[Achievement] = [
         requirement="Early completion",
         requirement_data={"type": "early_bird", "value": 7}
     ),
+    
+    # Phase 7.2: New Achievements
+    
+    # Consistency achievements (Unbreakable series)
+    Achievement(
+        id="achieve_unbreakable_7",
+        name="Unbreakable Week",
+        description="Don't miss a single day for 7 days straight",
+        category=AchievementCategory.CONSISTENCY,
+        tier=AchievementTier.BRONZE,
+        icon="🛡️",
+        xp_reward=75,
+        requirement="7 days without missing",
+        requirement_data={"type": "streak_days", "value": 7}
+    ),
+    Achievement(
+        id="achieve_unbreakable_14",
+        name="Unbreakable Fortnight",
+        description="Don't miss a single day for 14 days straight",
+        category=AchievementCategory.CONSISTENCY,
+        tier=AchievementTier.SILVER,
+        icon="🏰",
+        xp_reward=150,
+        requirement="14 days without missing",
+        requirement_data={"type": "streak_days", "value": 14}
+    ),
+    Achievement(
+        id="achieve_unbreakable_30",
+        name="Unbreakable Month",
+        description="Don't miss a single day for 30 days straight",
+        category=AchievementCategory.CONSISTENCY,
+        tier=AchievementTier.GOLD,
+        icon="🏯",
+        xp_reward=350,
+        requirement="30 days without missing",
+        requirement_data={"type": "streak_days", "value": 30}
+    ),
+    
+    # Variety achievements (Renaissance)
+    Achievement(
+        id="achieve_variety_5",
+        name="Renaissance Beginner",
+        description="Track 5 different habits simultaneously",
+        category=AchievementCategory.SPECIAL,
+        tier=AchievementTier.BRONZE,
+        icon="🎨",
+        xp_reward=100,
+        requirement="Track 5 habits",
+        requirement_data={"type": "total_habits", "value": 5}
+    ),
+    Achievement(
+        id="achieve_variety_10",
+        name="Renaissance Enthusiast",
+        description="Track 10 different habits simultaneously",
+        category=AchievementCategory.SPECIAL,
+        tier=AchievementTier.SILVER,
+        icon="🎭",
+        xp_reward=250,
+        requirement="Track 10 habits",
+        requirement_data={"type": "total_habits", "value": 10}
+    ),
+    Achievement(
+        id="achieve_variety_15",
+        name="Renaissance Master",
+        description="Track 15 different habits simultaneously",
+        category=AchievementCategory.SPECIAL,
+        tier=AchievementTier.GOLD,
+        icon="🎪",
+        xp_reward=500,
+        requirement="Track 15 habits",
+        requirement_data={"type": "total_habits", "value": 15}
+    ),
+    
+    # Dawn Patrol series (Early Bird expanded)
+    Achievement(
+        id="achieve_dawn_patrol_10",
+        name="Dawn Patrol",
+        description="Complete habits before 6 AM 10 times",
+        category=AchievementCategory.SPECIAL,
+        tier=AchievementTier.BRONZE,
+        icon="🌤️",
+        xp_reward=75,
+        requirement="10 early completions",
+        requirement_data={"type": "early_completions", "value": 10}
+    ),
+    Achievement(
+        id="achieve_dawn_patrol_25",
+        name="Early Riser",
+        description="Complete habits before 6 AM 25 times",
+        category=AchievementCategory.SPECIAL,
+        tier=AchievementTier.SILVER,
+        icon="🌄",
+        xp_reward=175,
+        requirement="25 early completions",
+        requirement_data={"type": "early_completions", "value": 25}
+    ),
+    Achievement(
+        id="achieve_dawn_patrol_50",
+        name="Morning Champion",
+        description="Complete habits before 6 AM 50 times",
+        category=AchievementCategory.SPECIAL,
+        tier=AchievementTier.GOLD,
+        icon="☀️",
+        xp_reward=400,
+        requirement="50 early completions",
+        requirement_data={"type": "early_completions", "value": 50}
+    ),
+    
+    # Midnight Oil series (Night Owl)
+    Achievement(
+        id="achieve_night_owl_10",
+        name="Night Owl",
+        description="Complete habits after 10 PM 10 times",
+        category=AchievementCategory.SPECIAL,
+        tier=AchievementTier.BRONZE,
+        icon="🌙",
+        xp_reward=75,
+        requirement="10 late completions",
+        requirement_data={"type": "late_completions", "value": 10}
+    ),
+    Achievement(
+        id="achieve_night_owl_25",
+        name="Midnight Worker",
+        description="Complete habits after 10 PM 25 times",
+        category=AchievementCategory.SPECIAL,
+        tier=AchievementTier.SILVER,
+        icon="🦉",
+        xp_reward=175,
+        requirement="25 late completions",
+        requirement_data={"type": "late_completions", "value": 25}
+    ),
+    Achievement(
+        id="achieve_night_owl_50",
+        name="Nocturnal Legend",
+        description="Complete habits after 10 PM 50 times",
+        category=AchievementCategory.SPECIAL,
+        tier=AchievementTier.GOLD,
+        icon="🌟",
+        xp_reward=400,
+        requirement="50 late completions",
+        requirement_data={"type": "late_completions", "value": 50}
+    ),
+    
+    # Flawless series (Perfectionist)
+    Achievement(
+        id="achieve_flawless_week",
+        name="Flawless Week",
+        description="100% completion rate for a week",
+        category=AchievementCategory.CONSISTENCY,
+        tier=AchievementTier.SILVER,
+        icon="💎",
+        xp_reward=200,
+        requirement="100% weekly completion",
+        requirement_data={"type": "perfect_weeks", "value": 1}
+    ),
+    Achievement(
+        id="achieve_flawless_month",
+        name="Flawless Month",
+        description="100% completion rate for a month",
+        category=AchievementCategory.CONSISTENCY,
+        tier=AchievementTier.PLATINUM,
+        icon="💫",
+        xp_reward=750,
+        requirement="100% monthly completion",
+        requirement_data={"type": "perfect_months", "value": 1}
+    ),
+    
+    # Resilient series (Comeback expanded)
+    Achievement(
+        id="achieve_resilient",
+        name="Resilient Soul",
+        description="Recover from 0% to 80% score",
+        category=AchievementCategory.COMEBACK,
+        tier=AchievementTier.SILVER,
+        icon="💪",
+        xp_reward=200,
+        requirement="Score recovery 0% to 80%",
+        requirement_data={"type": "comeback", "value": 80}
+    ),
+    
+    # Quantified Self series (Data Enthusiast)
+    Achievement(
+        id="achieve_data_100",
+        name="Data Enthusiast",
+        description="Log 100 habit entries",
+        category=AchievementCategory.SPECIAL,
+        tier=AchievementTier.BRONZE,
+        icon="📊",
+        xp_reward=100,
+        requirement="100 entries logged",
+        requirement_data={"type": "total_completions", "value": 100}
+    ),
+    Achievement(
+        id="achieve_data_500",
+        name="Data Scientist",
+        description="Log 500 habit entries",
+        category=AchievementCategory.SPECIAL,
+        tier=AchievementTier.SILVER,
+        icon="📈",
+        xp_reward=300,
+        requirement="500 entries logged",
+        requirement_data={"type": "total_completions", "value": 500}
+    ),
+    Achievement(
+        id="achieve_data_1000",
+        name="Quantified Self Master",
+        description="Log 1000 habit entries",
+        category=AchievementCategory.SPECIAL,
+        tier=AchievementTier.GOLD,
+        icon="🏆",
+        xp_reward=600,
+        requirement="1000 entries logged",
+        requirement_data={"type": "total_completions", "value": 1000}
+    ),
+    
+    # Hidden/Secret achievements
+    Achievement(
+        id="achieve_streak_freeze",
+        name="Frozen in Time",
+        description="Use a streak freeze to save your streak",
+        category=AchievementCategory.SPECIAL,
+        tier=AchievementTier.BRONZE,
+        icon="🧊",
+        xp_reward=50,
+        requirement="Use streak freeze",
+        requirement_data={"type": "streak_freeze_used", "value": 1},
+        is_hidden=True
+    ),
+    Achievement(
+        id="achieve_weekend_warrior",
+        name="Weekend Warrior",
+        description="Complete all habits on both Saturday and Sunday for 4 weekends",
+        category=AchievementCategory.CONSISTENCY,
+        tier=AchievementTier.SILVER,
+        icon="🎊",
+        xp_reward=200,
+        requirement="4 perfect weekends",
+        requirement_data={"type": "perfect_weekends", "value": 4},
+        is_hidden=True
+    ),
 ]
 
 

@@ -97,13 +97,22 @@ const Habits = {
     // Bind event listeners
     bindEvents() {
         // Add habit button
-        document.getElementById('addHabitBtn')?.addEventListener('click', () => {
-            this.showAddModal();
-        });
+        const addHabitBtn = document.getElementById('addHabitBtn');
+        if (addHabitBtn) {
+            // Remove any existing listener by cloning
+            const newAddBtn = addHabitBtn.cloneNode(true);
+            addHabitBtn.parentNode.replaceChild(newAddBtn, addHabitBtn);
+            newAddBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.showAddModal();
+            });
+        }
 
-        // View mode toggle buttons
-        document.querySelectorAll('.view-mode-btn').forEach(btn => {
+        // View mode toggle buttons - only bind once
+        document.querySelectorAll('.view-mode-btn:not([data-bound])').forEach(btn => {
+            btn.setAttribute('data-bound', 'true');
             btn.addEventListener('click', (e) => {
+                e.preventDefault();
                 document.querySelectorAll('.view-mode-btn').forEach(b => {
                     b.classList.remove('active');
                     b.classList.add('bg-gray-800', 'text-gray-400');
@@ -115,9 +124,11 @@ const Habits = {
             });
         });
 
-        // Period mode toggle (week/month)
-        document.querySelectorAll('.period-mode-btn').forEach(btn => {
+        // Period mode toggle (week/month) - only bind once
+        document.querySelectorAll('.period-mode-btn:not([data-bound])').forEach(btn => {
+            btn.setAttribute('data-bound', 'true');
             btn.addEventListener('click', (e) => {
+                e.preventDefault();
                 document.querySelectorAll('.period-mode-btn').forEach(b => {
                     b.classList.remove('active', 'bg-emerald-600', 'text-white');
                     b.classList.add('bg-gray-800', 'text-gray-400');
@@ -374,7 +385,14 @@ const Habits = {
 
     // Bind navigation events
     bindNavigationEvents() {
-        document.getElementById('prevPeriodBtn')?.addEventListener('click', () => {
+        const prevPeriodBtn = document.getElementById('prevPeriodBtn');
+        const nextPeriodBtn = document.getElementById('nextPeriodBtn');
+        const todayBtn = document.getElementById('todayBtn');
+        const prevYearBtn = document.getElementById('prevYearBtn');
+        const nextYearBtn = document.getElementById('nextYearBtn');
+
+        prevPeriodBtn?.addEventListener('click', (e) => {
+            e.preventDefault();
             if (this.currentPeriodMode === 'week') {
                 this.currentWeekOffset--;
             } else {
@@ -383,7 +401,8 @@ const Habits = {
             this.render();
         });
 
-        document.getElementById('nextPeriodBtn')?.addEventListener('click', () => {
+        nextPeriodBtn?.addEventListener('click', (e) => {
+            e.preventDefault();
             if (this.currentPeriodMode === 'week') {
                 this.currentWeekOffset++;
             } else {
@@ -392,14 +411,16 @@ const Habits = {
             this.render();
         });
 
-        document.getElementById('todayBtn')?.addEventListener('click', () => {
+        todayBtn?.addEventListener('click', (e) => {
+            e.preventDefault();
             this.currentWeekOffset = 0;
             this.currentMonthOffset = 0;
             this.render();
             setTimeout(() => this.scrollToCurrentDay(), 100);
         });
 
-        document.getElementById('prevYearBtn')?.addEventListener('click', () => {
+        prevYearBtn?.addEventListener('click', (e) => {
+            e.preventDefault();
             if (this.currentPeriodMode === 'week') {
                 this.currentWeekOffset -= 52;
             } else {
@@ -408,7 +429,8 @@ const Habits = {
             this.render();
         });
 
-        document.getElementById('nextYearBtn')?.addEventListener('click', () => {
+        nextYearBtn?.addEventListener('click', (e) => {
+            e.preventDefault();
             if (this.currentPeriodMode === 'week') {
                 this.currentWeekOffset += 52;
             } else {
@@ -417,9 +439,11 @@ const Habits = {
             this.render();
         });
 
-        // Period mode toggle
-        document.querySelectorAll('.period-mode-btn').forEach(btn => {
+        // Period mode toggle - use data-bound to prevent duplicate bindings
+        document.querySelectorAll('.period-mode-btn:not([data-nav-bound])').forEach(btn => {
+            btn.setAttribute('data-nav-bound', 'true');
             btn.addEventListener('click', (e) => {
+                e.preventDefault();
                 document.querySelectorAll('.period-mode-btn').forEach(b => {
                     b.classList.remove('active', 'bg-emerald-600', 'text-white');
                     b.classList.add('bg-gray-800', 'text-gray-400');

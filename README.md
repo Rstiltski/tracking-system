@@ -4,6 +4,21 @@
 
 ---
 
+## 🔗 Neural Synapse
+
+**Rule IDs:** DOC_005  
+**Core File:** [brain/CORE_RULES.md](brain/CORE_RULES.md)  
+**Neural Hub:** [brain/NEURAL_HUB.md](brain/NEURAL_HUB.md)  
+**Event Bus:** [brain/nervous_system.py](brain/nervous_system.py)
+
+| Connection | Target | Purpose |
+|------------|--------|---------|
+| Motor | [brain/CORE_RULES.md](brain/CORE_RULES.md) | Rule registry |
+| Rules | [PROJECT_RULES.md](PROJECT_RULES.md) | Development guidelines |
+| Patterns | [patterns/](patterns/) | Code templates |
+
+---
+
 ## 🧭 Quick Navigation
 
 | Want to... | Go to... |

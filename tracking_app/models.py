@@ -599,6 +599,274 @@ class Achievement:
         )
 
 
+class DiaryMood(str, Enum):
+    """Mood options for diary entries."""
+    AMAZING = "amazing"
+    GREAT = "great"
+    GOOD = "good"
+    OKAY = "okay"
+    BAD = "bad"
+    TERRIBLE = "terrible"
+
+
+class JournalCategory(str, Enum):
+    """Categories for journal entries."""
+    REFLECTION = "reflection"
+    GRATITUDE = "gratitude"
+    IDEAS = "ideas"
+    DREAMS = "dreams"
+    GOALS = "goals"
+    MEMORIES = "memories"
+    FREE_WRITE = "free_write"
+    CUSTOM = "custom"
+
+
+@dataclass
+class DiaryEntry:
+    """
+    Represents a private diary entry.
+    
+    Attributes:
+        id: Unique identifier (UUID)
+        title: Entry title
+        content: Entry content (supports Markdown)
+        entry_date: Date of the entry
+        mood: Mood indicator
+        tags: List of tags for organization
+        is_private: Always True for diary entries
+        created_at: Creation timestamp
+        updated_at: Last update timestamp
+    """
+    id: str = ""
+    title: str = ""
+    content: str = ""
+    entry_date: date = None
+    mood: str = DiaryMood.GOOD.value
+    tags: List[str] = field(default_factory=list)
+    is_private: bool = True
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+    
+    def __post_init__(self):
+        """Set defaults after initialization."""
+        if not self.id:
+            import uuid
+            self.id = str(uuid.uuid4())
+        if self.entry_date is None:
+            self.entry_date = date.today()
+        if self.created_at is None:
+            self.created_at = datetime.now()
+        if self.updated_at is None:
+            self.updated_at = datetime.now()
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary for storage."""
+        return {
+            "id": self.id,
+            "title": self.title,
+            "content": self.content,
+            "entry_date": self.entry_date.isoformat() if self.entry_date else None,
+            "mood": self.mood,
+            "tags": json.dumps(self.tags) if self.tags else "[]",
+            "is_private": 1 if self.is_private else 0,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
+        }
+    
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "DiaryEntry":
+        """Create instance from dictionary."""
+        entry_date = data.get("entry_date")
+        if isinstance(entry_date, str):
+            entry_date = date.fromisoformat(entry_date)
+        
+        created_at = data.get("created_at")
+        if isinstance(created_at, str):
+            created_at = datetime.fromisoformat(created_at)
+        
+        updated_at = data.get("updated_at")
+        if isinstance(updated_at, str):
+            updated_at = datetime.fromisoformat(updated_at)
+        
+        tags = data.get("tags", [])
+        if isinstance(tags, str):
+            try:
+                tags = json.loads(tags)
+            except (json.JSONDecodeError, TypeError):
+                tags = []
+        
+        return cls(
+            id=data.get("id", ""),
+            title=data.get("title", ""),
+            content=data.get("content", ""),
+            entry_date=entry_date,
+            mood=data.get("mood", DiaryMood.GOOD.value),
+            tags=tags,
+            is_private=bool(data.get("is_private", 1)),
+            created_at=created_at,
+            updated_at=updated_at,
+        )
+
+
+@dataclass
+class JournalEntry:
+    """
+    Represents a journal entry.
+    
+    Attributes:
+        id: Unique identifier (UUID)
+        title: Entry title
+        content: Entry content (supports Markdown)
+        category: Category for organization
+        tags: List of tags
+        is_private: Privacy flag
+        created_at: Creation timestamp
+        updated_at: Last update timestamp
+    """
+    id: str = ""
+    title: str = ""
+    content: str = ""
+    category: str = JournalCategory.FREE_WRITE.value
+    tags: List[str] = field(default_factory=list)
+    is_private: bool = True
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+    
+    def __post_init__(self):
+        """Set defaults after initialization."""
+        if not self.id:
+            import uuid
+            self.id = str(uuid.uuid4())
+        if self.created_at is None:
+            self.created_at = datetime.now()
+        if self.updated_at is None:
+            self.updated_at = datetime.now()
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary for storage."""
+        return {
+            "id": self.id,
+            "title": self.title,
+            "content": self.content,
+            "category": self.category,
+            "tags": json.dumps(self.tags) if self.tags else "[]",
+            "is_private": 1 if self.is_private else 0,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
+        }
+    
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "JournalEntry":
+        """Create instance from dictionary."""
+        created_at = data.get("created_at")
+        if isinstance(created_at, str):
+            created_at = datetime.fromisoformat(created_at)
+        
+        updated_at = data.get("updated_at")
+        if isinstance(updated_at, str):
+            updated_at = datetime.fromisoformat(updated_at)
+        
+        tags = data.get("tags", [])
+        if isinstance(tags, str):
+            try:
+                tags = json.loads(tags)
+            except (json.JSONDecodeError, TypeError):
+                tags = []
+        
+        return cls(
+            id=data.get("id", ""),
+            title=data.get("title", ""),
+            content=data.get("content", ""),
+            category=data.get("category", JournalCategory.FREE_WRITE.value),
+            tags=tags,
+            is_private=bool(data.get("is_private", 1)),
+            created_at=created_at,
+            updated_at=updated_at,
+        )
+
+
+@dataclass
+class PrivateTodo:
+    """
+    Represents a private todo item.
+    
+    Attributes:
+        id: Unique identifier (UUID)
+        title: Todo title
+        description: Optional description
+        priority: Priority level (low, medium, high)
+        due_date: Due date (optional)
+        completed: Whether todo is completed
+        category: Category for organization
+        is_private: Always True for private todos
+        created_at: Creation timestamp
+        updated_at: Last update timestamp
+    """
+    id: str = ""
+    title: str = ""
+    description: str = ""
+    priority: str = Priority.MEDIUM.value
+    due_date: Optional[datetime] = None
+    completed: bool = False
+    category: str = ""
+    is_private: bool = True
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+    
+    def __post_init__(self):
+        """Set defaults after initialization."""
+        if not self.id:
+            import uuid
+            self.id = str(uuid.uuid4())
+        if self.created_at is None:
+            self.created_at = datetime.now()
+        if self.updated_at is None:
+            self.updated_at = datetime.now()
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary for storage."""
+        return {
+            "id": self.id,
+            "title": self.title,
+            "description": self.description,
+            "priority": self.priority,
+            "due_date": self.due_date.isoformat() if self.due_date else None,
+            "completed": 1 if self.completed else 0,
+            "category": self.category,
+            "is_private": 1 if self.is_private else 0,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
+        }
+    
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "PrivateTodo":
+        """Create instance from dictionary."""
+        due_date = data.get("due_date")
+        if isinstance(due_date, str):
+            due_date = datetime.fromisoformat(due_date)
+        
+        created_at = data.get("created_at")
+        if isinstance(created_at, str):
+            created_at = datetime.fromisoformat(created_at)
+        
+        updated_at = data.get("updated_at")
+        if isinstance(updated_at, str):
+            updated_at = datetime.fromisoformat(updated_at)
+        
+        return cls(
+            id=data.get("id", ""),
+            title=data.get("title", ""),
+            description=data.get("description", ""),
+            priority=data.get("priority", Priority.MEDIUM.value),
+            due_date=due_date,
+            completed=bool(data.get("completed", 0)),
+            category=data.get("category", ""),
+            is_private=bool(data.get("is_private", 1)),
+            created_at=created_at,
+            updated_at=updated_at,
+        )
+
+
 # Export all models
 __all__ = [
     # Enums
@@ -608,6 +876,8 @@ __all__ = [
     "Priority",
     "TransactionType",
     "Mood",
+    "DiaryMood",
+    "JournalCategory",
     # Models
     "Habit",
     "HabitEntry",
@@ -616,4 +886,7 @@ __all__ = [
     "HealthEntry",
     "Goal",
     "Achievement",
+    "DiaryEntry",
+    "JournalEntry",
+    "PrivateTodo",
 ]

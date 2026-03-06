@@ -12,191 +12,314 @@ XP_INCREMENT_PER_LEVEL = 150
 
 # Achievement categories
 ACHIEVEMENT_CATEGORIES = {
+    "streak": "🔥 Streak",
+    "score": "📈 Score",
+    "consistency": "✨ Consistency",
+    "comeback": "🦅 Comeback",
+    "mastery": "🧘 Mastery",
+    "special": "🌟 Special",
     "habits": "🎯 Habits",
     "tasks": "📋 Tasks",
     "goals": "🎯 Goals",
     "finances": "💰 Finances",
     "health": "❤️ Health",
     "milestone": "⭐ Milestones",
-    "special": "🌟 Special",
 }
 
-# Default achievements
+# Default achievements (Phase 7.2 Enhanced - 29 total achievements)
 DEFAULT_ACHIEVEMENTS: List[Dict] = [
-    # Habits achievements
+    # Streak achievements
     {
-        "id": "first_habit",
-        "name": "First Steps",
-        "description": "Create your first habit",
-        "icon": "🎯",
-        "xp_reward": 10,
-        "category": "habits"
-    },
-    {
-        "id": "habit_streak_7",
+        "id": "achieve_streak_7",
         "name": "Week Warrior",
-        "description": "Maintain a 7-day habit streak",
+        "description": "Maintain a 7-day streak",
         "icon": "🔥",
-        "xp_reward": 25,
-        "category": "habits"
+        "xp_reward": 50,
+        "category": "streak",
+        "tier": "bronze"
     },
     {
-        "id": "habit_streak_30",
-        "name": "Monthly Master",
-        "description": "Maintain a 30-day habit streak",
+        "id": "achieve_streak_30",
+        "name": "Month Master",
+        "description": "Maintain a 30-day streak",
         "icon": "🌟",
-        "xp_reward": 100,
-        "category": "habits"
+        "xp_reward": 150,
+        "category": "streak",
+        "tier": "silver"
     },
     {
-        "id": "habit_streak_100",
-        "name": "Century Club",
-        "description": "Maintain a 100-day habit streak",
-        "icon": "💎",
-        "xp_reward": 500,
-        "category": "habits"
-    },
-    # Tasks achievements
-    {
-        "id": "first_task",
-        "name": "Getting Things Done",
-        "description": "Complete your first task",
-        "icon": "✅",
-        "xp_reward": 5,
-        "category": "tasks"
-    },
-    {
-        "id": "tasks_10",
-        "name": "Productivity Starter",
-        "description": "Complete 10 tasks",
-        "icon": "📋",
-        "xp_reward": 20,
-        "category": "tasks"
-    },
-    {
-        "id": "tasks_50",
-        "name": "Task Master",
-        "description": "Complete 50 tasks",
-        "icon": "🎖️",
-        "xp_reward": 50,
-        "category": "tasks"
-    },
-    {
-        "id": "tasks_100",
-        "name": "Productivity Pro",
-        "description": "Complete 100 tasks",
-        "icon": "🏅",
-        "xp_reward": 100,
-        "category": "tasks"
-    },
-    # Goals achievements
-    {
-        "id": "first_goal",
-        "name": "Dream Big",
-        "description": "Set your first goal",
-        "icon": "🎯",
-        "xp_reward": 10,
-        "category": "goals"
-    },
-    {
-        "id": "goal_complete",
-        "name": "Achiever",
-        "description": "Complete a goal",
-        "icon": "🏆",
-        "xp_reward": 50,
-        "category": "goals"
-    },
-    {
-        "id": "goals_5",
-        "name": "Goal Getter",
-        "description": "Complete 5 goals",
-        "icon": "⭐",
-        "xp_reward": 100,
-        "category": "goals"
-    },
-    # Finances achievements
-    {
-        "id": "first_transaction",
-        "name": "Financial Awareness",
-        "description": "Log your first transaction",
-        "icon": "💰",
-        "xp_reward": 5,
-        "category": "finances"
-    },
-    {
-        "id": "transactions_30",
-        "name": "Budget Tracker",
-        "description": "Log 30 transactions",
-        "icon": "📊",
-        "xp_reward": 30,
-        "category": "finances"
-    },
-    # Health achievements
-    {
-        "id": "first_health",
-        "name": "Health Conscious",
-        "description": "Log your first health entry",
-        "icon": "❤️",
-        "xp_reward": 5,
-        "category": "health"
-    },
-    {
-        "id": "health_7",
-        "name": "Week of Wellness",
-        "description": "Log health entries for 7 days",
-        "icon": "💪",
-        "xp_reward": 25,
-        "category": "health"
-    },
-    # Milestone achievements
-    {
-        "id": "level_5",
-        "name": "Rising Star",
-        "description": "Reach Level 5",
-        "icon": "⭐",
-        "xp_reward": 50,
-        "category": "milestone"
-    },
-    {
-        "id": "level_10",
-        "name": "Dedicated Tracker",
-        "description": "Reach Level 10",
-        "icon": "🌟",
-        "xp_reward": 100,
-        "category": "milestone"
-    },
-    {
-        "id": "level_25",
-        "name": "Tracking Champion",
-        "description": "Reach Level 25",
+        "id": "achieve_streak_90",
+        "name": "Quarter Queen/King",
+        "description": "Maintain a 90-day streak",
         "icon": "👑",
-        "xp_reward": 250,
-        "category": "milestone"
+        "xp_reward": 400,
+        "category": "streak",
+        "tier": "gold"
     },
     {
-        "id": "level_50",
-        "name": "Legendary Tracker",
-        "description": "Reach Level 50",
-        "icon": "🐉",
-        "xp_reward": 500,
-        "category": "milestone"
+        "id": "achieve_streak_365",
+        "name": "Yearly Legend",
+        "description": "Maintain a 365-day streak",
+        "icon": "🏆",
+        "xp_reward": 1000,
+        "category": "streak",
+        "tier": "diamond"
     },
+    
+    # Score achievements
+    {
+        "id": "achieve_score_90",
+        "name": "High Achiever",
+        "description": "Maintain 90%+ score for 7 days",
+        "icon": "📈",
+        "xp_reward": 100,
+        "category": "score",
+        "tier": "silver"
+    },
+    
+    # Consistency achievements (Unbreakable series)
+    {
+        "id": "achieve_unbreakable_7",
+        "name": "Unbreakable Week",
+        "description": "Don't miss a single day for 7 days straight",
+        "icon": "🛡️",
+        "xp_reward": 75,
+        "category": "consistency",
+        "tier": "bronze"
+    },
+    {
+        "id": "achieve_unbreakable_14",
+        "name": "Unbreakable Fortnight",
+        "description": "Don't miss a single day for 14 days straight",
+        "icon": "🏰",
+        "xp_reward": 150,
+        "category": "consistency",
+        "tier": "silver"
+    },
+    {
+        "id": "achieve_unbreakable_30",
+        "name": "Unbreakable Month",
+        "description": "Don't miss a single day for 30 days straight",
+        "icon": "🏯",
+        "xp_reward": 350,
+        "category": "consistency",
+        "tier": "gold"
+    },
+    {
+        "id": "achieve_perfect_week",
+        "name": "Perfect Week",
+        "description": "Complete all habits for 7 days",
+        "icon": "✨",
+        "xp_reward": 300,
+        "category": "consistency",
+        "tier": "gold"
+    },
+    {
+        "id": "achieve_flawless_week",
+        "name": "Flawless Week",
+        "description": "100% completion rate for a week",
+        "icon": "💎",
+        "xp_reward": 200,
+        "category": "consistency",
+        "tier": "silver"
+    },
+    {
+        "id": "achieve_flawless_month",
+        "name": "Flawless Month",
+        "description": "100% completion rate for a month",
+        "icon": "💫",
+        "xp_reward": 750,
+        "category": "consistency",
+        "tier": "platinum"
+    },
+    
+    # Comeback achievements
+    {
+        "id": "achieve_comeback",
+        "name": "Phoenix Rising",
+        "description": "Rebuild a streak after breaking it",
+        "icon": "🦅",
+        "xp_reward": 200,
+        "category": "comeback",
+        "tier": "silver"
+    },
+    {
+        "id": "achieve_resilient",
+        "name": "Resilient Soul",
+        "description": "Recover from 0% to 80% score",
+        "icon": "💪",
+        "xp_reward": 200,
+        "category": "comeback",
+        "tier": "silver"
+    },
+    
+    # Mastery achievements
+    {
+        "id": "achieve_mastery",
+        "name": "Habit Master",
+        "description": "Reach automaticity score of 6+",
+        "icon": "🧘",
+        "xp_reward": 500,
+        "category": "mastery",
+        "tier": "platinum"
+    },
+    
     # Special achievements
     {
-        "id": "early_bird",
-        "name": "Early Bird",
-        "description": "Complete a habit before 8 AM",
-        "icon": "🌅",
-        "xp_reward": 15,
-        "category": "special"
+        "id": "achieve_first_habit",
+        "name": "First Step",
+        "description": "Create your first habit",
+        "icon": "🌱",
+        "xp_reward": 25,
+        "category": "special",
+        "tier": "bronze"
     },
     {
-        "id": "night_owl",
+        "id": "achieve_early_adopter",
+        "name": "Early Bird",
+        "description": "Complete a habit before 7 AM",
+        "icon": "🌅",
+        "xp_reward": 50,
+        "category": "special",
+        "tier": "bronze"
+    },
+    
+    # Variety achievements (Renaissance)
+    {
+        "id": "achieve_variety_5",
+        "name": "Renaissance Beginner",
+        "description": "Track 5 different habits simultaneously",
+        "icon": "🎨",
+        "xp_reward": 100,
+        "category": "special",
+        "tier": "bronze"
+    },
+    {
+        "id": "achieve_variety_10",
+        "name": "Renaissance Enthusiast",
+        "description": "Track 10 different habits simultaneously",
+        "icon": "🎭",
+        "xp_reward": 250,
+        "category": "special",
+        "tier": "silver"
+    },
+    {
+        "id": "achieve_variety_15",
+        "name": "Renaissance Master",
+        "description": "Track 15 different habits simultaneously",
+        "icon": "🎪",
+        "xp_reward": 500,
+        "category": "special",
+        "tier": "gold"
+    },
+    
+    # Dawn Patrol series (Early Bird expanded)
+    {
+        "id": "achieve_dawn_patrol_10",
+        "name": "Dawn Patrol",
+        "description": "Complete habits before 6 AM 10 times",
+        "icon": "🌤️",
+        "xp_reward": 75,
+        "category": "special",
+        "tier": "bronze"
+    },
+    {
+        "id": "achieve_dawn_patrol_25",
+        "name": "Early Riser",
+        "description": "Complete habits before 6 AM 25 times",
+        "icon": "🌄",
+        "xp_reward": 175,
+        "category": "special",
+        "tier": "silver"
+    },
+    {
+        "id": "achieve_dawn_patrol_50",
+        "name": "Morning Champion",
+        "description": "Complete habits before 6 AM 50 times",
+        "icon": "☀️",
+        "xp_reward": 400,
+        "category": "special",
+        "tier": "gold"
+    },
+    
+    # Night Owl series
+    {
+        "id": "achieve_night_owl_10",
         "name": "Night Owl",
-        "description": "Complete a task after midnight",
+        "description": "Complete habits after 10 PM 10 times",
+        "icon": "🌙",
+        "xp_reward": 75,
+        "category": "special",
+        "tier": "bronze"
+    },
+    {
+        "id": "achieve_night_owl_25",
+        "name": "Midnight Worker",
+        "description": "Complete habits after 10 PM 25 times",
         "icon": "🦉",
-        "xp_reward": 15,
-        "category": "special"
+        "xp_reward": 175,
+        "category": "special",
+        "tier": "silver"
+    },
+    {
+        "id": "achieve_night_owl_50",
+        "name": "Nocturnal Legend",
+        "description": "Complete habits after 10 PM 50 times",
+        "icon": "🌟",
+        "xp_reward": 400,
+        "category": "special",
+        "tier": "gold"
+    },
+    
+    # Quantified Self series (Data Enthusiast)
+    {
+        "id": "achieve_data_100",
+        "name": "Data Enthusiast",
+        "description": "Log 100 habit entries",
+        "icon": "📊",
+        "xp_reward": 100,
+        "category": "special",
+        "tier": "bronze"
+    },
+    {
+        "id": "achieve_data_500",
+        "name": "Data Scientist",
+        "description": "Log 500 habit entries",
+        "icon": "📈",
+        "xp_reward": 300,
+        "category": "special",
+        "tier": "silver"
+    },
+    {
+        "id": "achieve_data_1000",
+        "name": "Quantified Self Master",
+        "description": "Log 1000 habit entries",
+        "icon": "🏆",
+        "xp_reward": 600,
+        "category": "special",
+        "tier": "gold"
+    },
+    
+    # Hidden/Secret achievements
+    {
+        "id": "achieve_streak_freeze",
+        "name": "???",
+        "description": "Hidden achievement - keep tracking to discover!",
+        "icon": "❓",
+        "xp_reward": 50,
+        "category": "special",
+        "tier": "bronze",
+        "is_hidden": True
+    },
+    {
+        "id": "achieve_weekend_warrior",
+        "name": "???",
+        "description": "Hidden achievement - keep tracking to discover!",
+        "icon": "❓",
+        "xp_reward": 200,
+        "category": "consistency",
+        "tier": "silver",
+        "is_hidden": True
     },
 ]
 
@@ -209,3 +332,21 @@ XP_TIPS = [
     ("🔥 Maintain Streaks", "+25 XP for 7-day streak"),
     ("🏆 Unlock Achievements", "Variable XP rewards"),
 ]
+
+# Tier colors for display
+TIER_COLORS = {
+    "bronze": "#CD7F32",
+    "silver": "#C0C0C0",
+    "gold": "#FFD700",
+    "platinum": "#E5E4E2",
+    "diamond": "#B9F2FF",
+}
+
+# Tier emojis for display
+TIER_EMOJIS = {
+    "bronze": "🥉",
+    "silver": "🥈",
+    "gold": "🥇",
+    "platinum": "💎",
+    "diamond": "💠",
+}

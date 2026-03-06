@@ -2384,6 +2384,407 @@ class Storage:
         return [dict(row) for row in rows]
 
 
+    # ==================== DIARY ENTRIES ====================
+
+    def get_diary_entries(
+        self,
+        start_date: Optional[date] = None,
+        end_date: Optional[date] = None,
+        mood: Optional[str] = None,
+        limit: int = 100
+    ) -> List["DiaryEntry"]:
+        """
+        Get diary entries.
+
+        Args:
+            start_date: Optional start date filter
+            end_date: Optional end date filter
+            mood: Optional mood filter
+            limit: Maximum number of entries to return
+
+        Returns:
+            List of DiaryEntry objects
+        """
+        from tracking_app.models import DiaryEntry
+
+        query = "SELECT * FROM diary_entries"
+        params = []
+        conditions = []
+
+        if start_date:
+            conditions.append("entry_date >= ?")
+            params.append(start_date.isoformat())
+        if end_date:
+            conditions.append("entry_date <= ?")
+            params.append(end_date.isoformat())
+        if mood:
+            conditions.append("mood = ?")
+            params.append(mood)
+
+        if conditions:
+            query += " WHERE " + " AND ".join(conditions)
+
+        query += " ORDER BY entry_date DESC LIMIT ?"
+        params.append(limit)
+
+        rows = self._db.fetch_all(query, tuple(params))
+        return [DiaryEntry.from_dict(row) for row in rows]
+
+    def get_diary_entry(self, entry_id: str) -> Optional["DiaryEntry"]:
+        """Get a single diary entry by ID."""
+        from tracking_app.models import DiaryEntry
+
+        row = self._db.fetch_one(
+            "SELECT * FROM diary_entries WHERE id = ?",
+            (entry_id,)
+        )
+        return DiaryEntry.from_dict(row) if row else None
+
+    def get_diary_entry_by_date(self, entry_date: date) -> Optional["DiaryEntry"]:
+        """Get diary entry for a specific date."""
+        from tracking_app.models import DiaryEntry
+
+        row = self._db.fetch_one(
+            "SELECT * FROM diary_entries WHERE entry_date = ?",
+            (entry_date.isoformat(),)
+        )
+        return DiaryEntry.from_dict(row) if row else None
+
+    def create_diary_entry(
+        self,
+        title: str,
+        content: str,
+        entry_date: Optional[date] = None,
+        mood: str = "good",
+        tags: Optional[List[str]] = None
+    ) -> "DiaryEntry":
+        """Create a new diary entry."""
+        from tracking_app.models import DiaryEntry
+
+        entry = DiaryEntry(
+            title=title,
+            content=content,
+            entry_date=entry_date,
+            mood=mood,
+            tags=tags or []
+        )
+
+        self._db.execute(
+            """INSERT INTO diary_entries
+               (id, title, content, entry_date, mood, tags, is_private, created_at, updated_at)
+               VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?)""",
+            (
+                entry.id, entry.title, entry.content,
+                entry.entry_date.isoformat() if entry.entry_date else date.today().isoformat(),
+                entry.mood, json.dumps(entry.tags),
+                entry.created_at.isoformat(), entry.updated_at.isoformat()
+            )
+        )
+
+        return entry
+
+    def update_diary_entry(self, entry_id: str, **updates) -> Optional["DiaryEntry"]:
+        """Update a diary entry."""
+        entry = self.get_diary_entry(entry_id)
+        if not entry:
+            return None
+
+        valid_fields = {'title', 'content', 'entry_date', 'mood', 'tags'}
+        update_fields = []
+        update_values = []
+
+        for field, value in updates.items():
+            if field in valid_fields:
+                update_fields.append(f"{field} = ?")
+                if field == 'entry_date' and isinstance(value, date):
+                    value = value.isoformat()
+                elif field == 'tags' and isinstance(value, list):
+                    value = json.dumps(value)
+                update_values.append(value)
+
+        if not update_fields:
+            return entry
+
+        update_fields.append("updated_at = ?")
+        update_values.append(datetime.now().isoformat())
+        update_values.append(entry_id)
+
+        self._db.execute(
+            f"UPDATE diary_entries SET {', '.join(update_fields)} WHERE id = ?",
+            tuple(update_values)
+        )
+
+        return self.get_diary_entry(entry_id)
+
+    def delete_diary_entry(self, entry_id: str) -> bool:
+        """Delete a diary entry."""
+        result = self._db.execute(
+            "DELETE FROM diary_entries WHERE id = ?",
+            (entry_id,)
+        )
+        return result.rowcount > 0
+
+    def search_diary_entries(self, query: str, limit: int = 50) -> List["DiaryEntry"]:
+        """Search diary entries by content or title."""
+        from tracking_app.models import DiaryEntry
+
+        search_term = f"%{query}%"
+        rows = self._db.fetch_all(
+            """SELECT * FROM diary_entries
+               WHERE title LIKE ? OR content LIKE ?
+               ORDER BY entry_date DESC
+               LIMIT ?""",
+            (search_term, search_term, limit)
+        )
+        return [DiaryEntry.from_dict(row) for row in rows]
+
+    # ==================== JOURNAL ENTRIES ====================
+
+    def get_journal_entries(
+        self,
+        category: Optional[str] = None,
+        limit: int = 100
+    ) -> List["JournalEntry"]:
+        """
+        Get journal entries.
+
+        Args:
+            category: Optional category filter
+            limit: Maximum number of entries to return
+
+        Returns:
+            List of JournalEntry objects
+        """
+        from tracking_app.models import JournalEntry
+
+        if category:
+            rows = self._db.fetch_all(
+                """SELECT * FROM journal_entries
+                   WHERE category = ?
+                   ORDER BY created_at DESC
+                   LIMIT ?""",
+                (category, limit)
+            )
+        else:
+            rows = self._db.fetch_all(
+                """SELECT * FROM journal_entries
+                   ORDER BY created_at DESC
+                   LIMIT ?""",
+                (limit,)
+            )
+
+        return [JournalEntry.from_dict(row) for row in rows]
+
+    def get_journal_entry(self, entry_id: str) -> Optional["JournalEntry"]:
+        """Get a single journal entry by ID."""
+        from tracking_app.models import JournalEntry
+
+        row = self._db.fetch_one(
+            "SELECT * FROM journal_entries WHERE id = ?",
+            (entry_id,)
+        )
+        return JournalEntry.from_dict(row) if row else None
+
+    def create_journal_entry(
+        self,
+        title: str,
+        content: str,
+        category: str = "free_write",
+        tags: Optional[List[str]] = None
+    ) -> "JournalEntry":
+        """Create a new journal entry."""
+        from tracking_app.models import JournalEntry
+
+        entry = JournalEntry(
+            title=title,
+            content=content,
+            category=category,
+            tags=tags or []
+        )
+
+        self._db.execute(
+            """INSERT INTO journal_entries
+               (id, title, content, category, tags, is_private, created_at, updated_at)
+               VALUES (?, ?, ?, ?, ?, 1, ?, ?)""",
+            (
+                entry.id, entry.title, entry.content, entry.category,
+                json.dumps(entry.tags),
+                entry.created_at.isoformat(), entry.updated_at.isoformat()
+            )
+        )
+
+        return entry
+
+    def update_journal_entry(self, entry_id: str, **updates) -> Optional["JournalEntry"]:
+        """Update a journal entry."""
+        entry = self.get_journal_entry(entry_id)
+        if not entry:
+            return None
+
+        valid_fields = {'title', 'content', 'category', 'tags'}
+        update_fields = []
+        update_values = []
+
+        for field, value in updates.items():
+            if field in valid_fields:
+                update_fields.append(f"{field} = ?")
+                if field == 'tags' and isinstance(value, list):
+                    value = json.dumps(value)
+                update_values.append(value)
+
+        if not update_fields:
+            return entry
+
+        update_fields.append("updated_at = ?")
+        update_values.append(datetime.now().isoformat())
+        update_values.append(entry_id)
+
+        self._db.execute(
+            f"UPDATE journal_entries SET {', '.join(update_fields)} WHERE id = ?",
+            tuple(update_values)
+        )
+
+        return self.get_journal_entry(entry_id)
+
+    def delete_journal_entry(self, entry_id: str) -> bool:
+        """Delete a journal entry."""
+        result = self._db.execute(
+            "DELETE FROM journal_entries WHERE id = ?",
+            (entry_id,)
+        )
+        return result.rowcount > 0
+
+    def search_journal_entries(self, query: str, limit: int = 50) -> List["JournalEntry"]:
+        """Search journal entries by content or title."""
+        from tracking_app.models import JournalEntry
+
+        search_term = f"%{query}%"
+        rows = self._db.fetch_all(
+            """SELECT * FROM journal_entries
+               WHERE title LIKE ? OR content LIKE ?
+               ORDER BY created_at DESC
+               LIMIT ?""",
+            (search_term, search_term, limit)
+        )
+        return [JournalEntry.from_dict(row) for row in rows]
+
+    # ==================== PRIVATE TODOS ====================
+
+    def get_private_todos(self, include_completed: bool = False) -> List["PrivateTodo"]:
+        """
+        Get private todos.
+
+        Args:
+            include_completed: Whether to include completed todos
+
+        Returns:
+            List of PrivateTodo objects
+        """
+        from tracking_app.models import PrivateTodo
+
+        if include_completed:
+            rows = self._db.fetch_all(
+                """SELECT * FROM private_todos
+                   ORDER BY due_date IS NULL, due_date ASC, priority DESC"""
+            )
+        else:
+            rows = self._db.fetch_all(
+                """SELECT * FROM private_todos
+                   WHERE completed = 0
+                   ORDER BY due_date IS NULL, due_date ASC, priority DESC"""
+            )
+
+        return [PrivateTodo.from_dict(row) for row in rows]
+
+    def get_private_todo(self, todo_id: str) -> Optional["PrivateTodo"]:
+        """Get a single private todo by ID."""
+        from tracking_app.models import PrivateTodo
+
+        row = self._db.fetch_one(
+            "SELECT * FROM private_todos WHERE id = ?",
+            (todo_id,)
+        )
+        return PrivateTodo.from_dict(row) if row else None
+
+    def create_private_todo(
+        self,
+        title: str,
+        description: str = "",
+        priority: str = "medium",
+        category: str = "",
+        due_date: Optional[datetime] = None
+    ) -> "PrivateTodo":
+        """Create a new private todo."""
+        from tracking_app.models import PrivateTodo
+
+        todo = PrivateTodo(
+            title=title,
+            description=description,
+            priority=priority,
+            category=category,
+            due_date=due_date
+        )
+
+        self._db.execute(
+            """INSERT INTO private_todos
+               (id, title, description, priority, due_date, completed, category, is_private, created_at, updated_at)
+               VALUES (?, ?, ?, ?, ?, 0, ?, 1, ?, ?)""",
+            (
+                todo.id, todo.title, todo.description, todo.priority,
+                todo.due_date.isoformat() if todo.due_date else None,
+                todo.category,
+                todo.created_at.isoformat(), todo.updated_at.isoformat()
+            )
+        )
+
+        return todo
+
+    def update_private_todo(self, todo_id: str, **updates) -> Optional["PrivateTodo"]:
+        """Update a private todo."""
+        todo = self.get_private_todo(todo_id)
+        if not todo:
+            return None
+
+        valid_fields = {'title', 'description', 'priority', 'due_date', 'completed', 'category'}
+        update_fields = []
+        update_values = []
+
+        for field, value in updates.items():
+            if field in valid_fields:
+                update_fields.append(f"{field} = ?")
+                if field == 'due_date' and isinstance(value, datetime):
+                    value = value.isoformat()
+                elif field == 'completed':
+                    value = 1 if value else 0
+                update_values.append(value)
+
+        if not update_fields:
+            return todo
+
+        update_fields.append("updated_at = ?")
+        update_values.append(datetime.now().isoformat())
+        update_values.append(todo_id)
+
+        self._db.execute(
+            f"UPDATE private_todos SET {', '.join(update_fields)} WHERE id = ?",
+            tuple(update_values)
+        )
+
+        return self.get_private_todo(todo_id)
+
+    def complete_private_todo(self, todo_id: str) -> Optional["PrivateTodo"]:
+        """Mark a private todo as complete."""
+        return self.update_private_todo(todo_id, completed=True)
+
+    def delete_private_todo(self, todo_id: str) -> bool:
+        """Delete a private todo."""
+        result = self._db.execute(
+            "DELETE FROM private_todos WHERE id = ?",
+            (todo_id,)
+        )
+        return result.rowcount > 0
+
+
 # Global storage instance
 _storage: Optional[Storage] = None
 

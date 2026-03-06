@@ -4,6 +4,22 @@
 
 ---
 
+## 🔗 Neural Synapse
+
+**Rule IDs:** BRAIN_001-005, VALID_001-005, POLICY_001-005, STATE_001-005  
+**Core File:** [CORE_RULES.md](./CORE_RULES.md)  
+**Neural Hub:** [NEURAL_HUB.md](./NEURAL_HUB.md)  
+**Event Bus:** [nervous_system.py](./nervous_system.py)
+
+| Connection | Target | Purpose |
+|------------|--------|---------|
+| Motor | [core/brain.py](./core/brain.py) | Command execution |
+| Logic | [rules/schema.py](./rules/schema.py) | Rule definitions |
+| Safety | [core/guardrails.py](./core/guardrails.py) | Safety middleware |
+| Entry | [../README.md](../README.md) | Project overview |
+
+---
+
 ## 🧭 Quick Navigation
 
 | Want to... | Go to... |

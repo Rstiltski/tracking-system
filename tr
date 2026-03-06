@@ -1,0 +1,350 @@
+"""
+UI components for the Achievements page.
+
+Contains all render functions for the achievements and gamification interface.
+Phase 7.2 Enhanced: Added unlock animations, progress tracking, and tier display.
+"""
+
+import streamlit as st
+from datetime import datetime
+from typing import List, Dict, Optional
+
+from tracking_app.models import Achievement
+
+from .constants import DEFAULT_ACHIEVEMENTS, ACHIEVEMENT_CATEGORIES, XP_TIPS, TIER_COLORS, TIER_EMOJIS
+from .helpers import (
+    get_xp_progress,
+    get_xp_remaining,
+    format_xp,
+)
+
+
+def render_header():
+    """Render page header."""
+    st.title("🏆 Achievements")
+    st.markdown("Track your progress, earn XP, and unlock achievements!")
+
+
+def render_level_progress():
+    """Render level and XP progress."""
+    st.subheader("📊 Level Progress")
+    
+    xp = st.session_state.user_xp
+    level = st.session_state.user_level
+    
+    xp_in_level, xp_needed, percentage = get_xp_progress(xp, level)
+    
+    # Level display
+    col1, col2, col3 = st.columns([1, 3, 1])
+    
+    with col1:
+        # Large level badge
+        st.markdown(
+            f"""
+            <div style="
+                width: 100px;
+                height: 100px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 48px;
+                font-weight: bold;
+                color: white;
+                margin: 0 auto;
+                box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+            ">
+                {level}
+            </div>
+            <p style="text-align: center; margin-top: 10px; font-weight: bold;">Level {level}</p>
+            """,
+            unsafe_allow_html=True
+        )
+    
+    with col2:
+        st.markdown(f"### XP: {format_xp(xp)}")
+        st.progress(percentage / 100)
+        st.caption(f"{format_xp(xp_in_level)} / {format_xp(xp_needed)} XP to Level {level + 1}")
+        
+        # XP to next level
+        remaining = get_xp_remaining(xp, level)
+        st.info(f"🎯 {format_xp(remaining)} XP needed for next level")
+    
+    with col3:
+        next_level = level + 1
+        st.markdown(
+            f"""
+            <div style="
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                background: #1e293b;
+                border: 3px solid #334155;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 36px;
+                color: #64748b;
+                margin: 0 auto;
+            ">
+                {next_level}
+            </div>
+            <p style="text-align: center; margin-top: 10px; color: #64748b;">Next Level</p>
+            """,
+            unsafe_allow_html=True
+        )
+
+
+def render_achievements_summary():
+    """Render achievements summary."""
+    achievements = DEFAULT_ACHIEVEMENTS
+    storage = st.session_state.storage
+    
+    # Get unlocked achievements
+    unlocked = storage.get_achievements(unlocked_only=True) if hasattr(storage, 'get_achievements') else []
+    unlocked_ids = [a.id if hasattr(a, 'id') else a.get('id', '') for a in unlocked]
+    
+    total = len(achievements)
+    unlocked_count = len([a for a in achievements if a.get('id', a.get('id', '')) in unlocked_ids])
+    
+    # Count by tier
+    tier_counts = {"bronze": 0, "silver": 0, "gold": 0, "platinum": 0, "diamond": 0}
+    for ach in achievements:
+        tier = ach.get('tier', 'bronze')
+        if tier in tier_counts:
+            tier_counts[tier] += 1
+    
+    unlocked_by_tier = {"bronze": 0, "silver": 0, "gold": 0, "platinum": 0, "diamond": 0}
+    for ach in achievements:
+        if ach.get('id', ach.get('id', '')) in unlocked_ids:
+            tier = ach.get('tier', 'bronze')
+            if tier in unlocked_by_tier:
+                unlocked_by_tier[tier] += 1
+    
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        st.metric("Achievements Unlocked", f"{unlocked_count}/{total}")
+    
+    with col2:
+        total_xp_from_achievements = sum(
+            a.get('xp_reward', 0) for a in achievements if a.get('id', a.get('id', '')) in unlocked_ids
+        )
+        st.metric("XP from Achievements", total_xp_from_achievements)
+    
+    with col3:
+        locked = total - unlocked_count
+        st.metric("Locked", locked)
+    
+    with col4:
+        # Show tier progress
+        st.metric("Tiers Unlocked", f"{sum(1 for t in unlocked_by_tier.values() if t > 0)}/5")
+
+
+def render_achievements_grid():
+    """Render achievements in a grid by category."""
+    st.subheader("🏅 Achievements")
+    
+    achievements = DEFAULT_ACHIEVEMENTS
+    storage = st.session_state.storage
+    
+    # Get unlocked achievements
+    unlocked = storage.get_achievements(unlocked_only=True) if hasattr(storage, 'get_achievements') else []
+    unlocked_ids = [a.id if hasattr(a, 'id') else a.get('id', '') for a in unlocked]
+    
+    # Tabs by category
+    tab1, tab2, tab3, tab4, tab5 = st.tabs([
+        "🔥 Streaks", "✨ Consistency", "🎯 Special", "📊 Progress", "🔒 Hidden"
+    ])
+    
+    with tab1:
+        # Streaks tab
+        streak_achievements = [a for a in achievements if a.get('category') in ['streak', 'score', 'comeback', 'mastery']]
+        render_achievement_cards(streak_achievements, unlocked_ids)
+    
+    with tab2:
+        # Consistency tab
+        consistency_achievements = [a for a in achievements if a.get('category') == 'consistency']
+        render_achievement_cards(consistency_achievements, unlocked_ids)
+    
+    with tab3:
+        # Special tab
+        special_achievements = [a for a in achievements if a.get('category') == 'special' and not a.get('is_hidden', False)]
+        render_achievement_cards(special_achievements, unlocked_ids)
+    
+    with tab4:
+        # Progress tab - show locked achievements with progress
+        render_progress_tracking(achievements, unlocked_ids)
+    
+    with tab5:
+        # Hidden achievements
+        hidden_achievements = [a for a in achievements if a.get('is_hidden', False)]
+        render_hidden_achievements(hidden_achievements, unlocked_ids)
+
+
+def render_achievement_cards(achievements: List[Dict], unlocked_ids: List[str]):
+    """Render achievement cards in a grid."""
+    # Create rows of 3 achievements
+    for i in range(0, len(achievements), 3):
+        cols = st.columns(3)
+        
+        for j, col in enumerate(cols):
+            if i + j < len(achievements):
+                achievement = achievements[i + j]
+                is_unlocked = achievement.get('id', '') in unlocked_ids
+                
+                with col:
+                    render_achievement_card(achievement, is_unlocked)
+
+
+def render_achievement_card(achievement: Dict, is_unlocked: bool):
+    """Render a single achievement card with tier styling."""
+    tier = achievement.get('tier', 'bronze')
+    tier_color = TIER_COLORS.get(tier, '#CD7F32')
+    tier_emoji = TIER_EMOJIS.get(tier, '🥉')
+    
+    # Card styling based on unlock status
+    if is_unlocked:
+        bg_color = f"linear-gradient(135deg, #1e293b 0%, #334155 100%)"
+        border_color = tier_color
+        opacity = "1.0"
+        icon = achievement.get('icon', '🏆')
+    else:
+        bg_color = "#0f172a"
+        border_color = "#334155"
+        opacity = "0.5"
+        icon = "🔒"
+    
+    xp_reward = achievement.get('xp_reward', 50)
+    
+    st.markdown(
+        f"""
+        <div style="
+            background: {bg_color};
+            border: 2px solid {border_color};
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            opacity: {opacity};
+            margin-bottom: 15px;
+            transition: transform 0.2s;
+        ">
+            <div style="font-size: 32px; margin-bottom: 5px;">{icon}</div>
+            <div style="font-size: 12px; color: {tier_color}; margin-bottom: 5px;">{tier_emoji} {tier.upper()}</div>
+            <div style="font-weight: bold; margin-bottom: 5px; font-size: 14px;">{achievement.get('name', 'Unknown')}</div>
+            <div style="font-size: 11px; color: #94a3b8; margin-bottom: 8px; min-height: 32px;">{achievement.get('description', '')}</div>
+            <div style="color: #10b981; font-weight: bold; font-size: 12px;">+{xp_reward} XP</div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+
+def render_progress_tracking(achievements: List[Dict], unlocked_ids: List[str]):
+    """Render progress tracking for locked achievements."""
+    st.markdown("#### 📊 Progress Toward Locked Achievements")
+    
+    locked_achievements = [a for a in achievements if a.get('id', '') not in unlocked_ids and not a.get('is_hidden', False)]
+    
+    if not locked_achievements:
+        st.success("🎉 Congratulations! You've unlocked all visible achievements!")
+        return
+    
+    # Group by tier
+    for tier in ['bronze', 'silver', 'gold', 'platinum', 'diamond']:
+        tier_achievements = [a for a in locked_achievements if a.get('tier') == tier]
+        if tier_achievements:
+            st.markdown(f"**{TIER_EMOJIS.get(tier, '🥉')} {tier.upper()} Achievements**")
+            
+            for ach in tier_achievements[:3]:  # Show max 3 per tier
+                col1, col2 = st.columns([3, 1])
+                
+                with col1:
+                    st.markdown(f"**{ach.get('name', 'Unknown')}**")
+                    st.caption(ach.get('description', ''))
+                
+                with col2:
+                    st.metric("XP", ach.get('xp_reward', 50))
+                
+                # Progress bar (placeholder - would need real progress data)
+                st.progress(0)  # TODO: Calculate real progress
+                st.caption("Progress: 0%")
+            
+            st.divider()
+
+
+def render_hidden_achievements(hidden_achievements: List[Dict], unlocked_ids: List[str]):
+    """Render hidden achievements section."""
+    st.markdown("#### 🔒 Secret Achievements")
+    st.caption("Hidden achievements are discovered through gameplay. Keep tracking to find them!")
+    
+    for ach in hidden_achievements:
+        is_unlocked = ach.get('id', '') in unlocked_ids
+        
+        col1, col2 = st.columns([1, 4])
+        
+        with col1:
+            icon = ach.get('icon', '❓') if is_unlocked else "❓"
+            st.markdown(f"### {icon}")
+        
+        with col2:
+            if is_unlocked:
+                st.markdown(f"**{ach.get('name', '???')}**")
+                st.caption(ach.get('description', '???'))
+                st.markdown(f"+{ach.get('xp_reward', 50)} XP")
+            else:
+                st.markdown("**???**")
+                st.caption("Hidden achievement - keep tracking to discover!")
+        
+        st.divider()
+
+
+def render_recent_unlocks():
+    """Render recently unlocked achievements with animation effect."""
+    st.subheader("🎉 Recent Unlocks")
+    
+    storage = st.session_state.storage
+    unlocked = storage.get_achievements(unlocked_only=True) if hasattr(storage, 'get_achievements') else []
+    
+    if not unlocked:
+        st.info("No achievements unlocked yet. Keep tracking to earn achievements!")
+        return
+    
+    # Sort by unlock date (newest first)
+    unlocked.sort(key=lambda a: a.unlocked_at if hasattr(a, 'unlocked_at') and a.unlocked_at else datetime.min, reverse=True)
+    
+    # Show last 5 unlocked with tier badges
+    for achievement in unlocked[:5]:
+        tier = getattr(achievement, 'tier', 'bronze') if hasattr(achievement, 'tier') else 'bronze'
+        tier_emoji = TIER_EMOJIS.get(tier, '🥉')
+        
+        col1, col2, col3 = st.columns([1, 3, 2])
+        
+        with col1:
+            icon = getattr(achievement, 'icon', '🏆') if hasattr(achievement, 'icon') else '🏆'
+            st.markdown(f"### {icon}")
+        
+        with col2:
+            st.markdown(f"**{getattr(achievement, 'name', 'Unknown')}** {tier_emoji}")
+            st.caption(getattr(achievement, 'description', ''))
+        
+        with col3:
+            st.markdown(f"+{getattr(achievement, 'xp_reward', 50)} XP")
+            if hasattr(achievement, 'unlocked_at') and achievement.unlocked_at:
+                st.caption(achievement.unlocked_at.strftime("%b %d, %Y"))
+    
+    if len(unlocked) > 5:
+        st.caption(f"...and {len(unlocked) - 5} more achievements")
+
+
+def render_xp_history():
+    """Render XP earning tips."""
+    st.subheader("💡 How to Earn XP")
+    
+    col1, col2 = st.columns(2)
+    
+    for i, (action, reward) in enumerate(XP_TIPS):
+        with col1 if i < 3 else col2:
+            st.markdown(f"**{action}**")
+            st.caption(reward)

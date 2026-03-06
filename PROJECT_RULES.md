@@ -1,3 +1,18 @@
+## 🔗 Neural Synapse
+
+**Rule IDs:** LANG_001-005, MOD_001-004, UI_001-005, DOC_001-005  
+**Core File:** [brain/CORE_RULES.md](brain/CORE_RULES.md)  
+**Neural Hub:** [brain/NEURAL_HUB.md](brain/NEURAL_HUB.md)  
+**Event Bus:** [brain/nervous_system.py](brain/nervous_system.py)
+
+| Connection | Target | Purpose |
+|------------|--------|---------|
+| Motor | [brain/CORE_RULES.md](brain/CORE_RULES.md) | Rule registry |
+| Entry | [README.md](README.md) | Project overview |
+| Patterns | [patterns/](patterns/) | Code templates |
+
+---
+
 ## 🎯 Overview
 This document outlines the rules, conventions, and best practices for developing the Personal Tracking System. All contributors and AI assistants must follow these guidelines to ensure consistency and quality.
 
@@ -1003,11 +1018,11 @@ Before submitting changes, verify:
 **CRITICAL: This protocol MUST be followed for ALL phases.**
 
 1. **At the start of each phase**, the AI assistant should ONLY create the phase markdown documentation file (e.g., `phases/PHASE_X_*.md`)
-2. **DO NOT implement any code** until the user provides research and guidance
-3. **Work through each phase TOGETHER** with the user - they will provide research, then the AI updates the code based on that research
+2Work through each phase TOGETHER** with the user - they will provide research, then the AI updates the code based on that research
 4. **Wait for explicit approval** before moving to implementation
 5. **The user is the driver** - they research, provide information, and guide the direction
-
+. **DO NOT implement any code** until the user provides research and guidance
+3. **
 **Workflow:**
 ```
 User provides research → AI reviews existing code → AI updates where necessary → User approves

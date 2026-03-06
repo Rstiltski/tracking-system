@@ -12,6 +12,7 @@
 | 2 | [Clone the Repository](#2-clone-the-repository) |
 | 3 | [Open in VS Code](#3-open-in-vs-code) |
 | 4 | [Running the Project](#4-running-the-project) |
+| 4.1 | [Opening the Localhost (Streamlit App)](#-41-opening-the-localhost-streamlit-app) |
 | 5 | [Troubleshooting](#5-troubleshooting) |
 | 6 | [Quick Reference](#6-quick-reference) |
 
@@ -138,6 +139,88 @@ python3 run_system.py
 
 **Access the application:**
 - Open your browser to: **http://localhost:5501**
+
+---
+
+## 🚀 §4.1 Opening the Localhost (Streamlit App)
+
+The main tracking system runs as a **Streamlit application** on port **8501**. Follow these steps to start and access it:
+
+### Starting the Streamlit Server
+
+Open a terminal and run:
+
+```bash
+# Navigate to the project directory
+cd "/home/ramplestiltski/Documents/a_tracking>system/project tracking system/tracking-system"
+
+# Start the Streamlit server
+streamlit run tracking_app/app.py --server.port 8501
+```
+
+### Accessing the Application
+
+Once the server is running, you'll see output like:
+
+```
+You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://192.168.100.54:8501
+```
+
+**Open your browser and navigate to:**
+
+| URL | Description |
+|-----|-------------|
+| **http://localhost:8501** | Local access (this computer) |
+| **http://192.168.100.54:8501** | Network access (other devices on same network) |
+
+### Quick Commands Reference
+
+| Action | Command |
+|--------|---------|
+| Start server | `streamlit run tracking_app/app.py --server.port 8501` |
+| Stop server | Press `Ctrl+C` in the terminal |
+| Use different port | `streamlit run tracking_app/app.py --server.port 8502` |
+| Run in background | `streamlit run tracking_app/app.py --server.port 8501 &` |
+
+### Troubleshooting the Localhost
+
+**"Port 8501 already in use"**
+
+```bash
+# Kill existing Streamlit processes
+pkill -f streamlit
+
+# Or find and kill specific process
+lsof -i :8501
+kill -9 <PID>
+```
+
+**"Module not found" errors**
+
+```bash
+# Ensure you're in the correct directory
+cd "/home/ramplestiltski/Documents/a_tracking>system/project tracking system/tracking-system"
+
+# Reinstall dependencies
+pip install -r requirements.txt
+```
+
+**Browser doesn't open automatically**
+
+- Manually open your browser
+- Type `http://localhost:8501` in the address bar
+- Press Enter
+
+### One-Liner Quick Start
+
+For fastest startup, copy and paste this entire command:
+
+```bash
+cd "/home/ramplestiltski/Documents/a_tracking>system/project tracking system/tracking-system" && streamlit run tracking_app/app.py --server.port 8501 && xdg-open http://localhost:8501
+```
 
 ---
 

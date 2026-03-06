@@ -1,6 +1,21 @@
 """
 Brain - Deterministic Command Processing Engine
 
+## 🔗 Neural Synapse
+
+**Rule IDs:** BRAIN_001-005  
+**Core File:** [CORE_RULES.md](./CORE_RULES.md)  
+**Neural Hub:** [NEURAL_HUB.md](./NEURAL_HUB.md)  
+**Event Bus:** [nervous_system.py](./nervous_system.py)
+
+| Connection | Target | Purpose |
+|------------|--------|---------|
+| Motor | [core/brain.py](./core/brain.py) | Command execution |
+| Logic | [rules/schema.py](./rules/schema.py) | Rule definitions |
+| Safety | [core/guardrails.py](./core/guardrails.py) | Safety middleware |
+
+---
+
 The Brain is the central nervous system of the landscaping business management platform.
 Every command flows through the Brain, ensuring determinism, auditability, and safety.
 

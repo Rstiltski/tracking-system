@@ -21,14 +21,22 @@ const Tasks = {
     // Bind event listeners
     bindEvents() {
         // Add task button
-        document.getElementById('addTaskBtn')?.addEventListener('click', () => {
-            this.showAddModal();
-        });
+        const addTaskBtn = document.getElementById('addTaskBtn');
+        if (addTaskBtn) {
+            const newAddBtn = addTaskBtn.cloneNode(true);
+            addTaskBtn.parentNode.replaceChild(newAddBtn, addTaskBtn);
+            newAddBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.showAddModal();
+            });
+        }
 
-        // Filter buttons
-        document.querySelectorAll('.tasks-filters .filter-btn').forEach(btn => {
+        // Filter buttons - only bind once
+        document.querySelectorAll('.filter-btn:not([data-bound])').forEach(btn => {
+            btn.setAttribute('data-bound', 'true');
             btn.addEventListener('click', (e) => {
-                document.querySelectorAll('.tasks-filters .filter-btn').forEach(b => b.classList.remove('active'));
+                e.preventDefault();
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
                 e.target.classList.add('active');
                 this.currentFilter = e.target.dataset.filter;
                 this.render();

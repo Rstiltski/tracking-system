@@ -78,26 +78,55 @@ const Time = {
 
     // Bind event listeners
     bindEvents() {
-        document.getElementById('addTimeEntryBtn')?.addEventListener('click', () => {
-            this.showAddModal();
-        });
+        const addTimeEntryBtn = document.getElementById('addTimeEntryBtn');
+        if (addTimeEntryBtn) {
+            const newBtn = addTimeEntryBtn.cloneNode(true);
+            addTimeEntryBtn.parentNode.replaceChild(newBtn, addTimeEntryBtn);
+            newBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.showAddModal();
+            });
+        }
 
-        document.getElementById('timerStart')?.addEventListener('click', () => {
-            this.startTimer();
-        });
+        const timerStart = document.getElementById('timerStart');
+        if (timerStart) {
+            const newStartBtn = timerStart.cloneNode(true);
+            timerStart.parentNode.replaceChild(newStartBtn, timerStart);
+            newStartBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.startTimer();
+            });
+        }
 
-        document.getElementById('timerPause')?.addEventListener('click', () => {
-            this.pauseTimer();
-        });
+        const timerPause = document.getElementById('timerPause');
+        if (timerPause) {
+            const newPauseBtn = timerPause.cloneNode(true);
+            timerPause.parentNode.replaceChild(newPauseBtn, timerPause);
+            newPauseBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.pauseTimer();
+            });
+        }
 
-        document.getElementById('timerReset')?.addEventListener('click', () => {
-            this.resetTimer();
-        });
+        const timerReset = document.getElementById('timerReset');
+        if (timerReset) {
+            const newResetBtn = timerReset.cloneNode(true);
+            timerReset.parentNode.replaceChild(newResetBtn, timerReset);
+            newResetBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.resetTimer();
+            });
+        }
 
-        document.getElementById('timerCategory')?.addEventListener('change', (e) => {
-            this.timerCategory = e.target.value;
-            this.saveTimerState();
-        });
+        const timerCategory = document.getElementById('timerCategory');
+        if (timerCategory) {
+            const newCategorySelect = timerCategory.cloneNode(true);
+            timerCategory.parentNode.replaceChild(newCategorySelect, timerCategory);
+            newCategorySelect.addEventListener('change', (e) => {
+                this.timerCategory = e.target.value;
+                this.saveTimerState();
+            });
+        }
     },
 
     // Render time view

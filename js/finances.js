@@ -30,9 +30,15 @@ const Finances = {
 
     // Bind event listeners
     bindEvents() {
-        document.getElementById('addTransactionBtn')?.addEventListener('click', () => {
-            this.showAddModal();
-        });
+        const addTransactionBtn = document.getElementById('addTransactionBtn');
+        if (addTransactionBtn) {
+            const newBtn = addTransactionBtn.cloneNode(true);
+            addTransactionBtn.parentNode.replaceChild(newBtn, addTransactionBtn);
+            newBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.showAddModal();
+            });
+        }
     },
 
     // Render finances view
