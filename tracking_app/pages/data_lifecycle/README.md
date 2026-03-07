@@ -104,6 +104,7 @@ render_archive_view()
 | Project overview | `../README.md` |
 | Backend architecture | `../brain/README.md` |
 | Page module pattern | `../patterns/page_module.md` |
+| Security protocols | `../brain/SECURITY_PLAYBOOK.md` |
 | Data lifecycle implementation | `../tracking_app/pages/data_lifecycle.py` |
 | Storage models | `../brain/models/` |
 | Export integration | `../tracking_app/pages/data_export/` |

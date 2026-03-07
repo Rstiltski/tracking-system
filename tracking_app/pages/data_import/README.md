@@ -105,6 +105,7 @@ render_preview()
 | Project overview | `../README.md` |
 | Backend architecture | `../brain/README.md` |
 | Page module pattern | `../patterns/page_module.md` |
+| Security protocols | `../brain/SECURITY_PLAYBOOK.md` |
 | Data import implementation | `../tracking_app/pages/data_import.py` |
 | Data models | `../brain/models/` |
 | Export integration | `../tracking_app/pages/data_export/` |

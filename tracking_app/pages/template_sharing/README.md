@@ -102,6 +102,7 @@ render_gallery()
 | Project overview | `../README.md` |
 | Backend architecture | `../brain/README.md` |
 | Page module pattern | `../patterns/page_module.md` |
+| Security protocols | `../brain/SECURITY_PLAYBOOK.md` |
 | Template sharing implementation | `../tracking_app/pages/template_sharing.py` |
 | Template models | `../brain/models/` |
 | Habit integration | `../tracking_app/pages/habits/` |

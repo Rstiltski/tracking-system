@@ -105,6 +105,7 @@ render_restore_form()
 | Project overview | `../README.md` |
 | Backend architecture | `../brain/README.md` |
 | Page module pattern | `../patterns/page_module.md` |
+| Security protocols | `../brain/SECURITY_PLAYBOOK.md` |
 | Backup & restore implementation | `../tracking_app/pages/backup_restore.py` |
 | Storage models | `../brain/models/` |
 | Data export integration | `../tracking_app/pages/data_export/` |
