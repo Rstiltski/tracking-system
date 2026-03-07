@@ -24,10 +24,12 @@
 
 | Want to... | Go to... |
 |------------|----------|
+| **AI entry point** | [AI_START_HERE.md](../AI_START_HERE.md) |
 | **Get started** | [GETTING_STARTED.md](../GETTING_STARTED.md) |
 | **Understand rules** | [PROJECT_RULES.md](../PROJECT_RULES.md) |
 | **Find features** | [FEATURE_MAP.md](../FEATURE_MAP.md) |
 | **See research** | [docs/research/](../docs/research/) |
+| **Security protocols** | [SECURITY_PLAYBOOK.md](./SECURITY_PLAYBOOK.md) |
 
 ---
 
@@ -477,6 +479,7 @@ class MyNewTool(Tool):
 | Risk tier reference | `design/05_risk_tiers.md` |
 | Audit schema | `design/06_audit_schema.md` |
 | Roles & permissions | `design/07_roles_permissions.md` |
+| Security protocols | `SECURITY_PLAYBOOK.md` |
 | Core documentation | `core/README.md` |
 | Tools documentation | `tools/README.md` |
 

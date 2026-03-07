@@ -9,9 +9,11 @@
 ### Core Documentation
 | File | Purpose | When to Use |
 |------|---------|-------------|
+| `AI_START_HERE.md` | **AI ENTRY POINT** - Master index for AI agents | Start here for AI context |
 | `brain/CORE_RULES.md` | **MASTER FILE** - All 58+ rules | Check any rule |
 | `brain/NEURAL_HUB.md` | Central navigation hub | Find your way |
 | `brain/AI_RULES.md` | AI thinking protocol (4-phase workflow) | Execute tasks |
+| `brain/SECURITY_PLAYBOOK.md` | Security protocols and audit requirements | Security reference |
 | `PROJECT_RULES.md` | Detailed development guidelines | Write code |
 | `README.md` | Project overview | Get oriented |
 | `ROADMAP.md` | Strategic development plan | Plan features |
@@ -206,9 +208,11 @@ tracking-system/
 
 | Want to... | Go to... |
 |------------|----------|
+| **AI entry point** | [AI_START_HERE.md](AI_START_HERE.md) |
 | Check rules | [brain/CORE_RULES.md](brain/CORE_RULES.md) |
 | Navigate project | [brain/NEURAL_HUB.md](brain/NEURAL_HUB.md) |
 | See AI protocol | [brain/AI_RULES.md](brain/AI_RULES.md) |
+| Security protocols | [brain/SECURITY_PLAYBOOK.md](brain/SECURITY_PLAYBOOK.md) |
 | Structure a prompt | [patterns/prompt_template.md](patterns/prompt_template.md) |
 | See current state | [session.json](session.json) |
 | Review decisions | [decisions.log](decisions.log) |

@@ -8,9 +8,11 @@
 
 | Want to... | Go to... |
 |------------|----------|
+| **AI entry point** | [AI_START_HERE.md](AI_START_HERE.md) |
 | **Get started** | [GETTING_STARTED.md](GETTING_STARTED.md) |
 | **Understand rules** | [PROJECT_RULES.md](PROJECT_RULES.md) |
 | **Find features** | [FEATURE_MAP.md](FEATURE_MAP.md) |
+| **See roadmap** | [ROADMAP.md](ROADMAP.md) |
 | **See research** | [docs/research/](docs/research/) |
 
 ---

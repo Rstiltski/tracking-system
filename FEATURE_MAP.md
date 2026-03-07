@@ -39,6 +39,7 @@ This document maps features to their implementation files. Use it to quickly fin
 ### Core Documentation
 | Document | Purpose | When to Use |
 |----------|---------|-------------|
+| `AI_START_HERE.md` | AI entry point | Start here for AI context |
 | `README.md` | Project overview | First time, quick reference |
 | `GETTING_STARTED.md` | Setup & workflow | Starting work, onboarding |
 | `PROJECT_RULES.md` | Rules & conventions | Before any coding |
@@ -229,6 +230,7 @@ This document maps features to their implementation files. Use it to quickly fin
 | Crypto | `brain/security/crypto_engine.py` | Encryption |
 | Neural Link | `brain/security/neural_link.py` | Secure channel |
 | Export Guard | `brain/security/export_guard.py` | Data protection |
+| Security Playbook | `brain/SECURITY_PLAYBOOK.md` | Security protocols & audit requirements |
 
 ### Invariants
 | Feature | File | Description |

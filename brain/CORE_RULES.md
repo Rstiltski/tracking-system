@@ -153,6 +153,7 @@ Each file contains rules and links back to this registry.
 ### Root Documentation
 | File | Rule IDs | Neural Link |
 |------|----------|-------------|
+| [AI_START_HERE.md](../AI_START_HERE.md) | DOC_005 | AI Entry Point |
 | [PROJECT_RULES.md](../PROJECT_RULES.md) | LANG_001-005, MOD_001-004, UI_001-005, DOC_001-005 | Primary Source |
 | [README.md](../README.md) | DOC_005 | Entry Point |
 | [TODO.md](../TODO.md) | DOC_003 | Task Tracking |
@@ -305,6 +306,7 @@ For AI to load context in the correct order:
 |------|---------|
 | [NEURAL_HUB.md](./NEURAL_HUB.md) | Central cortex entry point |
 | [AI_RULES.md](./AI_RULES.md) | AI thinking protocol |
+| [SECURITY_PLAYBOOK.md](./SECURITY_PLAYBOOK.md) | Security protocols & audit requirements |
 | [nervous_system.py](./nervous_system.py) | Event bus implementation |
 | [.context.md](../.context.md) | Synapse registry |
 | [session.json](../session.json) | Working memory |

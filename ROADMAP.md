@@ -6,9 +6,11 @@ This roadmap outlines the strategic direction for the Veryfyn Personal Tracking 
 
 ## 🔗 Neural Synapse
 
+**AI Entry:** [AI_START_HERE.md](AI_START_HERE.md)  
 **Core File:** [brain/CORE_RULES.md](brain/CORE_RULES.md)  
 **Neural Hub:** [brain/NEURAL_HUB.md](brain/NEURAL_HUB.md)  
-**AI Rules:** [brain/AI_RULES.md](brain/AI_RULES.md)
+**AI Rules:** [brain/AI_RULES.md](brain/AI_RULES.md)  
+**Security:** [brain/SECURITY_PLAYBOOK.md](brain/SECURITY_PLAYBOOK.md)
 
 ---
 

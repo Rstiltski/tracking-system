@@ -7,6 +7,7 @@
 
 | Connection | Target | Purpose |
 |------------|--------|---------|
+| AI Entry | [AI_START_HERE.md](AI_START_HERE.md) | AI entry point |
 | Motor | [brain/CORE_RULES.md](brain/CORE_RULES.md) | Rule registry |
 | Entry | [README.md](README.md) | Project overview |
 | Patterns | [patterns/](patterns/) | Code templates |

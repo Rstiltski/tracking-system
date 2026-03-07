@@ -23,6 +23,7 @@
 
 | Want to... | Go to... |
 |------------|----------|
+| **AI entry point** | [AI_START_HERE.md](AI_START_HERE.md) |
 | **Get started** | [GETTING_STARTED.md](GETTING_STARTED.md) |
 | **Understand rules** | [PROJECT_RULES.md](PROJECT_RULES.md) |
 | **Find a feature** | [FEATURE_MAP.md](FEATURE_MAP.md) |
@@ -307,6 +308,7 @@ The Brain is the central nervous system for data operations. Every command flows
 | State Machines | `brain/state/` | Entity lifecycle |
 | Audit | `brain/audit/` | Logging & compliance |
 | Security | `brain/security/` | Encryption & access |
+| Security Playbook | `brain/SECURITY_PLAYBOOK.md` | Security protocols & audit requirements |
 | Invariants | `brain/invariants/` | Business rules |
 | Immune System | `brain/immune/` | Self-healing |
 | Analysis | `brain/analysis/` | Correlation, prediction, burnout detection |

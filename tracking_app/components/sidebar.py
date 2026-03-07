@@ -25,6 +25,21 @@ def _render_nav_link(label: str, page_file: str):
     st.link_button(label, f"/{page_file}", use_container_width=True)
 
 
+def _render_category(title: str, icon: str, pages: list, expanded: bool = False):
+    """
+    Render a collapsible category with navigation links.
+    
+    Args:
+        title: Category title
+        icon: Emoji icon for the category
+        pages: List of tuples (label, page_file)
+        expanded: Whether the expander should be open by default
+    """
+    with st.expander(f"{icon} {title}", expanded=expanded):
+        for page_name, page_file in pages:
+            _render_nav_link(page_name, page_file)
+
+
 def render_sidebar(show_streak_freeze: bool = False):
     """
     Render the main sidebar with navigation.
@@ -32,7 +47,7 @@ def render_sidebar(show_streak_freeze: bool = False):
     Displays:
     - App title and logo
     - User stats (Level, XP)
-    - Navigation links to all pages
+    - Categorized navigation links to all pages
     - Optional Streak Freeze section (for habits page)
     - Theme toggle
     
@@ -75,54 +90,75 @@ def render_sidebar(show_streak_freeze: bool = False):
             _render_streak_freeze_section()
             st.divider()
         
-        # Main Navigation
-        st.subheader("📊 Tracking")
+        # ═══════════════════════════════════════════════════════════════
+        # CATEGORIZED NAVIGATION
+        # ═══════════════════════════════════════════════════════════════
         
-        # Core tracking modules
-        tracking_pages = [
+        # 🚀 OVERVIEW - Dashboard and high-level views
+        overview_pages = [
             ("🏠 Dashboard", "dashboard"),
+            ("📅 Calendar", "calendar"),
+            ("📊 Weekly Review", "weekly_review"),
+        ]
+        _render_category("Overview", "🚀", overview_pages, expanded=True)
+        
+        # ✅ HABIT MASTERY - Habit tracking and optimization
+        habit_pages = [
             ("✅ Habits", "habits"),
+            ("📚 Stacks", "stacks"),
+            ("📊 Habit Analytics", "habit_analytics"),
+            ("🧪 Habit Experiments", "habit_experiments"),
+            ("📤 Template Sharing", "template_sharing"),
+        ]
+        _render_category("Habit Mastery", "✅", habit_pages)
+        
+        # 📝 PLANNING - Task and goal management
+        planning_pages = [
             ("📋 Tasks", "tasks"),
-            ("💰 Finances", "finances"),
+            ("🎯 Goals", "goals"),
+            ("⏱️ Time", "time"),
+            ("📔 Journal", "journal"),
+            ("📝 Diary", "diary"),
+            ("🔒 Private Todos", "private_todos"),
+        ]
+        _render_category("Planning", "📝", planning_pages)
+        
+        # ❤️ WELLNESS - Health tracking
+        wellness_pages = [
             ("❤️ Health", "health"),
             ("🌈 Emotional Health", "emotional_health"),
-            ("⏱️ Time", "time"),
-            ("🎯 Goals", "goals"),
+        ]
+        _render_category("Wellness", "❤️", wellness_pages)
+        
+        # 💰 FINANCE - Financial tracking
+        finance_pages = [
+            ("💰 Finances", "finances"),
+        ]
+        _render_category("Finance", "💰", finance_pages)
+        
+        # 🏆 GAMIFICATION - Achievements and social
+        gamification_pages = [
             ("🏆 Achievements", "achievements"),
+            ("🎁 Rewards", "rewards"),
+            ("🏅 Leaderboards", "leaderboards"),
+            ("⚔️ Challenges", "challenges"),
+            ("👥 Friends", "friends"),
         ]
+        _render_category("Gamification", "🏆", gamification_pages)
         
-        for page_name, page_file in tracking_pages:
-            _render_nav_link(page_name, page_file)
-        
-        st.divider()
-        
-        # Data Management
-        st.subheader("📦 Data")
-        
-        data_pages = [
-            ("📤 Export", "data_export"),
-            ("📥 Import", "data_import"),
-            ("💾 Backup", "backup_restore"),
-            ("🔄 Lifecycle", "data_lifecycle"),
-        ]
-        
-        for page_name, page_file in data_pages:
-            _render_nav_link(page_name, page_file)
-        
-        st.divider()
-        
-        # Notifications
-        st.subheader("🔔 Alerts")
-        
-        notification_pages = [
+        # ⚙️ SYSTEM - Settings and data management
+        system_pages = [
             ("⚙️ Notifications", "notification_settings"),
             ("⏰ Habit Reminders", "habit_reminders"),
             ("📋 Task Alerts", "task_alerts"),
             ("🎯 Goal Alerts", "goal_alerts"),
+            ("📤 Data Export", "data_export"),
+            ("📥 Data Import", "data_import"),
+            ("💾 Backup & Restore", "backup_restore"),
+            ("🔄 Data Lifecycle", "data_lifecycle"),
+            ("📈 Insights", "insights"),
         ]
-        
-        for page_name, page_file in notification_pages:
-            _render_nav_link(page_name, page_file)
+        _render_category("System", "⚙️", system_pages)
         
         st.divider()
         

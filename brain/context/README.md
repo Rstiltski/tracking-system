@@ -329,10 +329,12 @@ Related Features:
 
 | If you need... | Read this file |
 |----------------|---------------|
+| AI entry point | `AI_START_HERE.md` |
 | Main project docs | `README.md` |
 | Brain system docs | `brain/README.md` |
 | Project rules | `PROJECT_RULES.md` |
 | Core brain docs | `brain/core/README.md` |
+| Security protocols | `brain/SECURITY_PLAYBOOK.md` |
 | Tool contracts | `brain/design/04_tool_contracts.md` |
 
 ---

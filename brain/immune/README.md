@@ -117,6 +117,7 @@ python -m pytest brain/immune/tests/
 | Core brain | `brain/core/README.md` |
 | Invariants | `brain/invariants/README.md` |
 | Repair brain | `brain/brains/repair_brain.py` |
+| Security protocols | `brain/SECURITY_PLAYBOOK.md` |
 
 ---
 

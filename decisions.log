@@ -155,5 +155,27 @@ Format: `[TIMESTAMP] [Decision ID] Choice -> [Reasoning] -> [Implication]`
 
 ---
 
-**Last Updated:** 2026-03-03
-**Version:** 1.1.0
+### [2026-03-07T14:00:00Z] DECISION_025
+**Choice:** Create AI_START_HERE.md as master index for AI/LLM entry point
+**Reasoning:** Need a clear, explicit entry point for AI agents that provides context loading sequence, quick start guide, documentation library, and project structure. The filename "AI_START_HERE" is self-documenting and matches the "🚨 LLM START HERE" header in the content.
+**Implication:** AI agents can now use "Follow AI_START_HERE.md" to load the 5-file context sequence. The legacy index.html remains for reference during the Python-First migration.
+
+### [2026-03-07T14:25:00Z] DECISION_026
+**Choice:** Enhance AI_START_HERE.md with patterns from M4L readme01.txt and create CONTRIBUTING.md
+**Reasoning:** The M4L project README contained valuable patterns including: LLM/Contributor Rules section, Agent Operational Note, Essential LLM Files table, Debug Mode documentation, and clearer file structure. These patterns improve AI agent onboarding and contributor guidance.
+**Implication:** AI_START_HERE.md now has comprehensive contributor rules, essential files list, debug mode section, and project status. CONTRIBUTING.md provides structured guidance for all contributors with development workflow, code style guidelines, testing instructions, and PR process.
+
+### [2026-03-07T14:35:00Z] DECISION_027
+**Choice:** Create brain/SECURITY_PLAYBOOK.md with security protocols and audit requirements
+**Reasoning:** Need comprehensive security documentation defining authentication/authorization policies, audit trail requirements, XP anti-cheat logging, export guard protocols, data protection measures, risk tier classification, security monitoring, and incident response procedures.
+**Implication:** Veryfyn now has a formal security playbook defining POLICY_001-004, risk tiers RISK_001-005, guardrail checks GUARD_001-005, and incident response protocols for data breach and corruption recovery.
+
+### [2026-03-07T15:30:00Z] DECISION_028
+**Choice:** Update all documentation cross-references for AI_START_HERE.md and brain/SECURITY_PLAYBOOK.md
+**Reasoning:** Following documentation consistency rules in PROJECT_RULES.md, all core documentation files must cross-reference newly created files. Updated 12 documentation files: CONTEXT.md, README.md, brain/README.md, brain/immune/README.md, PROJECT_RULES.md, brain/CORE_RULES.md, FEATURE_MAP.md, ROADMAP.md, GETTING_STARTED.md, .context.md, brain/context/README.md, and TODO.md.
+**Implication:** Documentation system is now fully interconnected with consistent navigation tables and cross-references. AI agents can navigate from any entry point to all critical files.
+
+---
+
+**Last Updated:** 2026-03-07
+**Version:** 1.4.0
