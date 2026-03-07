@@ -92,3 +92,21 @@ render_achievement_grid()
 - **Rewards**: Variable reward system
 - **Challenges**: Challenge achievements
 - **Leaderboards**: Compare achievements
+
+---
+
+## Cross-References
+
+| Topic | File |
+|-------|------|
+| AI entry point | `../AI_START_HERE.md` |
+| Project overview | `../README.md` |
+| Backend architecture | `../brain/README.md` |
+| Page module pattern | `../patterns/page_module.md` |
+| Achievement implementation | `../tracking_app/pages/achievements.py` |
+| Achievement models | `../brain/models/` |
+| Rewards integration | `../tracking_app/pages/rewards/` |
+
+---
+
+**Last Updated:** March 2026

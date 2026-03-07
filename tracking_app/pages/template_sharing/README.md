@@ -91,3 +91,21 @@ render_gallery()
 - **Habits**: Habit templates
 - **Goals**: Goal templates
 - **Tasks**: Task templates
+
+---
+
+## Cross-References
+
+| Topic | File |
+|-------|------|
+| AI entry point | `../AI_START_HERE.md` |
+| Project overview | `../README.md` |
+| Backend architecture | `../brain/README.md` |
+| Page module pattern | `../patterns/page_module.md` |
+| Template sharing implementation | `../tracking_app/pages/template_sharing.py` |
+| Template models | `../brain/models/` |
+| Habit integration | `../tracking_app/pages/habits/` |
+
+---
+
+**Last Updated:** March 2026

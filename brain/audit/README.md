@@ -111,6 +111,8 @@ result = tool.run({
 
 | Topic | File |
 |-------|------|
+| AI entry point | `../AI_START_HERE.md` |
+| Security playbook | `../SECURITY_PLAYBOOK.md` |
 | Audit schema specs | `brain/design/06_audit_schema.md` |
 | Core brain | `brain/core/README.md` |
 | Audit tools | `brain/tools/audit_tools.py` |

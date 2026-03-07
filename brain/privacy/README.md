@@ -66,10 +66,12 @@ vault.delete("key")
 
 | Topic | File |
 |-------|------|
+| AI entry point | `../AI_START_HERE.md` |
+| Security playbook | `../SECURITY_PLAYBOOK.md` |
 | Security | `brain/security/README.md` |
 | Crypto engine | `brain/security/crypto_engine.py` |
 | Core brain | `brain/core/README.md` |
 
 ---
 
-**Last Updated:** February 2026
+**Last Updated:** March 2026

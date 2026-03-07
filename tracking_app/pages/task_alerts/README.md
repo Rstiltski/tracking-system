@@ -91,3 +91,21 @@ render_alert_list()
 - **Tasks**: Task management
 - **Notification Settings**: Global notifications
 - **Goals**: Goal alerts
+
+---
+
+## Cross-References
+
+| Topic | File |
+|-------|------|
+| AI entry point | `../AI_START_HERE.md` |
+| Project overview | `../README.md` |
+| Backend architecture | `../brain/README.md` |
+| Page module pattern | `../patterns/page_module.md` |
+| Task alerts implementation | `../tracking_app/pages/task_alerts.py` |
+| Alert models | `../brain/models/` |
+| Task integration | `../tracking_app/pages/tasks/` |
+
+---
+
+**Last Updated:** March 2026

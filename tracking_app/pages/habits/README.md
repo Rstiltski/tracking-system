@@ -107,3 +107,21 @@ Table-based view for bulk editing and overview.
 - **Habit Reminders**: Habit reminders
 - **Habit Experiments**: Habit experiments
 - **Stacks**: Habit stacking
+
+---
+
+## Cross-References
+
+| Topic | File |
+|-------|------|
+| AI entry point | `../AI_START_HERE.md` |
+| Project overview | `../README.md` |
+| Backend architecture | `../brain/README.md` |
+| Page module pattern | `../patterns/page_module.md` |
+| Habit implementation | `../tracking_app/pages/habits.py` |
+| Habit models | `../brain/models/` |
+| Habit analytics | `../tracking_app/pages/habit_analytics/` |
+
+---
+
+**Last Updated:** March 2026

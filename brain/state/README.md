@@ -158,10 +158,12 @@ class TransitionResult:
 
 | Topic | File |
 |-------|------|
+| AI entry point | `../AI_START_HERE.md` |
+| Security playbook | `../SECURITY_PLAYBOOK.md` |
 | State machine specs | `brain/design/01_state_machines.md` |
 | Core brain | `brain/core/README.md` |
 | Policies | `brain/policies/README.md` |
 
 ---
 
-**Last Updated:** February 2026
+**Last Updated:** March 2026

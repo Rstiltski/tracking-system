@@ -93,3 +93,22 @@ render_data_selector()
 - **Data Import**: Import exported data
 - **Backup & Restore**: Full backup
 - **Data Lifecycle**: Data management
+
+---
+
+## Cross-References
+
+| Topic | File |
+|-------|------|
+| AI entry point | `../AI_START_HERE.md` |
+| Project overview | `../README.md` |
+| Backend architecture | `../brain/README.md` |
+| Page module pattern | `../patterns/page_module.md` |
+| Security protocols | `../brain/SECURITY_PLAYBOOK.md` |
+| Data export implementation | `../tracking_app/pages/data_export.py` |
+| Data models | `../brain/models/` |
+| Import integration | `../tracking_app/pages/data_import/` |
+
+---
+
+**Last Updated:** March 2026

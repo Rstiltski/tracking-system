@@ -93,3 +93,21 @@ render_experiment_form()
 - **Habits**: Habit management
 - **Habit Analytics**: Habit analytics
 - **Insights**: General insights
+
+---
+
+## Cross-References
+
+| Topic | File |
+|-------|------|
+| AI entry point | `../AI_START_HERE.md` |
+| Project overview | `../README.md` |
+| Backend architecture | `../brain/README.md` |
+| Page module pattern | `../patterns/page_module.md` |
+| Habit experiments implementation | `../tracking_app/pages/habit_experiments.py` |
+| Experiment models | `../brain/models/` |
+| Analytics integration | `../tracking_app/pages/habit_analytics/` |
+
+---
+
+**Last Updated:** March 2026

@@ -210,6 +210,8 @@ if result.requires_confirmation:
 
 | Topic | File |
 |-------|------|
+| AI entry point | `../AI_START_HERE.md` |
+| Security protocols | `../SECURITY_PLAYBOOK.md` |
 | Tool registry | `brain/tools/README.md` |
 | Policies | `brain/policies/README.md` |
 | State machines | `brain/state/README.md` |

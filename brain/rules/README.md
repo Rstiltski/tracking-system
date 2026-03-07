@@ -188,6 +188,8 @@ Available templates:
 
 | Topic | File |
 |-------|------|
+| AI entry point | `../AI_START_HERE.md` |
+| Security playbook | `../SECURITY_PLAYBOOK.md` |
 | Policies | `brain/policies/README.md` |
 | Invariants | `brain/invariants/README.md` |
 | State Machines | `brain/state/README.md` |
@@ -195,4 +197,4 @@ Available templates:
 
 ---
 
-**Last Updated:** February 2026
+**Last Updated:** March 2026

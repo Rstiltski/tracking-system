@@ -93,3 +93,21 @@ render_activity_feed()
 - **Leaderboards**: Compare rankings
 - **Challenges**: Challenge friends
 - **Achievements**: Share achievements
+
+---
+
+## Cross-References
+
+| Topic | File |
+|-------|------|
+| AI entry point | `../AI_START_HERE.md` |
+| Project overview | `../README.md` |
+| Backend architecture | `../brain/README.md` |
+| Page module pattern | `../patterns/page_module.md` |
+| Friends implementation | `../tracking_app/pages/friends.py` |
+| User models | `../brain/models/` |
+| Leaderboard integration | `../tracking_app/pages/leaderboards/` |
+
+---
+
+**Last Updated:** March 2026

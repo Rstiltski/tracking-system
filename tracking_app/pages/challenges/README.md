@@ -94,3 +94,21 @@ render_join_form()
 - **Achievements**: Challenge achievements
 - **Rewards**: Challenge rewards
 - **Leaderboards**: Challenge rankings
+
+---
+
+## Cross-References
+
+| Topic | File |
+|-------|------|
+| AI entry point | `../AI_START_HERE.md` |
+| Project overview | `../README.md` |
+| Backend architecture | `../brain/README.md` |
+| Page module pattern | `../patterns/page_module.md` |
+| Challenge implementation | `../tracking_app/pages/challenges.py` |
+| Challenge models | `../brain/models/` |
+| Achievement integration | `../tracking_app/pages/achievements/` |
+
+---
+
+**Last Updated:** March 2026

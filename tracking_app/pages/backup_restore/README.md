@@ -94,3 +94,21 @@ render_restore_form()
 - **Data Export**: Export specific data
 - **Data Import**: Import data
 - **Data Lifecycle**: Data management
+
+---
+
+## Cross-References
+
+| Topic | File |
+|-------|------|
+| AI entry point | `../AI_START_HERE.md` |
+| Project overview | `../README.md` |
+| Backend architecture | `../brain/README.md` |
+| Page module pattern | `../patterns/page_module.md` |
+| Backup & restore implementation | `../tracking_app/pages/backup_restore.py` |
+| Storage models | `../brain/models/` |
+| Data export integration | `../tracking_app/pages/data_export/` |
+
+---
+
+**Last Updated:** March 2026

@@ -93,3 +93,21 @@ render_alert_form()
 - **Goals**: Goal management
 - **Notification Settings**: Global notifications
 - **Task Alerts**: Task-specific alerts
+
+---
+
+## Cross-References
+
+| Topic | File |
+|-------|------|
+| AI entry point | `../AI_START_HERE.md` |
+| Project overview | `../README.md` |
+| Backend architecture | `../brain/README.md` |
+| Page module pattern | `../patterns/page_module.md` |
+| Goal alerts implementation | `../tracking_app/pages/goal_alerts.py` |
+| Alert models | `../brain/models/` |
+| Goal integration | `../tracking_app/pages/goals/` |
+
+---
+
+**Last Updated:** March 2026

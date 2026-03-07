@@ -94,3 +94,21 @@ render_time_log()
 - **Tasks**: Link time to tasks
 - **Insights**: Time analytics
 - **Goals**: Time-based goals
+
+---
+
+## Cross-References
+
+| Topic | File |
+|-------|------|
+| AI entry point | `../AI_START_HERE.md` |
+| Project overview | `../README.md` |
+| Backend architecture | `../brain/README.md` |
+| Page module pattern | `../patterns/page_module.md` |
+| Time implementation | `../tracking_app/pages/time.py` |
+| Time models | `../brain/models/` |
+| Task integration | `../tracking_app/pages/tasks/` |
+
+---
+
+**Last Updated:** March 2026

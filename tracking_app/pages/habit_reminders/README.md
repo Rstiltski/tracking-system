@@ -93,3 +93,21 @@ render_reminder_form()
 - **Habits**: Habit management
 - **Notification Settings**: Global notifications
 - **Habit Analytics**: Habit tracking
+
+---
+
+## Cross-References
+
+| Topic | File |
+|-------|------|
+| AI entry point | `../AI_START_HERE.md` |
+| Project overview | `../README.md` |
+| Backend architecture | `../brain/README.md` |
+| Page module pattern | `../patterns/page_module.md` |
+| Habit reminders implementation | `../tracking_app/pages/habit_reminders.py` |
+| Reminder models | `../brain/models/` |
+| Notification integration | `../tracking_app/pages/notification_settings/` |
+
+---
+
+**Last Updated:** March 2026

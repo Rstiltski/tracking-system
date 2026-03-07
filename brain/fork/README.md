@@ -92,10 +92,12 @@ class DryRunResult:
 
 | Topic | File |
 |-------|------|
+| AI entry point | `../AI_START_HERE.md` |
+| Security playbook | `../SECURITY_PLAYBOOK.md` |
 | Risk tiers | `brain/design/05_risk_tiers.md` |
 | Core brain | `brain/core/README.md` |
 | Router | `brain/core/router.py` |
 
 ---
 
-**Last Updated:** February 2026
+**Last Updated:** March 2026

@@ -93,3 +93,21 @@ render_mood_chart()
 - **Health**: Physical health tracking
 - **Insights**: Mood trend analysis
 - **Weekly Review**: Weekly mood summary
+
+---
+
+## Cross-References
+
+| Topic | File |
+|-------|------|
+| AI entry point | `../AI_START_HERE.md` |
+| Project overview | `../README.md` |
+| Backend architecture | `../brain/README.md` |
+| Page module pattern | `../patterns/page_module.md` |
+| Emotional health implementation | `../tracking_app/pages/emotional_health.py` |
+| Emotional models | `../brain/models/` |
+| Health integration | `../tracking_app/pages/health/` |
+
+---
+
+**Last Updated:** March 2026

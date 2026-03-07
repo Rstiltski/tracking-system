@@ -100,3 +100,21 @@ render_add_transaction_form()
 - **Goals**: Set financial goals
 - **Insights**: Financial analytics
 - **Data Export**: Export financial data
+
+---
+
+## Cross-References
+
+| Topic | File |
+|-------|------|
+| AI entry point | `../AI_START_HERE.md` |
+| Project overview | `../README.md` |
+| Backend architecture | `../brain/README.md` |
+| Page module pattern | `../patterns/page_module.md` |
+| Finance implementation | `../tracking_app/pages/finances.py` |
+| Finance models | `../brain/models/` |
+| Data export | `../tracking_app/pages/data_export/` |
+
+---
+
+**Last Updated:** March 2026

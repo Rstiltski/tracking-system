@@ -93,3 +93,21 @@ render_leaderboard()
 - **Friends**: Friend management
 - **Challenges**: Challenge rankings
 - **Rewards**: Points and rewards
+
+---
+
+## Cross-References
+
+| Topic | File |
+|-------|------|
+| AI entry point | `../AI_START_HERE.md` |
+| Project overview | `../README.md` |
+| Backend architecture | `../brain/README.md` |
+| Page module pattern | `../patterns/page_module.md` |
+| Leaderboard implementation | `../tracking_app/pages/leaderboards.py` |
+| User models | `../brain/models/` |
+| Challenge integration | `../tracking_app/pages/challenges/` |
+
+---
+
+**Last Updated:** March 2026

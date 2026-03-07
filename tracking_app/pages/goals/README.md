@@ -94,3 +94,21 @@ render_goal_list()
 - **Goal Alerts**: Goal notifications
 - **Insights**: Goal analytics
 - **Achievements**: Goal achievements
+
+---
+
+## Cross-References
+
+| Topic | File |
+|-------|------|
+| AI entry point | `../AI_START_HERE.md` |
+| Project overview | `../README.md` |
+| Backend architecture | `../brain/README.md` |
+| Page module pattern | `../patterns/page_module.md` |
+| Goal implementation | `../tracking_app/pages/goals.py` |
+| Goal models | `../brain/models/` |
+| Goal alerts | `../tracking_app/pages/goal_alerts/` |
+
+---
+
+**Last Updated:** March 2026

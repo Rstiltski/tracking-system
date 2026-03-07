@@ -90,3 +90,21 @@ render_settings_form()
 - **Habit Reminders**: Habit-specific reminders
 - **Goal Alerts**: Goal-specific alerts
 - **Task Alerts**: Task-specific alerts
+
+---
+
+## Cross-References
+
+| Topic | File |
+|-------|------|
+| AI entry point | `../AI_START_HERE.md` |
+| Project overview | `../README.md` |
+| Backend architecture | `../brain/README.md` |
+| Page module pattern | `../patterns/page_module.md` |
+| Notification settings implementation | `../tracking_app/pages/notification_settings.py` |
+| Settings models | `../brain/models/` |
+| Alert integration | `../tracking_app/pages/task_alerts/` |
+
+---
+
+**Last Updated:** March 2026

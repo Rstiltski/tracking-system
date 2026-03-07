@@ -322,10 +322,12 @@ class MyBrain:
 
 | Topic | File |
 |-------|------|
+| AI entry point | `../AI_START_HERE.md` |
+| Security playbook | `../SECURITY_PLAYBOOK.md` |
 | Core brain | `brain/core/README.md` |
 | Tools | `brain/tools/README.md` |
 | Policies | `brain/policies/README.md` |
 
 ---
 
-**Last Updated:** February 2026
+**Last Updated:** March 2026

@@ -93,3 +93,21 @@ render_stack_detail()
 - **Habits**: Habit management
 - **Time**: Time tracking
 - **Habit Reminders**: Stack reminders
+
+---
+
+## Cross-References
+
+| Topic | File |
+|-------|------|
+| AI entry point | `../AI_START_HERE.md` |
+| Project overview | `../README.md` |
+| Backend architecture | `../brain/README.md` |
+| Page module pattern | `../patterns/page_module.md` |
+| Stack implementation | `../tracking_app/pages/stacks.py` |
+| Stack models | `../brain/models/` |
+| Habit integration | `../tracking_app/pages/habits/` |
+
+---
+
+**Last Updated:** March 2026

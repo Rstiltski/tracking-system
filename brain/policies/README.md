@@ -212,6 +212,8 @@ class MyPolicy:
 
 | Topic | File |
 |-------|------|
+| AI entry point | `../AI_START_HERE.md` |
+| Security playbook | `../SECURITY_PLAYBOOK.md` |
 | Policy specs | `brain/design/02_policy_packs.md` |
 | Core brain | `brain/core/README.md` |
 | Invariants | `brain/invariants/README.md` |

@@ -94,3 +94,21 @@ render_mood_tracker()
 - **Emotional Health**: Detailed emotion tracking
 - **Insights**: Health analytics
 - **Goals**: Health goals
+
+---
+
+## Cross-References
+
+| Topic | File |
+|-------|------|
+| AI entry point | `../AI_START_HERE.md` |
+| Project overview | `../README.md` |
+| Backend architecture | `../brain/README.md` |
+| Page module pattern | `../patterns/page_module.md` |
+| Health implementation | `../tracking_app/pages/health.py` |
+| Health models | `../brain/models/` |
+| Emotional health | `../tracking_app/pages/emotional_health/` |
+
+---
+
+**Last Updated:** March 2026

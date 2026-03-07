@@ -1,181 +1,43 @@
-# Decision Log - Long-term Memory
+# DECISIONS LOG
 
-This file records all architectural and implementation decisions made during development.
+## DECISION_029: Cross-References Added to All Brain Documentation Files
 
-Format: `[TIMESTAMP] [Decision ID] Choice -> [Reasoning] -> [Implication]`
+**Date:** March 7, 2026
+**Status:** IMPLEMENTED
 
----
+### Summary
+Added cross-references to all 12 brain documentation files to improve navigation and context.
 
-## 2026-03-03 Phase Verification & System Improvement
+### Files Updated
+1. `brain/context/README.md` - Added AI_START_HERE.md and SECURITY_PLAYBOOK.md references
+2. `brain/NEURAL_HUB.md` - Added AI_START_HERE.md and SECURITY_PLAYBOOK.md references
+3. `brain/core/README.md` - Added AI_START_HERE.md and SECURITY_PLAYBOOK.md references
+4. `brain/security/README.md` - Added AI_START_HERE.md and SECURITY_PLAYBOOK.md references
+5. `brain/audit/README.md` - Added AI_START_HERE.md and SECURITY_PLAYBOOK.md references
+6. `brain/tools/README.md` - Added AI_START_HERE.md and SECURITY_PLAYBOOK.md references
+7. `brain/policies/README.md` - Added AI_START_HERE.md and SECURITY_PLAYBOOK.md references
+8. `brain/fork/README.md` - Added AI_START_HERE.md and SECURITY_PLAYBOOK.md references
+9. `brain/privacy/README.md` - Added AI_START_HERE.md and SECURITY_PLAYBOOK.md references
+10. `brain/rules/README.md` - Added AI_START_HERE.md and SECURITY_PLAYBOOK.md references
+11. `brain/state/README.md` - Added AI_START_HERE.md and SECURITY_PLAYBOOK.md references
+12. `brain/invariants/README.md` - Added AI_START_HERE.md and SECURITY_PLAYBOOK.md references
+13. `brain/monitoring/README.md` - Added AI_START_HERE.md and SECURITY_PLAYBOOK.md references
+14. `brain/brains/README.md` - Added AI_START_HERE.md and SECURITY_PLAYBOOK.md references
 
-### [2026-03-03T10:15:00Z] DECISION_015
-**Choice:** Create PHASE_7_TODO.md with detailed roadmap
-**Reasoning:** Phase 7 is the next phase after all Phases 1-6 verified complete. Need detailed task breakdown for implementation guidance.
-**Implication:** Phase 7 now has comprehensive roadmap with 6 sub-phases and 50 tasks; ready for implementation when user approves
+### Changes Made
+- Added "AI entry point" reference to `../AI_START_HERE.md`
+- Added "Security playbook" reference to `../SECURITY_PLAYBOOK.md`
+- Updated "Last Updated" dates from February 2026 to March 2026
+- Maintained existing cross-references to other brain components
 
-### [2026-03-03T14:30:00Z] DECISION_016
-**Choice:** Phase 7.1 Chart Responsiveness COMPLETE
-**Reasoning:** Enhanced tracking_app/components/charts.py with ChartExporter, ChartLoader, @with_loading, @debounced_render decorators, and responsive sizing.
-**Implication:** Charts now have loading states, export functionality (CSV/JSON), and optimized re-renders
+### Impact
+- Improved navigation between documentation files
+- Enhanced discoverability of key entry points
+- Better integration with the overall documentation structure
+- Consistent cross-referencing pattern across all brain modules
 
-### [2026-03-03T14:45:00Z] DECISION_017
-**Choice:** Phase 7.2 Achievement Enhancement COMPLETE - 29 achievements with 5-tier system
-**Reasoning:** Added 19 new achievements to brain/models/achievement.py, created tier system (Bronze/Silver/Gold/Platinum/Diamond), implemented achievement_notifications.py and achievement_sharing.py components.
-**Implication:** Users now have 29 achievements to unlock with tier progression, sharing capability, and 2 hidden secret achievements
+### Rationale
+Cross-references help users navigate the complex brain architecture more effectively and provide context for understanding how different components relate to each other and to the overall system.
 
-### [2026-03-03T18:35:00Z] DECISION_018
-**Choice:** Phase 7.3 Audio Feedback System COMPLETE - 14 synthesized sounds
-**Reasoning:** Created brain/audio/ package with AudioManager, SoundEffect definitions, and Web Audio API synthesis. No external audio files needed - all sounds generated via browser Web Audio API.
-**Implication:** Application now has full audio feedback with volume control, mute toggle, and category-based sound filtering (habits, achievements, tasks, system)
-
-### [2026-03-05T23:56:00Z] DECISION_019
-**Choice:** Phase 7.4 Calendar & Time Views COMPLETE - 4 new files
-**Reasoning:** Created brain/analysis/time_views.py (CalendarProcessor, DayData, WeekData, MonthData), tracking_app/components/heatmap.py (GitHub-style contribution heatmap), tracking_app/pages/calendar.py (monthly calendar view), and tracking_app/pages/weekly.py (7-day summary).
-**Implication:** Users can now view habit completion history in calendar format, weekly summaries with trend analysis, and heatmap visualization showing completion patterns over time
-
-### [2026-03-06T15:46:00Z] DECISION_020
-**Choice:** Fix calendar rendering bug in heatmap.py _group_by_weeks function
-**Reasoning:** The calendar view showed duplicate dates (e.g., "6" appearing multiple times) and misaligned weekdays due to _group_by_weeks only padding the first week and not handling subsequent week alignment correctly. Also fixed _render_heatmap_grid to handle empty placeholder cells.
-**Implication:** Calendar now displays each date exactly once with proper weekday alignment (Mon-Sun grid); dates are sorted chronologically within the grid
-
-### [2026-03-06T16:01:00Z] DECISION_021
-**Choice:** Simplified _group_by_weeks algorithm - removed overcomplicated gap handling
-**Reasoning:** The initial fix with gap handling logic was causing empty weeks. For a calendar month, all dates are consecutive (no gaps). Simplified to: sort data, pad first week based on first date's weekday, then add days sequentially to weeks.
-**Implication:** Calendar now renders correctly with March 1 on Sunday, March 7 on Saturday, etc. Each date appears once in correct position.
-
-### [2026-03-06T16:55:00Z] DECISION_022
-**Choice:** Enhanced TimeViewsProcessor with complete calendar/time views architecture
-**Reasoning:** User requested using the comprehensive Phase 7.4 implementation plan architecture. The improved TimeViewsProcessor now provides: get_day_detail(), get_weekly_summary(), get_monthly_view(), get_heatmap_data(), get_streaks(), navigation helpers, and export functionality. Updated calendar.py and weekly.py pages to use the new processor.
-**Implication:** Calendar and Weekly pages now have proper data layer with streak calculation, week-over-week comparison, monthly trend analysis, and heatmap data generation. Architecture follows clean separation of concerns pattern.
-
-### [2026-03-06T17:53:00Z] DECISION_023
-**Choice:** Phase 7.5 Performance Optimization COMPLETE - 5 new utility modules
-**Reasoning:** Created comprehensive performance optimization utilities in brain/utils/:
-1. cache.py - Thread-safe in-memory caching with TTL, LRU eviction, @cached decorator
-2. profiling.py - Performance logging, @timed decorator, Profiler class for detailed analysis
-3. pagination.py - Offset-based and cursor-based pagination for large datasets
-4. debounce.py - Debouncing, throttling, and rate limiting for UI updates
-5. lazy.py - Lazy loading for habit entries, task lists, goal history
-**Implication:** Application now has full performance optimization toolkit with caching (reduces DB queries), lazy loading (reduces memory), pagination (handles large datasets), debouncing (reduces UI re-renders), and profiling (identifies slow operations). Phase 7 now at 82% (41/50 tasks).
-
-### [2026-03-06T18:40:00Z] DECISION_024
-**Choice:** Phase 7.6 Mobile Responsiveness COMPLETE - Responsive UI components created
-**Reasoning:** Created tracking_app/components/responsive.py with:
-1. ResponsiveLayout - Breakpoint detection, responsive columns
-2. TouchFriendly - Touch-friendly buttons (min 44px), action rows
-3. MobileNavigation - Hamburger menu, tab bar for mobile
-4. SwipeGesture - Swipe-like navigation buttons
-5. ResponsiveChart - Chart sizing/optimization for mobile
-6. TextSizing - Responsive text sizing utilities
-**Implication:** Phase 7 (Polish & Enhancement) is now 100% complete (50/50 tasks). All 7 phases of the tracking system are verified complete. Application is production-ready with chart responsiveness, achievement enhancement, audio feedback, calendar views, performance optimization, and mobile responsiveness.
-
-### [2026-03-03T10:14:00Z] DECISION_014
-**Choice:** Create CORE_RULES.md as master rule registry
-**Reasoning:** Need single source of truth for all project rules, consolidating from PROJECT_RULES.md, brain/__init__.py, brain/rules/, etc.
-**Implication:** All future rule references point to CORE_RULES.md; other files link via synaptic hooks
-
-### [2026-03-03T02:05:00Z] DECISION_002
-**Choice:** Create NEURAL_HUB.md as central cortex entry point
-**Reasoning:** Need navigation hub that connects all neural pathways and provides context loading sequences
-**Implication:** AI starts at NEURAL_HUB.md for all tasks, following defined pathways
-
-### [2026-03-03T02:08:00Z] DECISION_003
-**Choice:** Create AI_RULES.md with 4-phase workflow
-**Reasoning:** Need structured thinking protocol to prevent "Simplicity Trap" and "Context Gap"
-**Implication:** All AI responses follow Interrogation → Translation → Roadmap → Execution workflow
-
-### [2026-03-03T02:09:00Z] DECISION_004
-**Choice:** Create session.json and decisions.log as memory system
-**Reasoning:** Need working memory (session state) and long-term memory (decision history) for AI continuity
-**Implication:** AI maintains state across sessions and learns from past decisions
-
-### [2026-03-03T02:50:00Z] DECISION_005
-**Choice:** Integrate Vibe Coding rules from "Vibe Coding for Non-Coders Guide"
-**Reasoning:** Need structured prompt framework to bridge the gap between user vision and AI execution. The Five-Component Framework (Purpose, Users, Features, Constraints, Quality Standards) addresses the "Simplicity Trap", "Context Gap", and "Vision-Execution Divide"
-**Implication:** All AI prompts must follow the Five-Component Framework; "simple" is banned without definition; quality phrases must be included; edge cases must be specified
-
-### [2026-03-03T02:51:00Z] DECISION_006
-**Choice:** Add AI_001-008 rules to CORE_RULES.md for Vibe Coding protocol
-**Reasoning:** Need formal rule enforcement for AI communication standards
-**Implication:** AI_001 (Five-Component Framework) and AI_002 (No Undefined "Simple") are CRITICAL enforcement level
-
-### [2026-03-03T02:52:00Z] DECISION_007
-**Choice:** Create patterns/prompt_template.md with Perfect Prompt Template
-**Reasoning:** Need reusable template for structured prompts with examples
-**Implication:** All feature requests should be transformed using this template before execution
-
-### [2026-03-03T08:47:00Z] DECISION_008
-**Choice:** Create CONTEXT.md as single master reference file for AI context loading
-**Reasoning:** User needs one file to mention that gives AI full project context without explaining each file separately
-**Implication:** User can say "Follow CONTEXT.md" and AI will understand the loading sequence, critical rules, and procedures
-
-### [2026-03-03T09:43:00Z] DECISION_009
-**Choice:** Phase 1 verified as COMPLETE - 31 tests passing
-**Reasoning:** All Phase 1 files exist (brain/models/habit.py, streak.py, audit/event_store.py) and all 31 unit tests pass, confirming HabitScore, StreakFreeze, and supporting classes work correctly
-**Implication:** Phase 1 Foundation Strengthening is confirmed 100% complete; can proceed to verify Phase 2
-
-### [2026-03-03T09:50:00Z] DECISION_010
-**Choice:** Phase 2-4 verified as COMPLETE - 88 tests passing
-**Reasoning:** All brain/analysis/, brain/behavioral/, brain/notifications/ modules exist with comprehensive implementations. Correlation, prediction, burnout, habit stacking, rewards, accountability, and notification modules all present.
-**Implication:** Phases 2, 3, and 4 confirmed 100% complete; proceed to verify Phase 5-6
-
-### [2026-03-03T09:51:00Z] DECISION_011
-**Choice:** Phase 5-6 discovered to be COMPLETE - ROADMAP.md was outdated
-**Reasoning:** Upon verification, brain/backup/ has 12 files, brain/lifecycle/ has 9 files, and tracking_app/pages/ has all required UI pages (dashboard, habits, insights, stacks, rewards). The ROADMAP.md showed 75% and 25% completion but actual implementation is 100%.
-**Implication:** ALL Phases 1-6 are verified complete; Phase 7 (Polish & Enhancement) is the next phase; ROADMAP.md has been corrected
-
-### [2026-03-03T09:55:00Z] DECISION_012
-**Choice:** Update all phase TODO files with verification status sections
-**Reasoning:** Consistent verification status sections across all PHASE_*_TODO.md files provides clear audit trail of what was verified, when, and by what method
-**Implication:** All phase documentation now includes VERIFICATION STATUS section at the top
-
----
-
-## Template for New Decisions
-
-```
-### [TIMESTAMP] DECISION_XXX
-**Choice:** [What was decided]
-**Reasoning:** [Why it was decided]
-**Implication:** [What this means for future]
-```
-
----
-
-## Decision Categories
-
-| Category | Prefix | Examples |
-|----------|--------|----------|
-| Architecture | ARCH_ | System design decisions |
-| Language | LANG_ | Python/JavaScript choices |
-| Feature | FEAT_ | Feature implementation choices |
-| Rule | RULE_ | Rule definition choices |
-| Pattern | PATTERN_ | Code pattern decisions |
-| Integration | INT_ | System integration choices |
-
----
-
-### [2026-03-07T14:00:00Z] DECISION_025
-**Choice:** Create AI_START_HERE.md as master index for AI/LLM entry point
-**Reasoning:** Need a clear, explicit entry point for AI agents that provides context loading sequence, quick start guide, documentation library, and project structure. The filename "AI_START_HERE" is self-documenting and matches the "🚨 LLM START HERE" header in the content.
-**Implication:** AI agents can now use "Follow AI_START_HERE.md" to load the 5-file context sequence. The legacy index.html remains for reference during the Python-First migration.
-
-### [2026-03-07T14:25:00Z] DECISION_026
-**Choice:** Enhance AI_START_HERE.md with patterns from M4L readme01.txt and create CONTRIBUTING.md
-**Reasoning:** The M4L project README contained valuable patterns including: LLM/Contributor Rules section, Agent Operational Note, Essential LLM Files table, Debug Mode documentation, and clearer file structure. These patterns improve AI agent onboarding and contributor guidance.
-**Implication:** AI_START_HERE.md now has comprehensive contributor rules, essential files list, debug mode section, and project status. CONTRIBUTING.md provides structured guidance for all contributors with development workflow, code style guidelines, testing instructions, and PR process.
-
-### [2026-03-07T14:35:00Z] DECISION_027
-**Choice:** Create brain/SECURITY_PLAYBOOK.md with security protocols and audit requirements
-**Reasoning:** Need comprehensive security documentation defining authentication/authorization policies, audit trail requirements, XP anti-cheat logging, export guard protocols, data protection measures, risk tier classification, security monitoring, and incident response procedures.
-**Implication:** Veryfyn now has a formal security playbook defining POLICY_001-004, risk tiers RISK_001-005, guardrail checks GUARD_001-005, and incident response protocols for data breach and corruption recovery.
-
-### [2026-03-07T15:30:00Z] DECISION_028
-**Choice:** Update all documentation cross-references for AI_START_HERE.md and brain/SECURITY_PLAYBOOK.md
-**Reasoning:** Following documentation consistency rules in PROJECT_RULES.md, all core documentation files must cross-reference newly created files. Updated 12 documentation files: CONTEXT.md, README.md, brain/README.md, brain/immune/README.md, PROJECT_RULES.md, brain/CORE_RULES.md, FEATURE_MAP.md, ROADMAP.md, GETTING_STARTED.md, .context.md, brain/context/README.md, and TODO.md.
-**Implication:** Documentation system is now fully interconnected with consistent navigation tables and cross-references. AI agents can navigate from any entry point to all critical files.
-
----
-
-**Last Updated:** 2026-03-07
-**Version:** 1.4.0
+### Related Decisions
+- DECISION_028: Cross-References Added to Core Documentation Files

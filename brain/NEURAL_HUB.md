@@ -225,8 +225,10 @@ After completing any task:
 
 | File | Purpose |
 |------|---------|
+| [AI_START_HERE.md](../AI_START_HERE.md) | **AI entry point** - Start here |
 | [CORE_RULES.md](./CORE_RULES.md) | **MASTER FILE** - All rules |
 | [AI_RULES.md](./AI_RULES.md) | AI thinking protocol |
+| [SECURITY_PLAYBOOK.md](./SECURITY_PLAYBOOK.md) | Security protocols & audit requirements |
 | [nervous_system.py](./nervous_system.py) | Event bus implementation |
 | [README.md](../README.md) | Project entry point |
 

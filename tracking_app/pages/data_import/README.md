@@ -94,3 +94,21 @@ render_preview()
 - **Data Export**: Export data
 - **Backup & Restore**: Full restore
 - **Data Lifecycle**: Data management
+
+---
+
+## Cross-References
+
+| Topic | File |
+|-------|------|
+| AI entry point | `../AI_START_HERE.md` |
+| Project overview | `../README.md` |
+| Backend architecture | `../brain/README.md` |
+| Page module pattern | `../patterns/page_module.md` |
+| Data import implementation | `../tracking_app/pages/data_import.py` |
+| Data models | `../brain/models/` |
+| Export integration | `../tracking_app/pages/data_export/` |
+
+---
+
+**Last Updated:** March 2026

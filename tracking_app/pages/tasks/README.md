@@ -95,3 +95,21 @@ render_task_list()
 - **Task Alerts**: Task notifications
 - **Time**: Time tracking for tasks
 - **Goals**: Task-related goals
+
+---
+
+## Cross-References
+
+| Topic | File |
+|-------|------|
+| AI entry point | `../AI_START_HERE.md` |
+| Project overview | `../README.md` |
+| Backend architecture | `../brain/README.md` |
+| Page module pattern | `../patterns/page_module.md` |
+| Task implementation | `../tracking_app/pages/tasks.py` |
+| Task models | `../brain/models/` |
+| Task alerts | `../tracking_app/pages/task_alerts/` |
+
+---
+
+**Last Updated:** March 2026

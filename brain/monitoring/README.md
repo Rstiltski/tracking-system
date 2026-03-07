@@ -210,10 +210,12 @@ if health.status == HealthStatus.CRITICAL:
 
 | Topic | File |
 |-------|------|
+| AI entry point | `../AI_START_HERE.md` |
+| Security playbook | `../SECURITY_PLAYBOOK.md` |
 | Audit Log | `brain/audit/README.md` |
 | Traceback Analyzer | `brain/tools/traceback_analyzer.py` |
 | Rules System | `brain/rules/README.md` |
 
 ---
 
-**Last Updated:** February 2026
+**Last Updated:** March 2026

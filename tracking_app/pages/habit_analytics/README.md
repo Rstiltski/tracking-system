@@ -93,3 +93,21 @@ render_analytics()
 - **Habits**: Habit management
 - **Insights**: General insights
 - **Weekly Review**: Weekly habit summary
+
+---
+
+## Cross-References
+
+| Topic | File |
+|-------|------|
+| AI entry point | `../AI_START_HERE.md` |
+| Project overview | `../README.md` |
+| Backend architecture | `../brain/README.md` |
+| Page module pattern | `../patterns/page_module.md` |
+| Habit analytics implementation | `../tracking_app/pages/habit_analytics.py` |
+| Habit models | `../brain/models/` |
+| Insights integration | `../tracking_app/pages/insights/` |
+
+---
+
+**Last Updated:** March 2026

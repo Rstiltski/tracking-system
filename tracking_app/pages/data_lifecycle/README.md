@@ -93,3 +93,21 @@ render_archive_view()
 - **Data Export**: Export data before cleanup
 - **Data Import**: Import archived data
 - **Backup & Restore**: Full backup
+
+---
+
+## Cross-References
+
+| Topic | File |
+|-------|------|
+| AI entry point | `../AI_START_HERE.md` |
+| Project overview | `../README.md` |
+| Backend architecture | `../brain/README.md` |
+| Page module pattern | `../patterns/page_module.md` |
+| Data lifecycle implementation | `../tracking_app/pages/data_lifecycle.py` |
+| Storage models | `../brain/models/` |
+| Export integration | `../tracking_app/pages/data_export/` |
+
+---
+
+**Last Updated:** March 2026

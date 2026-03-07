@@ -106,6 +106,8 @@ result = enforcer.check_operation(
 
 | Topic | File |
 |-------|------|
+| AI entry point | `../AI_START_HERE.md` |
+| Security playbook | `../SECURITY_PLAYBOOK.md` |
 | Security policy | `brain/policies/security.py` |
 | Privacy | `brain/privacy/README.md` |
 | Core brain | `brain/core/README.md` |

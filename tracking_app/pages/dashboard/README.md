@@ -93,3 +93,20 @@ render_quick_actions()
 - **All Pages**: Dashboard links to all features
 - **Insights**: Detailed analytics
 - **Weekly Review**: Weekly summary
+
+---
+
+## Cross-References
+
+| Topic | File |
+|-------|------|
+| AI entry point | `../AI_START_HERE.md` |
+| Project overview | `../README.md` |
+| Backend architecture | `../brain/README.md` |
+| Page module pattern | `../patterns/page_module.md` |
+| Dashboard implementation | `../tracking_app/pages/dashboard.py` |
+| Streamlit components | `../tracking_app/components/` |
+
+---
+
+**Last Updated:** March 2026

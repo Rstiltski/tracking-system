@@ -153,10 +153,12 @@ result = tool.run({
 
 | Topic | File |
 |-------|------|
+| AI entry point | `../AI_START_HERE.md` |
+| Security playbook | `../SECURITY_PLAYBOOK.md` |
 | Invariant specs | `brain/design/03_invariants.md` |
 | Reconciliation tool | `brain/tools/reconciliation_tools.py` |
 | Immune system | `brain/immune/README.md` |
 
 ---
 
-**Last Updated:** February 2026
+**Last Updated:** March 2026
