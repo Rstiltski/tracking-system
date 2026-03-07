@@ -63,6 +63,47 @@ logger.log_state_transition(
 
 ---
 
+## Performance System Auditing
+
+The audit system also tracks performance optimization operations:
+
+```python
+# Log predictive loading operations
+logger.log_performance_operation(
+    operation_type="predictive_load",
+    component="dashboard",
+    duration_ms=120,
+    success=True,
+    cache_hit=True
+)
+
+# Log smart cache operations
+logger.log_performance_operation(
+    operation_type="smart_cache",
+    cache_key="user_data_123",
+    strategy="ml_optimized",
+    hit_rate=0.85
+)
+
+# Log progressive loading events
+logger.log_performance_operation(
+    operation_type="progressive_load",
+    content_type="critical",
+    skeleton_shown=True,
+    load_time_ms=800
+)
+
+# Log performance analytics events
+logger.log_performance_operation(
+    operation_type="performance_analytics",
+    metric_type="page_load",
+    value=1.2,
+    threshold_exceeded=False
+)
+```
+
+---
+
 ## Audit Schema
 
 ```python
@@ -85,7 +126,13 @@ logger.log_state_transition(
             "success": true,
             "data": {...}
         }
-    ]
+    ],
+    "performance_metrics": {
+        "predictive_loading": true,
+        "cache_hit": false,
+        "progressive_loading": true,
+        "analytics_tracked": true
+    }
 }
 ```
 
@@ -105,6 +152,26 @@ result = tool.run({
 })
 ```
 
+### Performance Analytics Queries
+
+```python
+# Query performance system operations
+performance_logs = tool.run({
+    "start_date": "2026-03-01",
+    "end_date": "2026-03-08",
+    "operation_type": "performance_analytics",
+    "metric_type": "page_load"
+})
+
+# Query cache performance
+cache_logs = tool.run({
+    "start_date": "2026-03-01",
+    "end_date": "2026-03-08",
+    "operation_type": "smart_cache",
+    "cache_key": "user_data_*"
+})
+```
+
 ---
 
 ## Cross-References
@@ -116,6 +183,11 @@ result = tool.run({
 | Audit schema specs | `brain/design/06_audit_schema.md` |
 | Core brain | `brain/core/README.md` |
 | Audit tools | `brain/tools/audit_tools.py` |
+| Performance systems | `docs/PHASE_8_FINAL_SUMMARY.md` |
+| Predictive loading | `docs/PREDICTIVE_LOADING_GUIDE.md` |
+| Smart caching | `docs/SMART_CACHING_GUIDE.md` |
+| Progressive loading | `docs/PROGRESSIVE_LOADING_GUIDE.md` |
+| Performance analytics | `docs/PERFORMANCE_ANALYTICS_GUIDE.md` |
 
 ---
 

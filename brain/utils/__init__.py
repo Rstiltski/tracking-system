@@ -4,7 +4,7 @@ Brain Utilities Package
 Provides caching, profiling, pagination, lazy loading, and performance utilities for the tracking system.
 """
 
-from brain.utils.cache import Cache, cached, get_cache
+from brain.utils.cache import CacheManager, cached, get_cache
 from brain.utils.profiling import (
     PerformanceLogger,
     profile,
@@ -38,7 +38,7 @@ from brain.utils.lazy import (
 
 __all__ = [
     # Caching
-    "Cache",
+    "CacheManager",
     "cached",
     "get_cache",
     # Profiling

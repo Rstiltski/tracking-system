@@ -1,359 +1,510 @@
 """
-Caching Utilities - Performance Optimization
+Cache Manager - High-Performance Caching System
 
-Provides in-memory caching with TTL support for frequently accessed data.
-Following PROJECT_RULES.md:
-- Python-first implementation
-- Thread-safe operations
-- Configurable TTL and max size
+Provides a comprehensive caching system with TTL support, thread safety,
+and automatic cleanup. Designed for the tracking system's performance optimization.
+
+Usage:
+    from brain.utils.cache import CacheManager, ConnectionPool
+    
+    # Initialize cache
+    cache = CacheManager(default_ttl=300)
+    
+    # Store data
+    cache.set("user_123_profile", user_data, ttl=600)
+    
+    # Retrieve data
+    user_data = cache.get("user_123_profile")
+    
+    # Get cache statistics
+    stats = cache.get_stats()
 """
-from __future__ import annotations
 
-import threading
 import time
-import hashlib
-import json
-from functools import wraps
-from typing import Any, Callable, Dict, Optional, TypeVar, Generic
-from datetime import datetime
+import threading
+from typing import Any, Optional, Dict, List, Tuple
+from dataclasses import dataclass, field
+from datetime import datetime, timedelta
+from collections import defaultdict
 import logging
 
 logger = logging.getLogger(__name__)
 
-T = TypeVar('T')
+
+@dataclass
+class CacheEntry:
+    """Represents a single cache entry."""
+    value: Any
+    expiry_time: float
+    created_at: datetime
+    access_count: int = 0
+    last_accessed: datetime = field(default_factory=datetime.now)
 
 
-class CacheEntry(Generic[T]):
-    """A single cache entry with TTL support."""
-    
-    def __init__(self, value: T, ttl_seconds: Optional[float] = None):
-        """
-        Initialize cache entry.
-        
-        Args:
-            value: The cached value
-            ttl_seconds: Time-to-live in seconds (None = no expiry)
-        """
-        self.value = value
-        self.created_at = time.time()
-        self.ttl_seconds = ttl_seconds
-        self.access_count = 0
-        self.last_accessed = self.created_at
-    
-    def is_expired(self) -> bool:
-        """Check if entry has expired."""
-        if self.ttl_seconds is None:
-            return False
-        return time.time() - self.created_at > self.ttl_seconds
-    
-    def access(self) -> T:
-        """Access the cached value and update stats."""
-        self.access_count += 1
-        self.last_accessed = time.time()
-        return self.value
-
-
-class Cache:
+class CacheManager:
     """
-    Thread-safe in-memory cache with TTL support.
+    Thread-safe cache manager with TTL support and automatic cleanup.
     
     Features:
-    - Configurable TTL (time-to-live)
-    - Maximum size with LRU eviction
+    - TTL-based expiration
     - Thread-safe operations
-    - Cache statistics tracking
-    
-    Usage:
-        cache = Cache(max_size=1000, default_ttl=300)
-        
-        # Set value
-        cache.set("user:123", {"name": "John"}, ttl=60)
-        
-        # Get value
-        user = cache.get("user:123")
-        
-        # Use decorator
-        @cached(ttl=120)
-        def get_habits():
-            return storage.get_habits()
+    - Automatic cleanup of expired entries
+    - Cache statistics and monitoring
+    - LRU eviction when memory limits are reached
     """
     
     def __init__(
         self,
-        max_size: int = 1000,
-        default_ttl: Optional[float] = 300.0
+        default_ttl: int = 300,
+        max_size: int = 10000,
+        cleanup_interval: int = 60,
+        enable_stats: bool = True
     ):
         """
-        Initialize cache.
+        Initialize cache manager.
         
         Args:
-            max_size: Maximum number of entries
-            default_ttl: Default TTL in seconds (5 minutes default)
+            default_ttl: Default TTL in seconds
+            max_size: Maximum number of cache entries
+            cleanup_interval: Cleanup interval in seconds
+            enable_stats: Enable hit/miss statistics
         """
-        self._cache: Dict[str, CacheEntry] = {}
-        self._lock = threading.RLock()
-        self.max_size = max_size
         self.default_ttl = default_ttl
+        self.max_size = max_size
+        self.cleanup_interval = cleanup_interval
+        self.enable_stats = enable_stats
+        
+        # Thread-safe storage
+        self.cache: Dict[str, CacheEntry] = {}
+        self.lock = threading.RLock()
         
         # Statistics
-        self._hits = 0
-        self._misses = 0
+        self.stats = {
+            'hits': 0,
+            'misses': 0,
+            'sets': 0,
+            'deletes': 0,
+            'evictions': 0
+        }
+        
+        # Start cleanup thread
+        self._start_cleanup_thread()
+        
+        logger.info(f"CacheManager initialized with TTL={default_ttl}s, max_size={max_size}")
     
-    def _generate_key(self, *args, **kwargs) -> str:
-        """Generate a cache key from function arguments."""
-        key_data = json.dumps({"args": args, "kwargs": kwargs}, sort_keys=True, default=str)
-        return hashlib.md5(key_data.encode()).hexdigest()
-    
-    def get(self, key: str, default: Any = None) -> Any:
+    def set(self, key: str, value: Any, ttl: Optional[int] = None) -> None:
         """
-        Get a value from the cache.
+        Set a value in cache with optional TTL.
         
         Args:
             key: Cache key
-            default: Default value if not found
+            value: Value to store
+            ttl: Time to live in seconds (uses default if None)
+        """
+        ttl = ttl or self.default_ttl
+        expiry_time = time.time() + ttl
+        
+        with self.lock:
+            # Check if we need to evict entries
+            if len(self.cache) >= self.max_size:
+                self._evict_lru_entries(1)
+            
+            # Store the entry
+            entry = CacheEntry(
+                value=value,
+                expiry_time=expiry_time,
+                created_at=datetime.now()
+            )
+            
+            self.cache[key] = entry
+            
+            if self.enable_stats:
+                self.stats['sets'] += 1
+        
+        logger.debug(f"Cache set: {key} (TTL: {ttl}s)")
+    
+    def get(self, key: str) -> Optional[Any]:
+        """
+        Get a value from cache if it exists and hasn't expired.
+        
+        Args:
+            key: Cache key
             
         Returns:
-            Cached value or default
+            Cached value or None if not found or expired
         """
-        with self._lock:
-            entry = self._cache.get(key)
+        with self.lock:
+            entry = self.cache.get(key)
             
             if entry is None:
-                self._misses += 1
-                return default
+                if self.enable_stats:
+                    self.stats['misses'] += 1
+                return None
             
-            if entry.is_expired():
-                del self._cache[key]
-                self._misses += 1
-                return default
+            # Check if expired
+            current_time = time.time()
+            if current_time > entry.expiry_time:
+                del self.cache[key]
+                if self.enable_stats:
+                    self.stats['misses'] += 1
+                logger.debug(f"Cache miss (expired): {key}")
+                return None
             
-            self._hits += 1
-            return entry.access()
-    
-    def set(
-        self,
-        key: str,
-        value: Any,
-        ttl: Optional[float] = None
-    ) -> None:
-        """
-        Set a value in the cache.
-        
-        Args:
-            key: Cache key
-            value: Value to cache
-            ttl: TTL in seconds (uses default if None)
-        """
-        with self._lock:
-            # Evict if at max size
-            if len(self._cache) >= self.max_size and key not in self._cache:
-                self._evict_lru()
+            # Update access statistics
+            entry.access_count += 1
+            entry.last_accessed = datetime.now()
             
-            entry_ttl = ttl if ttl is not None else self.default_ttl
-            self._cache[key] = CacheEntry(value, entry_ttl)
+            if self.enable_stats:
+                self.stats['hits'] += 1
+            
+            logger.debug(f"Cache hit: {key}")
+            return entry.value
     
     def delete(self, key: str) -> bool:
         """
-        Delete a value from the cache.
+        Delete a key from cache.
         
         Args:
             key: Cache key
             
         Returns:
-            True if deleted, False if not found
+            True if key was deleted, False if not found
         """
-        with self._lock:
-            if key in self._cache:
-                del self._cache[key]
+        with self.lock:
+            if key in self.cache:
+                del self.cache[key]
+                if self.enable_stats:
+                    self.stats['deletes'] += 1
+                logger.debug(f"Cache delete: {key}")
                 return True
             return False
     
     def clear(self) -> None:
         """Clear all cache entries."""
-        with self._lock:
-            self._cache.clear()
-            self._hits = 0
-            self._misses = 0
-    
-    def _evict_lru(self) -> None:
-        """Evict the least recently used entry."""
-        if not self._cache:
-            return
-        
-        # Find entry with oldest last_accessed time
-        lru_key = min(
-            self._cache.keys(),
-            key=lambda k: self._cache[k].last_accessed
-        )
-        del self._cache[lru_key]
-        logger.debug(f"Evicted LRU cache entry: {lru_key}")
-    
-    def cleanup_expired(self) -> int:
-        """
-        Remove all expired entries.
-        
-        Returns:
-            Number of entries removed
-        """
-        with self._lock:
-            expired_keys = [
-                k for k, v in self._cache.items()
-                if v.is_expired()
-            ]
-            for key in expired_keys:
-                del self._cache[key]
-            
-            if expired_keys:
-                logger.debug(f"Cleaned up {len(expired_keys)} expired cache entries")
-            
-            return len(expired_keys)
+        with self.lock:
+            count = len(self.cache)
+            self.cache.clear()
+            if self.enable_stats:
+                self.stats['deletes'] += count
+            logger.info(f"Cache cleared: {count} entries removed")
     
     def get_stats(self) -> Dict[str, Any]:
         """
-        Get cache statistics.
+        Get comprehensive cache statistics.
         
         Returns:
-            Dictionary with cache stats
+            Dictionary with cache statistics
         """
-        with self._lock:
-            total_requests = self._hits + self._misses
-            hit_rate = (self._hits / total_requests * 100) if total_requests > 0 else 0
+        with self.lock:
+            total_entries = len(self.cache)
+            expired_entries = sum(1 for entry in self.cache.values() 
+                                if time.time() > entry.expiry_time)
+            active_entries = total_entries - expired_entries
+            
+            # Calculate hit rate
+            total_requests = self.stats['hits'] + self.stats['misses']
+            hit_rate = (self.stats['hits'] / total_requests * 100) if total_requests > 0 else 0
+            
+            # Get most accessed entries
+            most_accessed = sorted(
+                self.cache.items(),
+                key=lambda x: x[1].access_count,
+                reverse=True
+            )[:10]
             
             return {
-                "size": len(self._cache),
-                "max_size": self.max_size,
-                "hits": self._hits,
-                "misses": self._misses,
-                "hit_rate": round(hit_rate, 2),
-                "default_ttl": self.default_ttl
+                'cache_size': total_entries,
+                'active_entries': active_entries,
+                'expired_entries': expired_entries,
+                'max_size': self.max_size,
+                'hit_rate_percent': round(hit_rate, 2),
+                'total_hits': self.stats['hits'],
+                'total_misses': self.stats['misses'],
+                'total_sets': self.stats['sets'],
+                'total_deletes': self.stats['deletes'],
+                'total_evictions': self.stats['evictions'],
+                'memory_usage_mb': self._calculate_memory_usage(),
+                'most_accessed': [
+                    {
+                        'key': key,
+                        'access_count': entry.access_count,
+                        'created_at': entry.created_at.isoformat(),
+                        'last_accessed': entry.last_accessed.isoformat()
+                    }
+                    for key, entry in most_accessed
+                ]
             }
     
-    def invalidate_pattern(self, pattern: str) -> int:
+    def get_entry_info(self, key: str) -> Optional[Dict[str, Any]]:
         """
-        Invalidate all keys matching a pattern.
+        Get detailed information about a specific cache entry.
         
         Args:
-            pattern: Pattern to match (prefix match)
+            key: Cache key
             
         Returns:
-            Number of entries invalidated
+            Entry information or None if not found
         """
-        with self._lock:
-            keys_to_delete = [
-                k for k in self._cache.keys()
-                if k.startswith(pattern)
-            ]
-            for key in keys_to_delete:
-                del self._cache[key]
+        with self.lock:
+            entry = self.cache.get(key)
+            if entry is None:
+                return None
             
-            return len(keys_to_delete)
+            current_time = time.time()
+            time_remaining = max(0, entry.expiry_time - current_time)
+            
+            return {
+                'key': key,
+                'access_count': entry.access_count,
+                'created_at': entry.created_at.isoformat(),
+                'last_accessed': entry.last_accessed.isoformat(),
+                'time_remaining_seconds': round(time_remaining, 2),
+                'is_expired': current_time > entry.expiry_time
+            }
+    
+    def clear_expired(self) -> int:
+        """
+        Manually clear all expired entries.
+        
+        Returns:
+            Number of entries cleared
+        """
+        current_time = time.time()
+        expired_keys = []
+        
+        with self.lock:
+            for key, entry in self.cache.items():
+                if current_time > entry.expiry_time:
+                    expired_keys.append(key)
+            
+            for key in expired_keys:
+                del self.cache[key]
+            
+            if self.enable_stats:
+                self.stats['deletes'] += len(expired_keys)
+            
+            logger.info(f"Manual cleanup: {len(expired_keys)} expired entries cleared")
+            return len(expired_keys)
+    
+    def _evict_lru_entries(self, count: int) -> None:
+        """Evict least recently used entries."""
+        if count <= 0:
+            return
+        
+        # Sort by last accessed time
+        sorted_entries = sorted(
+            self.cache.items(),
+            key=lambda x: x[1].last_accessed
+        )
+        
+        evicted_count = 0
+        for key, _ in sorted_entries[:count]:
+            del self.cache[key]
+            evicted_count += 1
+        
+        if self.enable_stats:
+            self.stats['evictions'] += evicted_count
+        
+        logger.debug(f"LRU eviction: {evicted_count} entries evicted")
+    
+    def _cleanup_expired(self) -> None:
+        """Remove expired cache entries."""
+        current_time = time.time()
+        expired_keys = []
+        
+        with self.lock:
+            for key, entry in self.cache.items():
+                if current_time > entry.expiry_time:
+                    expired_keys.append(key)
+            
+            for key in expired_keys:
+                del self.cache[key]
+        
+        if expired_keys:
+            logger.debug(f"Auto cleanup: {len(expired_keys)} expired entries removed")
+    
+    def _calculate_memory_usage(self) -> float:
+        """
+        Calculate approximate memory usage of cached data.
+        
+        Returns:
+            Memory usage in MB
+        """
+        try:
+            import sys
+            total_size = sum(sys.getsizeof(entry.value) for entry in self.cache.values())
+            return round(total_size / 1024 / 1024, 2)  # Convert to MB
+        except Exception:
+            return 0.0
+    
+    def _start_cleanup_thread(self) -> None:
+        """Start background thread for cache cleanup."""
+        def cleanup_worker():
+            while True:
+                try:
+                    time.sleep(self.cleanup_interval)
+                    self._cleanup_expired()
+                except Exception as e:
+                    logger.error(f"Cache cleanup error: {e}")
+        
+        cleanup_thread = threading.Thread(target=cleanup_worker, daemon=True)
+        cleanup_thread.start()
+        logger.debug("Cache cleanup thread started")
+
+
+class ConnectionPool:
+    """
+    Database connection pool implementation.
+    
+    Features:
+    - Connection reuse
+    - Thread-safe access
+    - Connection timeout handling
+    - Automatic connection management
+    """
+    
+    def __init__(
+        self,
+        db_path: str,
+        max_connections: int = 10,
+        timeout: int = 30,
+        retry_attempts: int = 3
+    ):
+        """
+        Initialize connection pool.
+        
+        Args:
+            db_path: Database file path
+            max_connections: Maximum number of connections
+            timeout: Connection timeout in seconds
+            retry_attempts: Number of retry attempts for failed connections
+        """
+        self.db_path = db_path
+        self.max_connections = max_connections
+        self.timeout = timeout
+        self.retry_attempts = retry_attempts
+        
+        self.connections = []
+        self.lock = threading.Lock()
+        self.condition = threading.Condition(self.lock)
+        self.closed = False
+        
+        logger.info(f"ConnectionPool initialized for {db_path} (max: {max_connections})")
+    
+    def get_connection(self):
+        """
+        Get a connection from the pool.
+        
+        Returns:
+            Database connection
+            
+        Raises:
+            TimeoutError: If no connection is available within timeout
+            RuntimeError: If pool is closed
+        """
+        if self.closed:
+            raise RuntimeError("Connection pool is closed")
+        
+        with self.condition:
+            # Wait for available connection
+            start_time = time.time()
+            while len(self.connections) == 0 and not self.closed:
+                remaining_time = self.timeout - (time.time() - start_time)
+                if remaining_time <= 0:
+                    raise TimeoutError("No database connections available")
+                
+                self.condition.wait(remaining_time)
+                
+                if len(self.connections) == 0 and not self.closed:
+                    # Try to create a new connection if pool isn't full
+                    if len(self.connections) < self.max_connections:
+                        break
+            
+            if self.closed:
+                raise RuntimeError("Connection pool is closed")
+            
+            if self.connections:
+                return self.connections.pop()
+            else:
+                # Create new connection
+                return self._create_connection()
+    
+    def return_connection(self, conn) -> None:
+        """
+        Return a connection to the pool.
+        
+        Args:
+            conn: Database connection to return
+        """
+        with self.condition:
+            if not self.closed and len(self.connections) < self.max_connections:
+                self.connections.append(conn)
+                self.condition.notify()
+            else:
+                # Close connection if pool is full or closed
+                try:
+                    conn.close()
+                except Exception:
+                    pass
+    
+    def close_all(self) -> None:
+        """Close all connections in the pool."""
+        with self.lock:
+            self.closed = True
+            
+            # Close all existing connections
+            for conn in self.connections:
+                try:
+                    conn.close()
+                except Exception:
+                    pass
+            
+            self.connections.clear()
+            self.condition.notify_all()
+            
+            logger.info("All connections closed")
+    
+    def get_stats(self) -> Dict[str, Any]:
+        """Get connection pool statistics."""
+        with self.lock:
+            return {
+                'db_path': self.db_path,
+                'max_connections': self.max_connections,
+                'active_connections': len(self.connections),
+                'pool_closed': self.closed
+            }
+    
+    def _create_connection(self):
+        """Create a new database connection."""
+        try:
+            import sqlite3
+            conn = sqlite3.connect(self.db_path, check_same_thread=False)
+            conn.execute("PRAGMA journal_mode=WAL")
+            conn.execute("PRAGMA synchronous=NORMAL")
+            conn.execute("PRAGMA cache_size=10000")
+            conn.execute("PRAGMA temp_store=MEMORY")
+            return conn
+        except Exception as e:
+            logger.error(f"Failed to create database connection: {e}")
+            raise
 
 
 # Global cache instance
-_cache: Optional[Cache] = None
+_global_cache: Optional[CacheManager] = None
 
 
-def get_cache() -> Cache:
+def get_cache() -> CacheManager:
     """Get the global cache instance."""
-    global _cache
-    if _cache is None:
-        _cache = Cache()
-    return _cache
-
-
-def cached(
-    ttl: Optional[float] = None,
-    key_prefix: str = "",
-    cache: Optional[Cache] = None
-) -> Callable:
-    """
-    Decorator to cache function results.
-    
-    Args:
-        ttl: Time-to-live in seconds
-        key_prefix: Prefix for cache keys
-        cache: Cache instance (uses global if None)
-        
-    Returns:
-        Decorated function
-        
-    Example:
-        @cached(ttl=60, key_prefix="habits")
-        def get_habits():
-            return storage.get_habits()
-    """
-    def decorator(func: Callable) -> Callable:
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            # Use provided cache or global
-            cache_instance = cache or get_cache()
-            
-            # Generate cache key
-            cache_key = f"{key_prefix}:{func.__name__}:{cache_instance._generate_key(*args, **kwargs)}"
-            
-            # Try to get from cache
-            result = cache_instance.get(cache_key)
-            if result is not None:
-                logger.debug(f"Cache hit for {func.__name__}")
-                return result
-            
-            # Execute function and cache result
-            result = func(*args, **kwargs)
-            cache_instance.set(cache_key, result, ttl=ttl)
-            
-            logger.debug(f"Cache miss for {func.__name__}")
-            return result
-        
-        # Add cache control methods
-        wrapper.cache_clear = lambda: (cache or get_cache()).invalidate_pattern(f"{key_prefix}:{func.__name__}")
-        
-        return wrapper
-    
-    return decorator
-
-
-class CachedProperty:
-    """
-    Cached property descriptor with TTL.
-    
-    Example:
-        class MyClass:
-            @CachedProperty(ttl=60)
-            def expensive_computation(self):
-                return compute_something()
-    """
-    
-    def __init__(self, ttl: Optional[float] = None):
-        self.ttl = ttl
-        self.attr_name = None
-    
-    def __set_name__(self, owner, name):
-        self.attr_name = f"_cached_{name}"
-    
-    def __get__(self, instance, owner):
-        if instance is None:
-            return self
-        
-        cache = get_cache()
-        cache_key = f"{instance.__class__.__name__}_{id(instance)}_{self.attr_name}"
-        
-        result = cache.get(cache_key)
-        if result is not None:
-            return result
-        
-        # Compute and cache
-        func = getattr(instance, self.attr_name.lstrip('_cached_'))
-        result = func()
-        cache.set(cache_key, result, ttl=self.ttl)
-        
-        return result
+    global _global_cache
+    if _global_cache is None:
+        _global_cache = CacheManager()
+    return _global_cache
 
 
 # Export
 __all__ = [
-    "Cache",
-    "CacheEntry",
-    "get_cache",
-    "cached",
-    "CachedProperty",
+    'CacheManager',
+    'ConnectionPool',
+    'get_cache',
+    'CacheEntry'
 ]

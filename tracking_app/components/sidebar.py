@@ -1,230 +1,478 @@
 """
-Sidebar Component - Unified Navigation
+Optimized Sidebar - Lazy Loading Navigation
 
-Provides consistent sidebar navigation across all pages.
+Provides an optimized sidebar with lazy loading for navigation.
+Defers loading of non-active page modules until they are needed.
 
 Usage:
-    from tracking_app.components.sidebar import render_sidebar
+    from tracking_app.components.sidebar import LazySidebar, create_sidebar
+    
+    # Create sidebar
+    sidebar = create_sidebar()
+    
+    # Render sidebar and get selected page
+    selected_page = sidebar.render()
+    
+    # Render current page
+    sidebar.render_current_page()
 """
+
 import streamlit as st
-from datetime import datetime
-from typing import Optional
-import os
+from typing import Dict, List, Callable, Any, Optional
+import time
+import logging
+from dataclasses import dataclass, field
+from collections import defaultdict
+
+from tracking_app.components.lazy_loader import LazyPage
+from brain.utils.performance_monitor import get_performance_monitor
+
+logger = logging.getLogger(__name__)
 
 
-def _render_nav_link(label: str, page_file: str):
+@dataclass
+class PageConfig:
+    """Configuration for a sidebar page."""
+    func: Callable
+    icon: str
+    loading_text: str
+    load_time: Optional[float] = None
+    loaded: bool = False
+    access_count: int = 0
+    last_accessed: Optional[float] = None
+
+
+class LazySidebar:
     """
-    Render a navigation link using link_button for universal compatibility.
+    Optimized sidebar with lazy loading for navigation.
     
-    Args:
-        label: Display label for the link
-        page_file: Page filename without extension
+    Features:
+    - Lazy loading of page modules
+    - Performance monitoring
+    - Memory optimization
+    - Navigation state management
     """
-    # Use link_button which works in both multi-page and standalone contexts
-    # The href points to the page route
-    st.link_button(label, f"/{page_file}", use_container_width=True)
-
-
-def _render_category(title: str, icon: str, pages: list, expanded: bool = False):
-    """
-    Render a collapsible category with navigation links.
     
-    Args:
-        title: Category title
-        icon: Emoji icon for the category
-        pages: List of tuples (label, page_file)
-        expanded: Whether the expander should be open by default
-    """
-    with st.expander(f"{icon} {title}", expanded=expanded):
-        for page_name, page_file in pages:
-            _render_nav_link(page_name, page_file)
-
-
-def render_sidebar(show_streak_freeze: bool = False):
-    """
-    Render the main sidebar with navigation.
+    def __init__(self):
+        self.pages: Dict[str, PageConfig] = {}
+        self.current_page: Optional[str] = None
+        self._navigation_history: List[str] = []
+        self._total_load_time: float = 0.0
+        self._page_load_times: Dict[str, List[float]] = defaultdict(list)
     
-    Displays:
-    - App title and logo
-    - User stats (Level, XP)
-    - Categorized navigation links to all pages
-    - Optional Streak Freeze section (for habits page)
-    - Theme toggle
+    def add_page(
+        self, 
+        name: str, 
+        page_func: Callable, 
+        icon: str = "📄",
+        loading_text: str = "Loading page..."
+    ) -> None:
+        """
+        Add a page with lazy loading.
+        
+        Args:
+            name: Page name
+            page_func: Function that renders the page
+            icon: Icon to display with page name
+            loading_text: Text to display during loading
+        """
+        self.pages[name] = PageConfig(
+            func=page_func,
+            icon=icon,
+            loading_text=loading_text
+        )
+        
+        # Set default current page
+        if self.current_page is None:
+            self.current_page = name
+        
+        logger.info(f"Added page: {name} with icon {icon}")
     
-    Args:
-        show_streak_freeze: If True, show streak freeze inventory section
-    """
-    with st.sidebar:
-        # Logo/Title
-        st.title("🎯 Veryfyn")
-        st.caption("Personal Tracking System")
-        st.divider()
+    def render(self) -> str:
+        """
+        Render the sidebar and return selected page name.
         
-        # User Stats
-        level = st.session_state.get('user_level', 1)
-        xp = st.session_state.get('user_xp', 0)
+        Returns:
+            Selected page name
+        """
+        # Sidebar header
+        st.sidebar.title("🎯 Tracking System")
         
-        col1, col2 = st.columns(2)
-        with col1:
-            st.metric("Level", level)
-        with col2:
-            st.metric("XP", xp)
+        # Performance stats
+        self._render_performance_stats()
         
-        # XP Progress Bar
-        from tracking_app.components.session import get_xp_for_level
-        current_xp = xp
-        current_level = level
-        next_level_xp = get_xp_for_level(current_level + 1)
-        current_level_xp = get_xp_for_level(current_level)
+        st.sidebar.divider()
         
-        if next_level_xp > current_level_xp:
-            progress = (current_xp - current_level_xp) / (next_level_xp - current_level_xp)
-            # Ensure progress is always between 0 and 1
-            progress = max(0.0, min(1.0, progress))
-            st.progress(progress, text=f"Progress to Level {current_level + 1}")
+        # Navigation buttons
+        selected_page = self._render_navigation()
         
-        st.divider()
+        # Update current page if selection changed
+        if selected_page and selected_page != self.current_page:
+            self._navigation_history.append(self.current_page)
+            self.current_page = selected_page
+            
+            # Limit history to last 10 navigations
+            if len(self._navigation_history) > 10:
+                self._navigation_history.pop(0)
+            
+            logger.info(f"Navigation: {selected_page}")
         
-        # Streak Freeze Inventory (optional - shown on habits page)
-        if show_streak_freeze:
-            _render_streak_freeze_section()
-            st.divider()
+        # Sidebar footer
+        self._render_sidebar_footer()
         
-        # ═══════════════════════════════════════════════════════════════
-        # CATEGORIZED NAVIGATION
-        # ═══════════════════════════════════════════════════════════════
+        return self.current_page
+    
+    def render_current_page(self) -> None:
+        """
+        Render the currently selected page with lazy loading.
         
-        # 🚀 OVERVIEW - Dashboard and high-level views
-        overview_pages = [
-            ("🏠 Dashboard", "dashboard"),
-            ("📅 Calendar", "calendar"),
-            ("📊 Weekly Review", "weekly_review"),
-        ]
-        _render_category("Overview", "🚀", overview_pages, expanded=True)
+        Raises:
+            KeyError: If current page is not found
+        """
+        if not self.current_page or self.current_page not in self.pages:
+            raise KeyError(f"Current page '{self.current_page}' not found")
         
-        # ✅ HABIT MASTERY - Habit tracking and optimization
-        habit_pages = [
-            ("✅ Habits", "habits"),
-            ("📚 Stacks", "stacks"),
-            ("📊 Habit Analytics", "habit_analytics"),
-            ("🧪 Habit Experiments", "habit_experiments"),
-            ("📤 Template Sharing", "template_sharing"),
-        ]
-        _render_category("Habit Mastery", "✅", habit_pages)
+        page_config = self.pages[self.current_page]
         
-        # 📝 PLANNING - Task and goal management
-        planning_pages = [
-            ("📋 Tasks", "tasks"),
-            ("🎯 Goals", "goals"),
-            ("⏱️ Time", "time"),
-            ("📔 Journal", "journal"),
-            ("📝 Diary", "diary"),
-            ("🔒 Private Todos", "private_todos"),
-        ]
-        _render_category("Planning", "📝", planning_pages)
+        # Create lazy page wrapper
+        lazy_page = LazyPage(
+            page_func=page_config.func,
+            page_name=self.current_page,
+            loading_text=page_config.loading_text,
+            icon=page_config.icon
+        )
         
-        # ❤️ WELLNESS - Health tracking
-        wellness_pages = [
-            ("❤️ Health", "health"),
-            ("🌈 Emotional Health", "emotional_health"),
-        ]
-        _render_category("Wellness", "❤️", wellness_pages)
+        # Measure load time
+        start_time = time.time()
         
-        # 💰 FINANCE - Financial tracking
-        finance_pages = [
-            ("💰 Finances", "finances"),
-        ]
-        _render_category("Finance", "💰", finance_pages)
+        try:
+            # Render the page
+            lazy_page.render()
+            
+            # Record load time
+            load_time = time.time() - start_time
+            self._total_load_time += load_time
+            self._page_load_times[self.current_page].append(load_time)
+            
+            # Update page config
+            page_config.loaded = True
+            page_config.load_time = load_time
+            page_config.access_count += 1
+            page_config.last_accessed = time.time()
+            
+            logger.info(
+                f"Page '{self.current_page}' loaded in {load_time:.3f}s "
+                f"(total: {self._total_load_time:.3f}s)"
+            )
+            
+        except Exception as e:
+            logger.error(f"Error rendering page '{self.current_page}': {e}")
+            st.error(f"Error loading page: {e}")
+    
+    def _render_navigation(self) -> Optional[str]:
+        """Render navigation buttons and return selected page."""
+        selected_page = None
         
-        # 🏆 GAMIFICATION - Achievements and social
-        gamification_pages = [
-            ("🏆 Achievements", "achievements"),
-            ("🎁 Rewards", "rewards"),
-            ("🏅 Leaderboards", "leaderboards"),
-            ("⚔️ Challenges", "challenges"),
-            ("👥 Friends", "friends"),
-        ]
-        _render_category("Gamification", "🏆", gamification_pages)
+        # Group pages by priority (you can customize this logic)
+        priority_groups = self._group_pages_by_priority()
         
-        # ⚙️ SYSTEM - Settings and data management
-        system_pages = [
-            ("⚙️ Notifications", "notification_settings"),
-            ("⏰ Habit Reminders", "habit_reminders"),
-            ("📋 Task Alerts", "task_alerts"),
-            ("🎯 Goal Alerts", "goal_alerts"),
-            ("📤 Data Export", "data_export"),
-            ("📥 Data Import", "data_import"),
-            ("💾 Backup & Restore", "backup_restore"),
-            ("🔄 Data Lifecycle", "data_lifecycle"),
-            ("📈 Insights", "insights"),
-        ]
-        _render_category("System", "⚙️", system_pages)
+        for group_name, page_names in priority_groups.items():
+            if group_name != "All":
+                st.sidebar.subheader(f"**{group_name}**")
+            
+            for page_name in page_names:
+                page_config = self.pages[page_name]
+                
+                # Create button with status indicator
+                button_label = self._get_button_label(page_name, page_config)
+                
+                if st.sidebar.button(button_label, key=f"nav_{page_name}"):
+                    selected_page = page_name
+            
+            if group_name != "All":
+                st.sidebar.divider()
         
-        st.divider()
+        return selected_page
+    
+    def _render_performance_stats(self) -> None:
+        """Render performance statistics in sidebar."""
+        st.sidebar.subheader("⚡ Performance")
         
-        # Theme toggle
-        if st.button("🌙 Toggle Theme", use_container_width=True):
-            current_theme = st.session_state.get('theme', 'light')
-            new_theme = "dark" if current_theme == "light" else "light"
-            st.session_state.theme = new_theme
-            # Save to storage
-            if 'storage' in st.session_state:
-                st.session_state.storage.set_user_data('theme', new_theme)
+        # Overall stats
+        total_pages = len(self.pages)
+        loaded_pages = sum(1 for p in self.pages.values() if p.loaded)
+        
+        st.sidebar.write(f"**Loaded:** {loaded_pages}/{total_pages}")
+        
+        # Average load time
+        if self._page_load_times:
+            all_load_times = []
+            for times in self._page_load_times.values():
+                all_load_times.extend(times)
+            
+            if all_load_times:
+                avg_load_time = sum(all_load_times) / len(all_load_times)
+                st.sidebar.write(f"**Avg Load Time:** {avg_load_time:.3f}s")
+        
+        # Total load time
+        if self._total_load_time > 0:
+            st.sidebar.write(f"**Total Load Time:** {self._total_load_time:.3f}s")
+        
+        # Memory usage
+        try:
+            import psutil
+            process = psutil.Process()
+            memory_mb = process.memory_info().rss / 1024 / 1024
+            st.sidebar.write(f"**Memory:** {memory_mb:.1f} MB")
+        except ImportError:
+            pass
+        
+        # Performance tips
+        self._render_performance_tips()
+    
+    def _render_sidebar_footer(self) -> None:
+        """Render sidebar footer with actions."""
+        st.sidebar.divider()
+        
+        # Quick actions
+        st.sidebar.subheader("🔧 Actions")
+        
+        if st.sidebar.button("🧹 Clear Page States", key="clear_states"):
+            self.reset_all_page_states()
             st.rerun()
         
-        # Footer
-        st.divider()
-        st.caption(f"Version 2.0.0")
-        st.caption(f"© {datetime.now().year} Veryfyn")
+        if st.sidebar.button("📊 Show Stats", key="show_stats"):
+            self.show_detailed_stats()
+        
+        # Navigation history
+        if self._navigation_history:
+            st.sidebar.subheader("🔙 History")
+            for page in reversed(self._navigation_history[-5:]):  # Show last 5
+                st.sidebar.write(f"- {page}")
+    
+    def _render_performance_tips(self) -> None:
+        """Render performance optimization tips."""
+        total_pages = len(self.pages)
+        loaded_pages = sum(1 for p in self.pages.values() if p.loaded)
+        
+        if loaded_pages == 0:
+            st.sidebar.success("✅ Excellent! No pages loaded yet.")
+        elif loaded_pages < 3:
+            st.sidebar.info("ℹ️ Good lazy loading in action!")
+        elif loaded_pages > total_pages * 0.7:
+            st.sidebar.warning("⚠️ Many pages loaded. Consider more aggressive lazy loading.")
+        
+        # Show not loaded pages
+        not_loaded = [name for name, config in self.pages.items() if not config.loaded]
+        if not_loaded:
+            with st.sidebar.expander("📦 Not Loaded Pages"):
+                for page in not_loaded[:5]:  # Show first 5
+                    st.write(f"- {page}")
+                if len(not_loaded) > 5:
+                    st.write(f"... and {len(not_loaded) - 5} more")
+    
+    def _group_pages_by_priority(self) -> Dict[str, List[str]]:
+        """
+        Group pages by priority for organized navigation.
+        
+        Returns:
+            Dictionary mapping group names to page name lists
+        """
+        # Define page priorities (customize as needed)
+        priorities = {
+            "🏠 Dashboard": ["Dashboard"],
+            "📋 Core Tracking": ["Habits", "Tasks", "Goals"],
+            "📊 Analytics": ["Habit Analytics", "Habit Experiments", "Insights"],
+            "👥 Social": ["Friends", "Leaderboards", "Challenges"],
+            "⚙️ Settings": ["Settings", "Data Export", "Backup & Restore"],
+            "Other": []
+        }
+        
+        # Add any pages not in predefined groups to "Other"
+        all_priority_pages = set()
+        for page_list in priorities.values():
+            all_priority_pages.update(page_list)
+        
+        other_pages = [name for name in self.pages.keys() if name not in all_priority_pages]
+        priorities["Other"] = other_pages
+        
+        # Return only groups that have pages
+        return {name: pages for name, pages in priorities.items() if pages}
+    
+    def _get_button_label(self, page_name: str, page_config: PageConfig) -> str:
+        """
+        Get button label with status indicator.
+        
+        Args:
+            page_name: Name of the page
+            page_config: Page configuration
+            
+        Returns:
+            Formatted button label
+        """
+        status_icon = "🟢" if page_config.loaded else "⚪"
+        return f"{status_icon} {page_config.icon} {page_name}"
+    
+    def get_load_stats(self) -> Dict[str, Any]:
+        """
+        Get detailed load statistics.
+        
+        Returns:
+            Dictionary with load statistics
+        """
+        stats = {
+            'total_pages': len(self.pages),
+            'loaded_pages': sum(1 for p in self.pages.values() if p.loaded),
+            'total_load_time': self._total_load_time,
+            'page_load_times': {},
+            'not_loaded': [name for name, config in self.pages.items() if not config.loaded],
+            'navigation_history': self._navigation_history.copy(),
+            'current_page': self.current_page
+        }
+        
+        # Page-specific load times
+        for name, config in self.pages.items():
+            if config.load_time is not None:
+                stats['page_load_times'][name] = {
+                    'load_time': config.load_time,
+                    'access_count': config.access_count,
+                    'loaded': config.loaded
+                }
+        
+        # Calculate averages
+        if stats['page_load_times']:
+            load_times = [info['load_time'] for info in stats['page_load_times'].values()]
+            stats['avg_load_time'] = sum(load_times) / len(load_times)
+        
+        return stats
+    
+    def reset_all_page_states(self) -> None:
+        """Reset all page states (for testing or refresh)."""
+        for page_config in self.pages.values():
+            page_config.loaded = False
+            page_config.load_time = None
+            page_config.access_count = 0
+            page_config.last_accessed = None
+        
+        self._total_load_time = 0.0
+        self._page_load_times.clear()
+        self._navigation_history.clear()
+        
+        logger.info("All page states reset")
+    
+    def show_detailed_stats(self) -> None:
+        """Show detailed performance statistics."""
+        stats = self.get_load_stats()
+        
+        st.subheader("📊 Detailed Performance Statistics")
+        
+        # Summary
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.metric("Total Pages", stats['total_pages'])
+        with col2:
+            st.metric("Loaded Pages", stats['loaded_pages'])
+        with col3:
+            st.metric("Total Load Time", f"{stats['total_load_time']:.3f}s")
+        
+        # Page details
+        if stats['page_load_times']:
+            st.subheader("Page Load Times")
+            
+            for page_name, info in stats['page_load_times'].items():
+                col1, col2, col3 = st.columns([2, 1, 1])
+                with col1:
+                    st.write(f"**{page_name}**")
+                with col2:
+                    st.write(f"⏱️ {info['load_time']:.3f}s")
+                with col3:
+                    st.write(f"👁️ {info['access_count']}")
+        
+        # Not loaded pages
+        if stats['not_loaded']:
+            st.subheader("Not Loaded Pages")
+            for page in stats['not_loaded']:
+                st.write(f"- {page}")
+        
+        # Navigation history
+        if stats['navigation_history']:
+            st.subheader("Navigation History")
+            for i, page in enumerate(reversed(stats['navigation_history'][-10:]), 1):
+                st.write(f"{i}. {page}")
+    
+    def get_memory_usage(self) -> Dict[str, Any]:
+        """Get memory usage statistics."""
+        try:
+            import psutil
+            process = psutil.Process()
+            memory_info = process.memory_info()
+            
+            return {
+                'rss_mb': memory_info.rss / 1024 / 1024,
+                'vms_mb': memory_info.vms / 1024 / 1024,
+                'percent': process.memory_percent(),
+                'available_mb': psutil.virtual_memory().available / 1024 / 1024
+            }
+        except ImportError:
+            return {'error': 'psutil not available'}
 
 
-def _render_streak_freeze_section():
-    """Render streak freeze inventory section."""
-    try:
-        from brain.models.streak import StreakFreeze
-    except ImportError:
-        st.caption("❄️ Streak Freeze unavailable")
-        return
-    
-    # Load streak freeze inventory
-    storage = st.session_state.get('storage')
-    if not storage:
-        return
-    
-    freeze_data = storage.get_user_data("streak_freeze", None)
-    
-    if freeze_data:
-        streak_freeze = StreakFreeze.from_dict(freeze_data)
-    else:
-        streak_freeze = StreakFreeze(count=1)  # Start with 1 free freeze
-    
-    st.subheader("❄️ Streak Freezes")
-    
-    # Display freeze count with visual indicator
-    freeze_progress = streak_freeze.count / streak_freeze.max_freezes
-    st.progress(freeze_progress, text=f"{streak_freeze.count}/{streak_freeze.max_freezes} available")
-    
-    # Purchase freeze button
-    if not streak_freeze.is_maxed:
-        xp = st.session_state.get('user_xp', 0)
-        if st.button(f"🛒 Buy Freeze ({streak_freeze.xp_cost} XP)", 
-                    help="Purchase a streak freeze to protect your streaks",
-                    use_container_width=True):
-            success, new_xp = streak_freeze.purchase_freeze(xp)
-            if success:
-                st.session_state.user_xp = new_xp
-                storage.set_user_data("streak_freeze", streak_freeze.to_dict())
-                if 'storage' in st.session_state:
-                    st.session_state.storage.set_xp(new_xp)
-                st.success("❄️ Streak Freeze purchased!")
-                st.rerun()
-            else:
-                st.error(f"Not enough XP! Need {streak_freeze.xp_cost} XP.")
-    else:
-        st.caption("✅ Max freezes reached!")
-    
-    # Update session state for use in other functions
-    st.session_state.streak_freeze = streak_freeze
+# Global sidebar instance
+_sidebar: Optional[LazySidebar] = None
 
 
-__all__ = ["render_sidebar"]
+def get_sidebar() -> LazySidebar:
+    """Get the global sidebar instance."""
+    global _sidebar
+    if _sidebar is None:
+        _sidebar = LazySidebar()
+    return _sidebar
+
+
+def create_sidebar() -> LazySidebar:
+    """
+    Create and configure the main sidebar.
+    
+    Returns:
+        Configured LazySidebar instance
+    """
+    sidebar = get_sidebar()
+    
+    # Add pages with lazy loading
+    # Note: Import pages here to avoid circular imports
+    # You may need to adjust the import paths based on your project structure
+    
+    # High priority pages (frequently accessed)
+    sidebar.add_page("Dashboard", lambda: st.write("Dashboard content"), "🏠", "Loading dashboard...")
+    sidebar.add_page("Habits", lambda: st.write("Habits content"), "✅", "Loading habits...")
+    sidebar.add_page("Tasks", lambda: st.write("Tasks content"), "📝", "Loading tasks...")
+    sidebar.add_page("Goals", lambda: st.write("Goals content"), "🎯", "Loading goals...")
+    
+    # Medium priority pages
+    sidebar.add_page("Health", lambda: st.write("Health content"), "❤️", "Loading health data...")
+    sidebar.add_page("Finances", lambda: st.write("Finances content"), "💰", "Loading finances...")
+    sidebar.add_page("Time", lambda: st.write("Time content"), "⏰", "Loading time tracking...")
+    sidebar.add_page("Emotional Health", lambda: st.write("Emotional Health content"), "😊", "Loading mood data...")
+    
+    # Lower priority pages (less frequently accessed)
+    sidebar.add_page("Achievements", lambda: st.write("Achievements content"), "🏆", "Loading achievements...")
+    sidebar.add_page("Challenges", lambda: st.write("Challenges content"), "💪", "Loading challenges...")
+    sidebar.add_page("Friends", lambda: st.write("Friends content"), "👥", "Loading friends...")
+    sidebar.add_page("Leaderboards", lambda: st.write("Leaderboards content"), "📊", "Loading leaderboards...")
+    
+    # Analytics and settings pages
+    sidebar.add_page("Habit Analytics", lambda: st.write("Habit Analytics content"), "📈", "Loading analytics...")
+    sidebar.add_page("Habit Experiments", lambda: st.write("Habit Experiments content"), "🔬", "Loading experiments...")
+    sidebar.add_page("Settings", lambda: st.write("Settings content"), "⚙️", "Loading settings...")
+    
+    logger.info(f"Sidebar created with {len(sidebar.pages)} pages")
+    return sidebar
+
+
+# Export
+__all__ = [
+    'LazySidebar',
+    'create_sidebar',
+    'get_sidebar',
+    'PageConfig'
+]
