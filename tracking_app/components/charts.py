@@ -186,8 +186,9 @@ def get_responsive_columns(num_items: int) -> int:
 # CHART RENDERING FUNCTIONS
 # =============================================================================
 
-@st.cache_data(ttl=60)
-def cache_chart_data(data_hash: str, data: Dict) -> Dict:
+# REMOVED: Dead code - function was never used and had broken caching (Dict parameter)
+# @st.cache_data(ttl=60)
+# def cache_chart_data(data_hash: str, data: Dict) -> Dict:
     """
     Cache chart data to improve performance.
     

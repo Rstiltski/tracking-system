@@ -55,8 +55,8 @@ HEATMAP_MONTHS = 12  # Show 12 months of history
 # Day detail settings
 MAX_DETAIL_ITEMS = 10  # Max items to show in day detail
 
-# Cached lookup functions
-@st.cache_data(ttl=3600, show_spinner=False)
+# Cached lookup functions - TTL=86400 (24h) static data
+@st.cache_data(ttl=86400, show_spinner=False)
 def get_completion_color(rate: float) -> str:
     """
     Get color for completion rate using O(1) lookup.
@@ -81,7 +81,8 @@ def get_completion_color(rate: float) -> str:
         return COMPLETION_COLORS["no_data"]
 
 
-@st.cache_data(ttl=3600, show_spinner=False)
+# TTL=86400 (24h) static data
+@st.cache_data(ttl=86400, show_spinner=False)
 def get_month_name(month: int) -> str:
     """
     Get month name from number using O(1) lookup.
@@ -97,7 +98,8 @@ def get_month_name(month: int) -> str:
     return ""
 
 
-@st.cache_data(ttl=3600, show_spinner=False)
+# TTL=86400 (24h) static data
+@st.cache_data(ttl=86400, show_spinner=False)
 def get_weekday_label(day_index: int, full: bool = False) -> str:
     """
     Get weekday label from index using O(1) lookup.

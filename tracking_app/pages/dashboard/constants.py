@@ -68,7 +68,8 @@ def get_random_quote() -> Tuple[str, str]:
     return random.choice(MOTIVATIONAL_QUOTES)
 
 
-@st.cache_data(ttl=3600, show_spinner=False)
+# TTL=86400 (24h) - static lookup
+@st.cache_data(ttl=86400, show_spinner=False)
 def get_priority_icon(priority: str) -> str:
     """
     Get icon for priority level using O(1) lookup.
@@ -82,7 +83,8 @@ def get_priority_icon(priority: str) -> str:
     return PRIORITY_ICONS.get(priority, "⚪")
 
 
-@st.cache_data(ttl=3600, show_spinner=False)
+# TTL=86400 (24h) - static calculation
+@st.cache_data(ttl=86400, show_spinner=False)
 def get_xp_for_task_priority(priority: str) -> int:
     """
     Get XP reward for task completion by priority.

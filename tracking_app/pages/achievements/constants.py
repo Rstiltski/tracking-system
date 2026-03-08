@@ -359,7 +359,8 @@ import streamlit as st
 from typing import Optional, List, Dict, Any
 
 
-@st.cache_data(ttl=3600, show_spinner=False)
+# TTL=86400 (24h) - static lookup data
+@st.cache_data(ttl=86400, show_spinner=False)
 def get_achievement_by_id(achievement_id: str) -> Optional[Dict[str, Any]]:
     """
     Get achievement data by ID using O(1) dictionary lookup.
@@ -373,7 +374,8 @@ def get_achievement_by_id(achievement_id: str) -> Optional[Dict[str, Any]]:
     return _ACHIEVEMENT_BY_ID.get(achievement_id)
 
 
-@st.cache_data(ttl=3600, show_spinner=False)
+# TTL=86400 (24h) - static lookup data
+@st.cache_data(ttl=86400, show_spinner=False)
 def get_achievements_by_category(category: str) -> List[Dict[str, Any]]:
     """
     Get all achievements in a category using O(1) dictionary lookup.
@@ -387,7 +389,8 @@ def get_achievements_by_category(category: str) -> List[Dict[str, Any]]:
     return _ACHIEVEMENTS_BY_CATEGORY.get(category, [])
 
 
-@st.cache_data(ttl=3600, show_spinner=False)
+# TTL=86400 (24h) - static lookup data
+@st.cache_data(ttl=86400, show_spinner=False)
 def get_tier_color(tier: str) -> str:
     """
     Get color for a tier using O(1) dictionary lookup.
@@ -401,7 +404,8 @@ def get_tier_color(tier: str) -> str:
     return TIER_COLORS.get(tier, "#808080")
 
 
-@st.cache_data(ttl=3600, show_spinner=False)
+# TTL=86400 (24h) - static lookup data
+@st.cache_data(ttl=86400, show_spinner=False)
 def get_tier_emoji(tier: str) -> str:
     """
     Get emoji for a tier using O(1) dictionary lookup.
@@ -415,7 +419,8 @@ def get_tier_emoji(tier: str) -> str:
     return TIER_EMOJIS.get(tier, "🏅")
 
 
-@st.cache_data(ttl=3600, show_spinner=False)
+# TTL=86400 (24h) - static lookup data
+@st.cache_data(ttl=86400, show_spinner=False)
 def get_category_display(category_key: str) -> str:
     """
     Get display name for a category using O(1) dictionary lookup.
@@ -429,7 +434,8 @@ def get_category_display(category_key: str) -> str:
     return ACHIEVEMENT_CATEGORIES.get(category_key, category_key)
 
 
-@st.cache_data(ttl=3600, show_spinner=False)
+# TTL=86400 (24h) - static lookup data
+@st.cache_data(ttl=86400, show_spinner=False)
 def get_all_achievement_ids() -> List[str]:
     """
     Get list of all achievement IDs.
@@ -440,7 +446,8 @@ def get_all_achievement_ids() -> List[str]:
     return list(_ACHIEVEMENT_BY_ID.keys())
 
 
-@st.cache_data(ttl=3600, show_spinner=False)
+# TTL=86400 (24h) - static lookup data
+@st.cache_data(ttl=86400, show_spinner=False)
 def get_categories() -> List[str]:
     """
     Get list of all category keys.

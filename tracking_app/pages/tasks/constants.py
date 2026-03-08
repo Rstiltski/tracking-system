@@ -22,7 +22,8 @@ CATEGORIES: List[str] = [
 PRIORITIES: List[str] = ["low", "medium", "high"]
 
 # Cached priority lookup for O(1) access
-@st.cache_data(ttl=3600)
+# TTL=86400 (24h) - static data that never changes
+@st.cache_data(ttl=86400)
 def get_priority_index_map() -> Dict[str, int]:
     """Create a mapping of priority to index for O(1) lookup."""
     return {p: idx for idx, p in enumerate(PRIORITIES)}

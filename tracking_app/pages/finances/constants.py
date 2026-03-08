@@ -35,13 +35,15 @@ INCOME_CATEGORIES: List[str] = [
 ]
 
 # Cached category lookup for O(1) access
-@st.cache_data(ttl=3600)
+# TTL=86400 (24h) - static data that never changes
+@st.cache_data(ttl=86400)
 def get_expense_category_index_map() -> Dict[str, int]:
     """Create a mapping of expense category to index for O(1) lookup."""
     return {cat: idx for idx, cat in enumerate(EXPENSE_CATEGORIES)}
 
 
-@st.cache_data(ttl=3600)
+# TTL=86400 (24h) - static data that never changes
+@st.cache_data(ttl=86400)
 def get_income_category_index_map() -> Dict[str, int]:
     """Create a mapping of income category to index for O(1) lookup."""
     return {cat: idx for idx, cat in enumerate(INCOME_CATEGORIES)}

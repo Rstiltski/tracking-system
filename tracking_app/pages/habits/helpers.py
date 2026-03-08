@@ -23,29 +23,30 @@ from .constants import (
 )
 
 
-@st.cache_data(ttl=300)
-def get_habits_batch_data(habit_ids: str, _storage_hash: str) -> Dict[str, Dict]:
-    """
-    Batch load habit data for multiple habits to avoid N+1 queries.
-    
-    This function loads all entries for multiple habits in a single call,
-    reducing database queries from O(n) to O(1).
-    
-    Args:
-        habit_ids: Comma-separated habit IDs
-        _storage_hash: Hash of storage to ensure cache invalidation
-        
-    Returns:
-        Dictionary mapping habit_id to {entries, streak, completion_rate, score}
-    """
-    # Parse habit IDs
-    habit_id_list = habit_ids.split(",") if habit_ids else []
-    if not habit_id_list:
-        return {}
-    
-    # This is a placeholder - actual implementation would batch load
-    # For now, this demonstrates the pattern to use
-    return {}
+# REMOVED: Dead code - function was never used and had placeholder implementation
+# @st.cache_data(ttl=300)
+# def get_habits_batch_data(habit_ids: str, _storage_hash: str) -> Dict[str, Dict]:
+#     """
+#     Batch load habit data for multiple habits to avoid N+1 queries.
+#     
+#     This function loads all entries for multiple habits in a single call,
+#     reducing database queries from O(n) to O(1).
+#     
+#     Args:
+#         habit_ids: Comma-separated habit IDs
+#         _storage_hash: Hash of storage to ensure cache invalidation
+#         
+#     Returns:
+#         Dictionary mapping habit_id to {entries, streak, completion_rate, score}
+#     """
+#     # Parse habit IDs
+#     habit_id_list = habit_ids.split(",") if habit_ids else []
+#     if not habit_id_list:
+#         return {}
+#     
+#     # This is a placeholder - actual implementation would batch load
+#     # For now, this demonstrates the pattern to use
+#     return {}
 
 
 def get_local_date() -> date:

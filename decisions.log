@@ -1,5 +1,57 @@
 # DECISIONS LOG
 
+## DECISION_031: Phase 10 Performance Optimization - Caching Enhancement
+
+**Date:** March 8, 2026
+**Status:** IMPLEMENTED
+
+### Summary
+Completed Phase 10 performance optimization including caching enhancements, calendar page implementation, and constants optimization.
+
+### Changes Made
+1. **Calendar Page Implementation**
+   - Created new calendar page with month/year navigation
+   - Added completion heatmap visualization
+   - Day detail view with habit entries
+
+2. **Constants Optimization**
+   - Replaced O(n) list lookups with O(1) dictionary lookups
+   - Added @st.cache_data decorators to icon/category mappings
+
+3. **Caching System Enhancement**
+   - Analyzed 27 @st.cache_data functions
+   - Removed 2 broken cache functions (dead code)
+   - Optimized TTL values: 3600s → 86400s for 18 static data functions
+   - Updated 10 files across habits, tasks, goals, finances, time, achievements, calendar, dashboard
+
+### Files Modified
+- `tracking_app/components/charts.py` - Removed dead cache function
+- `tracking_app/pages/habits/constants.py` - TTL optimization
+- `tracking_app/pages/habits/helpers.py` - Removed dead cache function
+- `tracking_app/pages/tasks/constants.py` - TTL optimization
+- `tracking_app/pages/goals/constants.py` - TTL optimization
+- `tracking_app/pages/finances/constants.py` - TTL optimization (2 functions)
+- `tracking_app/pages/time/constants.py` - TTL optimization
+- `tracking_app/pages/achievements/constants.py` - TTL optimization (7 functions)
+- `tracking_app/pages/achievements/helpers.py` - TTL optimization (3 functions)
+- `tracking_app/pages/calendar/constants.py` - TTL optimization (3 functions)
+- `tracking_app/pages/dashboard/constants.py` - TTL optimization (2 functions)
+
+### New Files Created
+- `phases/PHASE_10_IMPROVED.md` - Phase 10 roadmap
+- `phases/PHASE_10_CACHING_STRATEGY.md` - Caching details
+
+### Impact
+- Reduced unnecessary cache refreshes for static data (24h vs 1h)
+- Improved page load performance
+- Removed dead code that wasn't being used
+- Better cache hit rates for constants
+
+### Rationale
+Static data like icons, categories, and lookups should be cached for longer periods since they don't change. This reduces CPU usage and improves response times.
+
+---
+
 ## DECISION_029: Cross-References Added to All Brain Documentation Files
 
 **Date:** March 7, 2026

@@ -11,7 +11,8 @@ import streamlit as st
 from .constants import BASE_XP_PER_LEVEL, XP_INCREMENT_PER_LEVEL
 
 
-@st.cache_data(ttl=3600, show_spinner=False)
+# TTL=86400 (24h) - static calculation
+@st.cache_data(ttl=86400, show_spinner=False)
 def get_xp_for_level(level: int) -> int:
     """
     Calculate XP required for a given level.
@@ -27,7 +28,8 @@ def get_xp_for_level(level: int) -> int:
     return BASE_XP_PER_LEVEL + (level - 2) * XP_INCREMENT_PER_LEVEL
 
 
-@st.cache_data(ttl=3600, show_spinner=False)
+# TTL=86400 (24h) - static calculation
+@st.cache_data(ttl=86400, show_spinner=False)
 def get_level_from_xp(xp: int) -> int:
     """
     Calculate level from total XP.
@@ -44,7 +46,8 @@ def get_level_from_xp(xp: int) -> int:
     return level
 
 
-@st.cache_data(ttl=3600, show_spinner=False)
+# TTL=86400 (24h) - static calculation
+@st.cache_data(ttl=86400, show_spinner=False)
 def get_xp_progress(xp: int, level: int) -> Tuple[int, int, float]:
     """
     Get XP progress towards next level.

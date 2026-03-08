@@ -17,6 +17,7 @@
 | `PROJECT_RULES.md` | Detailed development guidelines | Write code |
 | `README.md` | Project overview | Get oriented |
 | `ROADMAP.md` | Strategic development plan | Plan features |
+| `phases/PHASE_*.md` | Phase implementation docs | Phase details |
 | `TODO.md` | Task tracking | Find work |
 
 ### Memory System

@@ -91,9 +91,8 @@ def render_page():
     # Get habits
     habits = storage.get_habits()
     active_habits = [h for h in habits if not getattr(h, 'archived', False)]
-    habit_ids = [h.id for h in active_habits]
     
-    if not habit_ids:
+    if not active_habits:
         st.info("No habits to display. Create some habits first!")
         return
     
@@ -102,7 +101,7 @@ def render_page():
     
     # Get completion data
     with st.spinner("Loading calendar data..."):
-        completion_data = get_month_completion_data(storage, habit_ids, calendar_dates)
+        completion_data = get_month_completion_data(storage, active_habits, calendar_dates)
     
     # Render calendar grid
     _render_calendar_grid(calendar_dates, completion_data, view_date)
@@ -110,12 +109,12 @@ def render_page():
     st.markdown("---")
     
     # Render heatmap
-    _render_year_heatmap(storage, habit_ids, today)
+    _render_year_heatmap(storage, active_habits, today)
     
     # Render day detail if selected
     selected_date = get_selected_date()
     if selected_date:
-        _render_day_detail(storage, selected_date, habit_ids)
+        _render_day_detail(storage, selected_date, active_habits)
 
 
 def _render_calendar_grid(
@@ -197,7 +196,7 @@ def _render_calendar_day(
             st.rerun()
 
 
-def _render_year_heatmap(storage: Any, habit_ids: list[str], today: date) -> None:
+def _render_year_heatmap(storage: Any, habits: list, today: date) -> None:
     """Render a year-long heatmap of completions."""
     st.markdown("### 🔥 Activity Heatmap")
     
@@ -209,7 +208,7 @@ def _render_year_heatmap(storage: Any, habit_ids: list[str], today: date) -> Non
     heatmap_dates.reverse()
     
     # Get heatmap data
-    heatmap_data = get_month_completion_data(storage, habit_ids, heatmap_dates)
+    heatmap_data = get_month_completion_data(storage, habits, heatmap_dates)
     
     # Format for heatmap component
     formatted_data = []
@@ -232,7 +231,7 @@ def _render_year_heatmap(storage: Any, habit_ids: list[str], today: date) -> Non
 def _render_day_detail(
     storage: Any,
     selected_date: date,
-    habit_ids: list[str]
+    habits: list
 ) -> None:
     """Render detailed view for a selected day."""
     st.markdown("---")
@@ -248,7 +247,7 @@ def _render_day_detail(
             st.rerun()
     
     # Get day data
-    detail_data = get_day_detail_data(storage, selected_date, habit_ids)
+    detail_data = get_day_detail_data(storage, selected_date, habits)
     
     # Show habits
     if detail_data["habits"]:
