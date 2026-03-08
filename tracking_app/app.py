@@ -2,7 +2,7 @@
 Veryfyn Tracking System - Main Streamlit Application
 
 Main entry point for the Streamlit-based tracking application.
-Redirects to the comprehensive dashboard page.
+Uses Streamlit's native multi-page navigation.
 
 Usage:
     streamlit run tracking_app/app.py
@@ -50,15 +50,43 @@ st.set_page_config(
 # ============================================================================
 
 def main():
-    """Main application entry point - redirects to dashboard page."""
+    """
+    Main application entry point.
+    
+    Uses Streamlit's native multi-page navigation.
+    The pages in tracking_app/pages/ appear in the sidebar automatically.
+    """
     # Initialize session state
     init_session_state()
     
-    # Render sidebar
-    render_sidebar()
+    # Don't create custom sidebar - let Streamlit handle navigation natively
     
-    # Redirect to the comprehensive dashboard page
-    st.switch_page("pages/dashboard.py")
+    # Show welcome message on main page
+    st.title("🎯 Veryfyn - Personal Tracking System")
+    st.markdown("""
+    Welcome to your personal tracking system!
+    
+    Use the **sidebar navigation** to access different features:
+    
+    - 📊 **Dashboard** - Overview of your progress
+    - ✅ **Habits** - Track your daily habits  
+    - 📝 **Tasks** - Manage your todo list
+    - 💰 **Finances** - Track income and expenses
+    - ❤️ **Health** - Monitor health metrics
+    - 😊 **Emotional Health** - Track your emotional state
+    - ⏰ **Time** - Track time spent on activities
+    - 🎯 **Goals** - Set and track goals
+    - 🏆 **Achievements** - View your achievements
+    - 👥 **Friends** - Connect with friends
+    - 📊 **Leaderboards** - Compete with friends
+    - 🔬 **Habit Experiments** - Test habit variations
+    - 📈 **Insights** - Analyze your data
+    - 📓 **Journal** - Keep a daily journal
+    - 🔒 **Private Todos** - Private notes and todos
+    - ⚙️ **Settings** - Configure the app
+    
+    *Select a page from the sidebar to get started!*
+    """)
 
 
 if __name__ == "__main__":

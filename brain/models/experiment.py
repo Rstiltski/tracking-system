@@ -126,6 +126,21 @@ class HabitExperiment:
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "HabitExperiment":
+        # Handle variant_a and variant_b which may be stored as JSON strings in SQLite
+        def parse_variant(v):
+            if isinstance(v, dict):
+                return v
+            elif isinstance(v, str):
+                import json
+                try:
+                    return json.loads(v)
+                except:
+                    return {}
+            return {}
+        
+        variant_a_data = data.get("variant_a", {})
+        variant_b_data = data.get("variant_b", {})
+        
         return cls(
             id=data.get("id", str(uuid.uuid4())[:8]),
             habit_id=data.get("habit_id", ""),
@@ -133,8 +148,8 @@ class HabitExperiment:
             name=data.get("name", ""),
             experiment_type=ExperimentType(data.get("experiment_type", "custom")),
             hypothesis=data.get("hypothesis", ""),
-            variant_a=ExperimentVariant.from_dict(data.get("variant_a", {})),
-            variant_b=ExperimentVariant.from_dict(data.get("variant_b", {})),
+            variant_a=ExperimentVariant.from_dict(parse_variant(variant_a_data)),
+            variant_b=ExperimentVariant.from_dict(parse_variant(variant_b_data)),
             duration_days=data.get("duration_days", 7),
             success_metric=data.get("success_metric", "completion_rate"),
             status=ExperimentStatus(data.get("status", "draft")),

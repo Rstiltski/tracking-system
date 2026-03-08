@@ -101,6 +101,14 @@ pip install -r requirements.txt
 streamlit run tracking_app/app.py
 ```
 
+### 4. Navigation System (IMPORTANT)
+The app uses Streamlit's native multi-page navigation system. Key points:
+- Pages are located in `tracking_app/pages/`
+- Pages appear automatically in the sidebar
+- Do NOT use custom `st.sidebar.radio()` for navigation
+- Use Streamlit's built-in multi-page app features
+- See `decisions.log` (DECISION_030) for implementation details
+
 ### 4. Development Mode
 - The database is auto-initialized at `tracking_app/tracking.db`
 - See `GETTING_STARTED.md` for detailed workflow

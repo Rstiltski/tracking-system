@@ -506,5 +506,59 @@ __all__ = [
     'CacheManager',
     'ConnectionPool',
     'get_cache',
-    'CacheEntry'
+    'CacheEntry',
+    'cached'
 ]
+
+
+def cached(ttl: int = 300, key_prefix: str = ''):
+    """
+    Decorator to cache function results using CacheManager.
+    
+    Args:
+        ttl: Time to live in seconds (default: 300)
+        key_prefix: Optional prefix for cache keys
+    
+    Usage:
+        @cached(ttl=600)
+        def expensive_function(arg1, arg2):
+            # ... expensive computation
+            return result
+    
+        @cached()
+        def another_function(arg):
+            return compute(arg)
+    """
+    def decorator(func):
+        import functools
+        import hashlib
+        import json
+        
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            # Create cache key from function name and arguments
+            cache_key = f"{key_prefix}{func.__name__}"
+            
+            if args or kwargs:
+                # Create a hash of the arguments
+                key_data = json.dumps({'args': args, 'kwargs': kwargs}, sort_keys=True, default=str)
+                key_hash = hashlib.md5(key_data.encode()).hexdigest()[:12]
+                cache_key = f"{cache_key}:{key_hash}"
+            
+            # Try to get from cache
+            cache = get_cache()
+            cached_value = cache.get(cache_key)
+            
+            if cached_value is not None:
+                logger.debug(f"Cache hit for {cache_key}")
+                return cached_value
+            
+            # Compute and cache the result
+            result = func(*args, **kwargs)
+            cache.set(cache_key, result, ttl=ttl)
+            logger.debug(f"Cache miss for {cache_key}, computed and cached")
+            
+            return result
+        
+        return wrapper
+    return decorator

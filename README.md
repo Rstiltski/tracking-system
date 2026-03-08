@@ -106,8 +106,16 @@ python3 run.py
 
 ### Navigation Tips
 
+The app uses **Streamlit native multi-page navigation**:
+
 | Area | Location |
 |------|----------|
+| All Pages | `tracking_app/pages/` |
+| Sidebar | Auto-generated from pages |
+| Main App | `tracking_app/app.py` |
+| Custom Nav | NOT RECOMMENDED (use Streamlit native) |
+
+**Important:** Do not create custom `st.sidebar.radio()` navigation. Use Streamlit's built-in multi-page app features. See `decisions.log` (DECISION_030).
 | UI pages | `tracking_app/pages/` |
 | Business logic | `services/` and `database/queries/` |
 

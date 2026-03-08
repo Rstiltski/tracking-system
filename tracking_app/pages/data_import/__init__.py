@@ -10,6 +10,7 @@ from .session_state import init_session_state
 from .components import (
     render_import_settings,
     render_file_upload,
+    render_file_info,
     render_import_preview,
     render_import_result,
     render_instructions,

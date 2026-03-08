@@ -15,11 +15,11 @@ Architecture:
 
 import streamlit as st
 
-from brain.manager import LeaderboardManager
+from brain.social.leaderboard_manager import LeaderboardManager
 
-from .leaderboards.constants import PAGE_TITLE, PAGE_ICON, PAGE_LAYOUT, TAB_ACTIVE, TAB_CREATE, TAB_ARCHIVE
-from .leaderboards.session_state import init_session_state, get_storage, get_user_id
-from .leaderboards.components import (
+from tracking_app.pages.leaderboards.constants import PAGE_TITLE, PAGE_ICON, PAGE_LAYOUT, TAB_ACTIVE, TAB_CREATE, TAB_ARCHIVE
+from tracking_app.pages.leaderboards.session_state import init_session_state, get_storage, get_user_id
+from tracking_app.pages.leaderboards.components import (
     render_active_competitions,
     render_create_competition,
     render_archive,

@@ -19,9 +19,9 @@ Architecture:
 
 import streamlit as st
 
-from .rewards.constants import PAGE_TITLE, PAGE_ICON, PAGE_LAYOUT
-from .rewards.session_state import init_session_state, get_user_xp, get_user_level
-from .rewards.components import (
+from tracking_app.pages.rewards.constants import PAGE_TITLE, PAGE_ICON, PAGE_LAYOUT
+from tracking_app.pages.rewards.session_state import init_session_state, get_user_xp, get_user_level
+from tracking_app.pages.rewards.components import (
     render_header,
     render_roll_section,
     render_inventory,

@@ -41,3 +41,48 @@ Cross-references help users navigate the complex brain architecture more effecti
 
 ### Related Decisions
 - DECISION_028: Cross-References Added to Core Documentation Files
+---
+
+## DECISION_030: Navigation System Refactored to Use Streamlit Native Multi-Page Navigation
+
+**Date:** March 8, 2026
+**Status:** IMPLEMENTED
+
+### Summary
+Refactored the sidebar navigation system to use Streamlit's native multi-page navigation instead of custom radio button navigation. This resolves issues where clicking sidebar pages caused page reloads or opened new tabs.
+
+### Problem
+- Custom `st.sidebar.radio()` navigation in `render_sidebar()` conflicted with Streamlit's page system
+- `app.py` used `st.switch_page()` which caused redirect loops
+- Users experienced page reloads when clicking sidebar navigation
+
+### Solution
+1. Modified `tracking_app/components/sidebar.py`:
+   - Removed custom radio button navigation from `render_sidebar()`
+   - Function now returns `None` to let Streamlit handle navigation
+   - Added proper documentation about delegating to Streamlit's native system
+
+2. Modified `tracking_app/app.py`:
+   - Removed automatic redirect to dashboard
+   - Added welcome message on main page
+   - Let Streamlit handle page navigation natively
+
+### Impact
+- Smooth page navigation without reloads
+- Uses Streamlit's built-in multi-page app features
+- Better user experience
+- Cleaner code architecture
+
+### Related Fixes (March 8, 2026)
+- Fixed `render_sidebar` import error (added **kwargs support)
+- Fixed `LeaderboardManager` import (wrong module path)
+- Fixed relative imports in rewards.py and notification_settings.py
+- Fixed "no such table: users" database error
+- Fixed ExperimentVariant.from_dict() to handle JSON strings
+- Fixed DataExport cursor error
+- Fixed DataImport render_file_info import
+- Fixed Achievements progress bar value clamping
+- Added missing `category` column to habits table
+
+### Rationale
+Streamlit's native multi-page navigation is the recommended approach and provides better performance and user experience than custom navigation implementations.

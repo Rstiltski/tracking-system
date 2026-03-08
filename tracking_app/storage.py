@@ -2098,9 +2098,9 @@ class Storage:
     def get_friends(self, user_id: str) -> List[Dict[str, Any]]:
         """Get user's friends."""
         rows = self._db.fetch_all(
-            """SELECT f.*, u.name as friend_name
+            """SELECT f.id, f.user_id, f.friend_id, f.status, f.created_at, f.updated_at,
+                      f.friend_id as friend_name
                FROM friendships f
-               LEFT JOIN users u ON f.friend_id = u.id
                WHERE f.user_id = ? AND f.status = 'accepted'
                ORDER BY f.created_at DESC""",
             (user_id,)
@@ -2110,9 +2110,9 @@ class Storage:
     def get_pending_friend_requests(self, user_id: str) -> List[Dict[str, Any]]:
         """Get pending friend requests."""
         rows = self._db.fetch_all(
-            """SELECT f.*, u.name as sender_name
+            """SELECT f.id, f.user_id, f.friend_id, f.status, f.created_at, f.updated_at,
+                      f.user_id as sender_name
                FROM friendships f
-               LEFT JOIN users u ON f.user_id = u.id
                WHERE f.friend_id = ? AND f.status = 'pending'
                ORDER BY f.created_at DESC""",
             (user_id,)

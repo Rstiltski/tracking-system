@@ -17,9 +17,9 @@ Architecture:
 
 import streamlit as st
 
-from .notification_settings.constants import PAGE_TITLE, PAGE_ICON, PAGE_LAYOUT
-from .notification_settings.session_state import init_session_state, get_current_preferences
-from .notification_settings.components import (
+from tracking_app.pages.notification_settings.constants import PAGE_TITLE, PAGE_ICON, PAGE_LAYOUT
+from tracking_app.pages.notification_settings.session_state import init_session_state, get_current_preferences
+from tracking_app.pages.notification_settings.components import (
     render_global_controls,
     render_channel_preferences,
     render_quiet_hours,

@@ -30,6 +30,34 @@ from brain.utils.performance_monitor import get_performance_monitor
 logger = logging.getLogger(__name__)
 
 
+def render_sidebar(**kwargs):
+    """
+    Render the sidebar navigation.
+    
+    This is a simple sidebar rendering function that provides
+    basic navigation for the tracking application.
+    
+    Args:
+        **kwargs: Additional keyword arguments (e.g., show_streak_freeze)
+                  These are ignored for compatibility with existing calls.
+    
+    Returns:
+        str: The selected page name from sidebar navigation
+    """
+    # Use the existing LazySidebar if available, otherwise create basic navigation
+    try:
+        sidebar = get_sidebar()
+        if sidebar:
+            return sidebar.render()
+    except Exception:
+        pass
+    
+    # Fallback: Do not create custom navigation - let Streamlit handle pages natively
+    # Streamlit's multi-page apps automatically show pages in the sidebar
+    return None
+
+
+
 @dataclass
 class PageConfig:
     """Configuration for a sidebar page."""
@@ -474,5 +502,6 @@ __all__ = [
     'LazySidebar',
     'create_sidebar',
     'get_sidebar',
-    'PageConfig'
+    'PageConfig',
+    'render_sidebar'
 ]

@@ -63,7 +63,7 @@ def render_level_progress():
     
     with col2:
         st.markdown(f"### XP: {format_xp(xp)}")
-        st.progress(percentage / 100)
+        st.progress(min(max(percentage / 100, 0.0), 1.0))
         st.caption(f"{format_xp(xp_in_level)} / {format_xp(xp_needed)} XP to Level {level + 1}")
         
         # XP to next level

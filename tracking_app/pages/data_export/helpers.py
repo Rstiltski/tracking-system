@@ -33,7 +33,7 @@ def get_exporter():
         from brain.data_export import DataExporter
         
         db_path, export_dir = get_export_paths()
-        return DataExporter(str(db_path), str(export_dir))
+        return DataExporter(db_path=str(db_path), export_dir=str(export_dir))
     except ImportError:
         return None
 
