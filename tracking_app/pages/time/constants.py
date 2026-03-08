@@ -4,7 +4,8 @@ Constants for the Time page.
 Contains time categories, XP rates, and configuration values.
 """
 
-from typing import List
+import streamlit as st
+from typing import Dict, List
 
 # Time categories
 TIME_CATEGORIES: List[str] = [
@@ -16,6 +17,18 @@ TIME_CATEGORIES: List[str] = [
     "Break",
     "Other",
 ]
+
+# Cached category lookup for O(1) access
+@st.cache_data(ttl=3600)
+def get_time_category_index_map() -> Dict[str, int]:
+    """Create a mapping of time category to index for O(1) lookup."""
+    return {cat: idx for idx, cat in enumerate(TIME_CATEGORIES)}
+
+
+def get_time_category_index(category: str) -> int:
+    """Get the index of a time category, returning 0 if not found."""
+    category_map = get_time_category_index_map()
+    return category_map.get(category, 0)
 
 # XP rates
 XP_PER_MINUTE = 1  # 1 XP per minute tracked

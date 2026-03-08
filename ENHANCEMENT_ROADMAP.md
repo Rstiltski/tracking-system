@@ -36,7 +36,7 @@ This roadmap outlines the strategic enhancement of TrackLife based on research f
 | 3 | Behavioral Science | 2 weeks | Atomic Habits framework, Loss Aversion, Variable Rewards | 🔵 Not Started |
 | 4 | Automation & Integration | 2 weeks | Rule Engine, Webhooks, Natural Language Input | 🔵 Not Started |
 | 5 | Scientific Experimentation | 2 weeks | N-of-1 Trials, Experiment Analytics | 🔵 Not Started |
-| 6 | Local AI Integration | 4 weeks | RAG System, Digital Coach | 🔵 Not Started |
+| 6 | Core Enhancements | 4 weeks | Focus on app functionality, no AI | 🔵 Not Started |
 
 ---
 
@@ -172,22 +172,22 @@ This roadmap outlines the strategic enhancement of TrackLife based on research f
 
 ---
 
-## Phase 6: Local AI Integration
+## Phase 6: Core Enhancements
 
 **Duration:** 4 weeks  
 **Status:** 🔵 Not Started  
-**Details:** [phases/PHASE_6_AI_INTEGRATION.md](phases/PHASE_6_AI_INTEGRATION.md)
+**Details:** Focus on app functionality - NO AI
 
 ### Objectives
-- Implement local RAG system
-- Create Digital Coach functionality
-- Enable private AI chat with personal data
+- Improve core tracking features
+- Fix bugs and enhance UX
+- No AI integration
 
 ### Key Features
 
 | Feature | Priority | Effort | Reference |
 |---------|----------|--------|-----------|
-| RAG System | High | High | [LOCAL_RAG_SPEC.md](docs/specs/LOCAL_RAG_SPEC.md) |
+| Core Improvements | High | Medium | TBD |
 | Digital Coach | Medium | High | [LOCAL_RAG_SPEC.md](docs/specs/LOCAL_RAG_SPEC.md) |
 
 ### Success Criteria

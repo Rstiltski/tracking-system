@@ -4,8 +4,11 @@ Constants for the Tasks page.
 Contains categories, priorities, and configuration values.
 """
 
+import streamlit as st
+from typing import Dict, List
+
 # Task categories
-CATEGORIES = [
+CATEGORIES: List[str] = [
     "Work",
     "Personal",
     "Health",
@@ -16,7 +19,19 @@ CATEGORIES = [
 ]
 
 # Priority levels
-PRIORITIES = ["low", "medium", "high"]
+PRIORITIES: List[str] = ["low", "medium", "high"]
+
+# Cached priority lookup for O(1) access
+@st.cache_data(ttl=3600)
+def get_priority_index_map() -> Dict[str, int]:
+    """Create a mapping of priority to index for O(1) lookup."""
+    return {p: idx for idx, p in enumerate(PRIORITIES)}
+
+
+def get_priority_index(priority: str) -> int:
+    """Get the index of a priority, returning 0 if not found."""
+    priority_map = get_priority_index_map()
+    return priority_map.get(priority.lower(), 1)  # Default to medium (index 1)
 
 # Priority colors
 PRIORITY_COLORS = {

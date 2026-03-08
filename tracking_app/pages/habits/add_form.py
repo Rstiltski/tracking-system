@@ -6,6 +6,7 @@ Renders forms for creating new habits.
 
 import streamlit as st
 from datetime import datetime
+from typing import Optional
 
 from .constants import HABIT_ICONS
 

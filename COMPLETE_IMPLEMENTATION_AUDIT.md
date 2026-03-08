@@ -440,7 +440,7 @@ pytest --cov=brain --cov-report=term-missing -v
 4. ✅ Create comprehensive user documentation
 
 ### Future Enhancements
-1. Phase 6: Local AI Integration (RAG, Digital Coach)
+1. Phase 10: Core Enhancements (focus on app functionality, no AI)
 2. Cloud synchronization
 3. Mobile app (React Native or Flutter)
 4. Wearable device integration

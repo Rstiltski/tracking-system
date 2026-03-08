@@ -7,7 +7,7 @@ Renders forms for editing existing habits.
 import streamlit as st
 from datetime import datetime
 
-from .constants import HABIT_ICONS
+from .constants import HABIT_ICONS, get_icon_index
 
 
 def render_edit_habit_form(habit):
@@ -39,8 +39,8 @@ def render_edit_habit_form(habit):
         col1, col2 = st.columns(2)
         
         with col1:
-            # Find current icon index
-            current_icon_index = HABIT_ICONS.index(habit.icon) if habit.icon in HABIT_ICONS else 0
+            # Use cached O(1) lookup instead of O(n) list.index()
+            current_icon_index = get_icon_index(habit.icon)
             icon = st.selectbox("Icon", HABIT_ICONS, index=current_icon_index)
         
         with col2:

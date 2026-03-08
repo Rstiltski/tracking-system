@@ -86,3 +86,166 @@ Refactored the sidebar navigation system to use Streamlit's native multi-page na
 
 ### Rationale
 Streamlit's native multi-page navigation is the recommended approach and provides better performance and user experience than custom navigation implementations.
+
+---
+
+## DECISION_031: Phase 9 Implementation - Advanced Functionality Enhancement
+
+**Date:** March 8, 2026
+**Status:** COMPLETE
+
+### Summary
+Implemented Phase 9 focusing on enhancing existing app functionality. AI features deferred to Phase 10.
+
+### New Features Added
+1. **Reports Page** (`tracking_app/pages/reports.py`)
+   - Custom date range picker with presets
+   - Multi-category reports (Habits, Tasks, Finances, Health)
+   - Multi-habit comparison charts (bar charts for completion rates and streaks)
+   - CSV and JSON export functionality
+
+2. **Widget Settings Page** (`tracking_app/pages/widget_settings.py`)
+   - Enable/disable dashboard widgets
+   - Widget presets (Productivity, Health)
+   - Widget order management
+
+### Verified Existing Features
+- Friends system: `tracking_app/pages/friends.py`
+- Challenges: `tracking_app/pages/challenges.py`
+- Leaderboards: `tracking_app/pages/leaderboards.py`
+- Template Sharing: `tracking_app/pages/template_sharing.py`
+- Habit Experiments: `tracking_app/pages/habit_experiments.py`
+
+### Impact
+- Users can now generate custom date range reports
+- Export report data as CSV/JSON
+- Dashboard widgets are customizable
+- Social features fully integrated
+
+### Next Steps
+Phase 10 will add AI features (Ollama, ChromaDB, Digital Coach)
+
+DECISION_032: Phase 10 - Achievements Constants Optimization
+Date: March 8, 2026
+Status: IMPLEMENTED
+
+Details:
+- Added O(1) dictionary lookup functions to achievements/constants.py
+- get_achievement_by_id() - cached lookup by achievement ID
+- get_achievements_by_category() - cached lookup by category
+- get_tier_color() - cached tier color lookup
+- get_tier_emoji() - cached tier emoji lookup
+- get_category_display() - cached category display name
+- get_all_achievement_ids() - cached list of IDs
+- get_categories() - cached list of categories
+- Pre-built _ACHIEVEMENT_BY_ID and _ACHIEVEMENTS_BY_CATEGORY dicts at module load
+
+Performance Impact:
+- Replaces O(n) list iteration with O(1) dict lookup
+- @st.cache_data(ttl=3600) prevents recalculation
+
+
+DECISION_033: Phase 10 - Dashboard & Achievements Helpers Optimization
+Date: March 8, 2026
+Status: IMPLEMENTED
+
+Details:
+- Added @st.cache_data decorators to achievements/helpers.py:
+  - get_xp_for_level() - cached XP calculation
+  - get_level_from_xp() - cached level calculation
+  - get_xp_progress() - cached progress calculation
+
+- Added cached functions to dashboard/constants.py:
+  - get_random_quote() - cached random quote selection
+  - get_priority_icon() - O(1) priority icon lookup
+  - get_xp_for_task_priority() - O(1) XP by priority lookup
+
+Performance Impact:
+- XP calculations cached for 1 hour
+- Random quote selection cached (same quote for session)
+- Priority lookups use O(1) dict instead of list iteration
+
+
+DECISION_034: Phase 10 - Field Module Constants Audit Summary
+Date: March 8, 2026
+Status: COMPLETE
+
+Fields Audited:
+1. Habits - Already has caching, batch loading placeholder exists
+2. Tasks - Already has caching (@st.cache_data on get_priority_index_map)
+3. Goals - Already has caching (@st.cache_data on get_goal_icon_index_map)  
+4. Health - Uses dicts (O(1)), no explicit caching needed
+5. Finances - Previously optimized with cached lookups
+6. Time - Previously optimized with cached lookups
+7. Emotional Health - Uses dicts (O(1))
+8. Achievements - NEW: Added 7 cached O(1) lookup functions
+9. Dashboard - NEW: Added 3 cached functions
+
+Key Findings:
+- Most fields already optimized with @st.cache_data decorators
+- Habits has a placeholder batch_load function that needs implementation
+- N+1 query issue exists in card_view.py where multiple DB calls happen per habit
+- Achievements and Dashboard were the main ones needing new optimizations
+
+Next Steps for Further Optimization:
+1. Implement actual batch loading in habits/helpers.py (placeholder returns {})
+2. Refactor card_view.py to use batch loading to fix N+1 queries
+3. Consider adding @st.cache_data to helpers in other fields
+
+
+DECISION_035: Phase 10 - Brain Utils Audit
+Date: March 8, 2026
+Status: COMPLETE
+
+Brain utilities already have extensive performance infrastructure:
+- cache.py (17KB) - Caching utilities
+- debounce.py (11KB) - Debouncing for frequent events
+- lazy.py (13KB) - Lazy loading
+- pagination.py (10KB) - Pagination handling
+- performance_analytics.py (32KB) - Performance tracking
+- performance_monitor.py (15KB) - Performance monitoring
+- predictive_loader.py (25KB) - Predictive data loading
+- profiling.py (12KB) - Function profiling
+- progressive_loader.py (24KB) - Progressive loading
+- smart_cache.py (31KB) - Advanced caching
+
+Components also have:
+- lazy_loader.py - Component-level lazy loading
+
+The field module constants/helpers optimization follows the same patterns
+already established in the brain utilities.
+
+Summary of Phase 10 Work:
+- Optimized: achievements (constants + helpers)
+- Optimized: dashboard (constants)
+- Verified: tasks, goals, health, emotional_health already optimized
+- Noted: habits has batch loading placeholder (needs Storage API enhancement)
+- Noted: calendar has minimal implementation
+
+
+DECISION_036: Phase 10 - Calendar Page Implementation
+Date: March 8, 2026
+Status: IMPLEMENTED
+
+Details:
+Implemented the Calendar page (tracking_app/pages/calendar/) which was planned but unimplemented.
+
+Files Created:
+- __init__.py - Module initialization (exports render_page)
+- constants.py - Calendar constants with cached O(1) lookup functions
+- session_state.py - Session state management
+- helpers.py - Helper functions for calendar calculations
+- calendar.py - Main calendar page (265 lines)
+
+Features:
+- Monthly calendar grid view
+- Navigation (previous/next month, today)
+- Color-coded completion rates
+- Today highlighting
+- Day detail view on click
+- 12-month heatmap using existing heatmap component
+- @st.cache_data for performance optimization
+
+The page reuses existing components (heatmap) and follows the same patterns
+as other pages in the project (weekly.py, habits, etc.).
+

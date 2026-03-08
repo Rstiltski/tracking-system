@@ -350,3 +350,115 @@ TIER_EMOJIS = {
     "platinum": "💎",
     "diamond": "💠",
 }
+
+# =============================================================================
+# CACHED LOOKUP FUNCTIONS - O(1) dictionary access instead of O(n) list search
+# =============================================================================
+
+import streamlit as st
+from typing import Optional, List, Dict, Any
+
+
+@st.cache_data(ttl=3600, show_spinner=False)
+def get_achievement_by_id(achievement_id: str) -> Optional[Dict[str, Any]]:
+    """
+    Get achievement data by ID using O(1) dictionary lookup.
+    
+    Args:
+        achievement_id: The achievement ID to look up
+        
+    Returns:
+        Achievement dictionary or None if not found
+    """
+    return _ACHIEVEMENT_BY_ID.get(achievement_id)
+
+
+@st.cache_data(ttl=3600, show_spinner=False)
+def get_achievements_by_category(category: str) -> List[Dict[str, Any]]:
+    """
+    Get all achievements in a category using O(1) dictionary lookup.
+    
+    Args:
+        category: The category to filter by
+        
+    Returns:
+        List of achievements in that category
+    """
+    return _ACHIEVEMENTS_BY_CATEGORY.get(category, [])
+
+
+@st.cache_data(ttl=3600, show_spinner=False)
+def get_tier_color(tier: str) -> str:
+    """
+    Get color for a tier using O(1) dictionary lookup.
+    
+    Args:
+        tier: The tier name (bronze, silver, gold, platinum, diamond)
+        
+    Returns:
+        Hex color code
+    """
+    return TIER_COLORS.get(tier, "#808080")
+
+
+@st.cache_data(ttl=3600, show_spinner=False)
+def get_tier_emoji(tier: str) -> str:
+    """
+    Get emoji for a tier using O(1) dictionary lookup.
+    
+    Args:
+        tier: The tier name (bronze, silver, gold, platinum, diamond)
+        
+    Returns:
+        Tier emoji
+    """
+    return TIER_EMOJIS.get(tier, "🏅")
+
+
+@st.cache_data(ttl=3600, show_spinner=False)
+def get_category_display(category_key: str) -> str:
+    """
+    Get display name for a category using O(1) dictionary lookup.
+    
+    Args:
+        category_key: The category key
+        
+    Returns:
+        Display name with icon
+    """
+    return ACHIEVEMENT_CATEGORIES.get(category_key, category_key)
+
+
+@st.cache_data(ttl=3600, show_spinner=False)
+def get_all_achievement_ids() -> List[str]:
+    """
+    Get list of all achievement IDs.
+    
+    Returns:
+        List of achievement ID strings
+    """
+    return list(_ACHIEVEMENT_BY_ID.keys())
+
+
+@st.cache_data(ttl=3600, show_spinner=False)
+def get_categories() -> List[str]:
+    """
+    Get list of all category keys.
+    
+    Returns:
+        List of category key strings
+    """
+    return list(ACHIEVEMENT_CATEGORIES.keys())
+
+
+# Build O(1) lookup dictionaries at module load time
+_ACHIEVEMENT_BY_ID: Dict[str, Dict[str, Any]] = {
+    achievement["id"]: achievement for achievement in DEFAULT_ACHIEVEMENTS
+}
+
+_ACHIEVEMENTS_BY_CATEGORY: Dict[str, List[Dict[str, Any]]] = {}
+for achievement in DEFAULT_ACHIEVEMENTS:
+    category = achievement.get("category", "special")
+    if category not in _ACHIEVEMENTS_BY_CATEGORY:
+        _ACHIEVEMENTS_BY_CATEGORY[category] = []
+    _ACHIEVEMENTS_BY_CATEGORY[category].append(achievement)

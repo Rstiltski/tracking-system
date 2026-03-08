@@ -5,9 +5,24 @@ Contains all module-level constants including icons, colors, score categories,
 and magic numbers as named constants.
 """
 
+import streamlit as st
+from typing import Dict, List, Tuple
+
 # Icon options for habits
-HABIT_ICONS = ["🎯", "🏃", "📚", "💧", "🧘", "💪", "🌅", "📝", "🍎", "🛏️",
+HABIT_ICONS: List[str] = ["🎯", "🏃", "📚", "💧", "🧘", "💪", "🌅", "📝", "🍎", "🛏️",
                "🚭", "💊", "🧹", "🎨", "🎵", "💻", "🧠", "❤️", "🌱", "⭐"]
+
+# Cached icon lookup dict for O(1) access (avoids O(n) list.index())
+@st.cache_data(ttl=3600)
+def get_icon_index_map() -> Dict[str, int]:
+    """Create a mapping of icon to index for O(1) lookup."""
+    return {icon: idx for idx, icon in enumerate(HABIT_ICONS)}
+
+
+def get_icon_index(icon: str) -> int:
+    """Get the index of an icon, returning 0 if not found."""
+    icon_map = get_icon_index_map()
+    return icon_map.get(icon, 0)
 
 # Color options for habits (name, hex)
 HABIT_COLORS = [
