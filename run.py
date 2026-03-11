@@ -18,7 +18,7 @@ def main():
     print("Starting Veryfyn Tracking System...")
     print(f"Running: streamlit run {app_path}")
     
-    subprocess.run([sys.executable, "-m", "streamlit", "run", app_path])
+    subprocess.run([sys.executable, "-m", "streamlit", "run", app_path, "--server.port", "8501"])
 
 if __name__ == "__main__":
     main()

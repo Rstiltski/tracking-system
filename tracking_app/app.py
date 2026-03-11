@@ -59,7 +59,8 @@ def main():
     # Initialize session state
     init_session_state()
     
-    # Don't create custom sidebar - let Streamlit handle navigation natively
+    # Render custom categorized sidebar
+    render_sidebar()
     
     # Show welcome message on main page
     st.title("🎯 Veryfyn - Personal Tracking System")

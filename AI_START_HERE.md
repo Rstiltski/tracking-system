@@ -51,11 +51,14 @@ All contributors and automated agents MUST read [`GETTING_STARTED.md`](GETTING_S
 |----------|------|---------|
 | 1 | [`CONTEXT.md`](CONTEXT.md) | **MASTER REFERENCE** - Load this first |
 | 2 | [`brain/CORE_RULES.md`](brain/CORE_RULES.md) | Immutable project laws (58+ rules) |
-| 3 | [`brain/AI_RULES.md`](brain/AI_RULES.md) | Thinking protocol (4-Phase Workflow) |
+| 3 | [`brain/AI_RULES.md`](brain/AI_RULES.md) | Thinking protocol (4-Phase Workflow + ReAct) |
 | 4 | [`session.json`](session.json) | Current memory state |
 | 5 | [`decisions.log`](decisions.log) | Implementation history |
+| 6 | [`brain/ai_assistant/README.md`](brain/ai_assistant/README.md) | AI Assistant Memory Management (DECISION_037) |
 
 **Command:** "Follow CONTEXT.md" triggers the full context loading sequence.
+
+**Enhanced Thinking Protocol (DECISION_037):** AI assistants must use the ReAct pattern (Thought→Action→Observation→Reflection) and leverage the AI Assistant Memory Management System for all interactions.
 
 ---
 

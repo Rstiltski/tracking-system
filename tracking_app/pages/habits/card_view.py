@@ -16,6 +16,11 @@ from tracking_app.components.srbai_survey import render_automaticity_badge, rend
 from tracking_app.components.tip_card import render_tip_section, render_all_tips
 from tracking_app.components.suggestion_card import render_suggestions_section, render_all_suggestions
 from tracking_app.components.timing_indicator import render_timing_indicator
+from tracking_app.components.momentum_counter import (
+    update_habit_momentum,
+    get_habit_momentum,
+    render_momentum_indicator
+)
 
 from .constants import XP_PER_COMPLETION
 from .helpers import (
@@ -54,6 +59,9 @@ def render_habit_card(habit: Habit, storage, today: date):
     is_complete = is_entry_completed(entry)
     streak = calculate_streak(storage, habit.id)
     completion_rate = get_completion_rate(storage, habit.id)
+    
+    # Get momentum tracking (Task 11.1.8: 4-Day Momentum)
+    momentum = get_habit_momentum(habit.id)
 
     # Calculate habit score using exponential smoothing
     habit_score = calculate_habit_score(storage, habit.id)
@@ -151,6 +159,10 @@ def render_habit_card(habit: Habit, storage, today: date):
             )
             # Streak below score
             st.caption(f"🔥 {streak} day streak · {completion_rate:.0f}% (30d)")
+            
+            # Show momentum indicator (compact view) - Task 11.1.8
+            if momentum.current_day > 0:
+                render_momentum_indicator(momentum, show_message=False, compact=True)
         
         with col4:
             # Actions
@@ -169,7 +181,13 @@ def render_habit_card(habit: Habit, storage, today: date):
                         storage.mark_habit_complete(habit.id, today)
                         st.session_state.user_xp = storage.add_xp(XP_PER_COMPLETION)
                         st.session_state.user_level = get_level_from_xp(st.session_state.user_xp)
-                        st.success(f"+{XP_PER_COMPLETION} XP!")
+                        
+                        # Update momentum tracking (Task 11.1.8: 4-Day Momentum)
+                        momentum = update_habit_momentum(habit.id, today)
+                        if momentum.current_day == 4:
+                            st.balloons()
+                            st.success("🎉 Day 4 MOMENTUM ACHIEVED! You've crossed the threshold!")
+                        
                         st.rerun()
 
             with col_b:
@@ -397,7 +415,13 @@ def render_habits_list():
                                 storage.mark_habit_complete(habit.id, today)
                                 st.session_state.user_xp = storage.add_xp(XP_PER_COMPLETION)
                                 st.session_state.user_level = get_level_from_xp(st.session_state.user_xp)
-                                st.success(f"+{XP_PER_COMPLETION} XP!")
+                                
+                                # Update momentum tracking (Task 11.1.8: 4-Day Momentum)
+                                momentum = update_habit_momentum(habit.id, today)
+                                if momentum.current_day == 4:
+                                    st.balloons()
+                                    st.success("🎉 Day 4 MOMENTUM ACHIEVED! You've crossed the threshold!")
+                                
                                 st.rerun()
             else:
                 st.info("No active habits")

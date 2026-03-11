@@ -1,0 +1,6 @@
+[server]
+port = 8501
+
+[client]
+# Hide the native sidebar navigation to use our custom grouped navigation
+showSidebarNavigation = false

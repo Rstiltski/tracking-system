@@ -42,6 +42,68 @@ Reusable code structures we have established.
 
 ---
 
+## 🧠 AI ASSISTANT MEMORY MANAGEMENT (DECISION_037)
+
+**Enhanced thinking infrastructure for AI assistants working on this project.**
+
+### Available Components
+
+| Component | File | Purpose |
+|-----------|------|---------|
+| **Memory Manager** | `brain/ai_assistant/memory_manager.py` | Memory compression, relevance scoring, intent-driven retrieval |
+| **Reference Index** | `brain/ai_assistant/reference_index.py` | Reference-by-substitution for large code blocks |
+| **Task Decomposer** | `brain/ai_assistant/task_decomposer.py` | Hierarchical task decomposition with dependencies |
+| **Session Context** | `brain/ai_assistant/session_context.py` | Sliding window for recent interactions |
+
+### ReAct Thinking Pattern (REQUIRED)
+
+**Every response MUST show the ReAct loop:**
+
+```markdown
+🤔 THOUGHT: [What I'm analyzing and why]
+📋 ACTION: [What I'm about to do]
+👁️ OBSERVATION: [What I found/observed]
+💭 REFLECTION: [What this means for next steps]
+```
+
+### Memory Protocols
+
+1. **Sliding Window**: Keep last 10 interactions active, summarize older
+2. **Intent-Driven Retrieval**: Load only memories relevant to current goal
+3. **Reference-by-Substitution**: Use lightweight IDs for large files
+4. **Timestamp Decay**: Apply 0.5^(age/24h) decay to older memories
+
+### Task Decomposition
+
+For complex requests, break into hierarchical subtasks:
+
+```
+Main Task
+├── 1. Subtask (dependency: none)
+├── 2. Subtask (dependency: 1)
+│   ├── 2a. Sub-subtask
+│   └── 2b. Sub-subtask
+└── 3. Subtask (dependency: 1, 2)
+```
+
+### Decision Logging
+
+**ALWAYS log decisions using MemoryManager:**
+
+```python
+from brain.ai_assistant.memory_manager import log_decision
+
+log_decision(
+    choice="Using pattern X",
+    reasoning="Matches existing architecture per DECISION_030",
+    implication="Consistent with MOD_001 single-page rule"
+)
+```
+
+**Reference:** See `brain/ai_assistant/README.md` for complete documentation.
+
+---
+
 ## 🔄 THE 4-PHASE AI WORKFLOW
 
 You must process ALL inputs through these 4 phases sequentially. **Do not skip phases.**

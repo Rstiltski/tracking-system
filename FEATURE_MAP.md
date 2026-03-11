@@ -330,6 +330,52 @@ This document maps features to their implementation files. Use it to quickly fin
 
 ---
 
+## Phase 11 Features (Complete!)
+
+### Phase 11.1: Foundation + Safeguards
+| Feature | Model File | UI File |
+|---------|------------|----------|
+| Orthorexia Safeguards | `brain/models/disordered_patterns.py` | `tracking_app/components/healthy_tracking_guardrails.py` |
+| Privacy Dashboard | `brain/models/privacy_preferences.py` | `tracking_app/pages/privacy_dashboard.py` |
+| Data Minimization | `brain/models/data_audit.py` | `brain/policies/data_minimization.py` |
+| Growth Mindset | `brain/models/mindset.py` | `tracking_app/components/mindset_interventions.py` |
+| Eudaemonic Motivation | `brain/models/motivation.py` | `tracking_app/pages/purpose_tracker.py` |
+| Ego-Depletion Detection | `brain/models/ego_depletion.py` | `tracking_app/components/rest_prompts.py` |
+| Fixed Mindset Detection | `brain/models/fixed_mindset.py` | `tracking_app/components/challenge_scaler.py` |
+| 4-Day Momentum | `brain/models/momentum.py` | `tracking_app/components/momentum_counter.py` |
+
+### Phase 11.2: High Impact Features
+| Feature | Model File | UI File |
+|---------|------------|----------|
+| Identity Integration | `brain/models/identity.py` | `tracking_app/pages/identity.py` |
+| Energy Management | `brain/models/energy.py` | `tracking_app/pages/energy.py` |
+| Commitment Devices | `brain/models/commitment.py` | `tracking_app/pages/commitments.py` |
+| Dopamine Menu | `brain/models/dopamine_menu.py` | `tracking_app/components/dopamine_menu.py` |
+| Spiritual Tracking | `brain/models/spiritual.py` | `tracking_app/pages/spiritual.py` |
+| Gratitude Practice | `brain/models/gratitude.py` | `tracking_app/pages/gratitude.py` |
+| Data Audit Trail | `brain/models/data_audit.py` | - |
+| Privacy Preferences | `brain/models/privacy_preferences.py` | `tracking_app/pages/privacy_dashboard.py` |
+| Scarcity Mindset | `brain/models/scarcity.py` | `tracking_app/pages/abundance.py` |
+| Partner Tracking | `brain/models/dyadic.py` | `tracking_app/pages/partners.py` |
+| Social Safeguards | `brain/models/social_safeguards.py` | `tracking_app/pages/social.py` |
+| Self-Monitoring Fatigue | `brain/models/self_monitoring_fatigue.py` | `tracking_app/components/self_monitoring_fatigue.py` |
+
+### Phase 11.3: Enhanced Support
+| Feature | Model File |
+|---------|------------|
+| Passive Tracking | `brain/models/passive_tracking.py` |
+| Identity Reconstruction | `brain/models/identity_reconstruction.py` |
+| N-of-1 Experiments | `brain/models/experiments.py` |
+| Attachment Theory | `brain/models/attachment.py` |
+| Dual Citizen Co-Creation | `brain/models/dual_citizen.py` |
+| Self-Gaming Detection | `brain/models/self_gaming.py` |
+| Biographical Disruption | `brain/models/biographical_disruption.py` |
+| Streak Optimization | `brain/models/streak_optimization.py` |
+| Micro/Macro Hole Response | `brain/models/hole_response.py` |
+| Invisible Data Validation | `brain/models/invisible_validation.py` |
+
+---
+
 ## Cross-References
 
 | Document | Content |

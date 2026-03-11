@@ -8,6 +8,149 @@
 
 This document covers AI integration patterns, predictive analytics models, and machine learning approaches applicable to personal tracking systems.
 
+**Updated:** March 8, 2026 - Added AI Assistant Memory Management System (DECISION_037)
+
+---
+
+## 🧠 AI Assistant Memory Management System (DECISION_037)
+
+**Enhanced thinking infrastructure for AI assistants working on this project.**
+
+### Architecture Overview
+
+The AI Assistant Memory Management System implements advanced AI agent patterns from 2024-2025 research:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                  AI ASSISTANT MEMORY SYSTEM                  │
+├─────────────────────────────────────────────────────────────┤
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │
+│  │   Memory    │  │  Reference  │  │    Task     │        │
+│  │   Manager   │  │    Index    │  │ Decomposer  │        │
+│  │             │  │             │  │             │        │
+│  │ - Compression│  │ - Lazy load │  │ - Hierarchy │        │
+│  │ - Relevance  │  │ - Metadata  │  │ - Deps      │        │
+│  │ - Retrieval  │  │ - Tags      │  │ - Templates │        │
+│  └─────────────┘  └─────────────┘  └─────────────┘        │
+│                                                             │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │              Session Context                         │   │
+│  │  - Sliding window (10 interactions)                  │   │
+│  │  - Summarization (older interactions)                │   │
+│  │  - Persistence (across conversations)                │   │
+│  └─────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Implementation Files
+
+| Component | File | Lines | Purpose |
+|-----------|------|-------|---------|
+| Memory Manager | `brain/ai_assistant/memory_manager.py` | ~300 | Compression, retrieval, relevance scoring |
+| Reference Index | `brain/ai_assistant/reference_index.py` | ~350 | Reference-by-substitution pattern |
+| Task Decomposer | `brain/ai_assistant/task_decomposer.py` | ~450 | Hierarchical decomposition |
+| Session Context | `brain/ai_assistant/session_context.py` | ~350 | Sliding window, persistence |
+
+**Total:** ~1,450 lines of Python code
+
+### AI Agent Patterns Implemented
+
+| Pattern | Research Source | Implementation |
+|---------|-----------------|----------------|
+| **ReAct Loop** | Yao et al. (2023) | Thought→Action→Observation→Reflection |
+| **Memory Compression** | AI Agent Research | Sliding window + summarization |
+| **Reference-by-Substitution** | AI Agent Research | Lightweight IDs for large files |
+| **Intent-Driven Retrieval** | AI Agent Research | Goal-specific memory lookup |
+| **Hierarchical Decomposition** | Wang et al. (2023) | Task trees with dependencies |
+| **Stateful Memory** | AI Agent Research | Session persistence |
+
+### Usage Example
+
+```python
+from brain.ai_assistant import (
+    MemoryManager,
+    ReferenceIndex,
+    TaskDecomposer,
+    SessionContext
+)
+
+# Initialize components
+memory = MemoryManager()
+index = ReferenceIndex()
+decomposer = TaskDecomposer()
+context = SessionContext()
+
+# Before responding to user
+relevant = memory.get_relevant_decisions(intent="Adding new feature")
+task_tree = decomposer.decompose("Add correlation analysis")
+context.add_interaction(role="user", content="Add new feature")
+
+# Show ReAct thinking
+print("🤔 THOUGHT: Analyzing request...")
+print("📋 ACTION: Loading relevant decisions...")
+print("👁️ OBSERVATION: Found DECISION_030 about navigation...")
+print("💭 REFLECTION: This aligns with existing patterns...")
+
+# After completing task
+memory.log_decision(
+    choice="Using pattern X",
+    reasoning="Matches existing architecture",
+    implication="Consistent with MOD_001"
+)
+```
+
+### Memory Compression Strategy
+
+**Sliding Window:**
+- Keep last 10 interactions in active memory
+- Summarize interactions 11-50
+- Archive interactions 51+ with timestamp decay
+
+**Relevance Scoring:**
+```python
+relevance_score = (
+    keyword_match * 0.4 +      # Keyword matching
+    intent_match * 0.3 +       # Intent alignment
+    recency * 0.2 +            # Time decay
+    decision_impact * 0.1      # Impact weight
+)
+```
+
+**Timestamp Decay:**
+```python
+decay_factor = 0.5 ** (age.total_seconds() / half_life.total_seconds())
+# half_life = 24 hours
+```
+
+### Task Decomposition Templates
+
+Built-in templates for common task types:
+
+| Template | Pattern Keywords | Subtasks |
+|----------|-----------------|----------|
+| Feature Addition | add, create, implement | 8 subtasks |
+| Bug Fix | fix, bug, error, issue | 6 subtasks |
+| Analysis | analyze, review, examine | 5 subtasks |
+| Refactoring | refactor, restructure | 6 subtasks |
+| Documentation | document, write docs | 5 subtasks |
+
+### Integration with 5-File Memory
+
+| 5-File Memory | Enhancement |
+|---------------|-------------|
+| **ACTIVE PROMPT** | SessionContext manages sliding window |
+| **SESSION STATE** | SessionContext persists to session_state.json |
+| **DECISION LOG** | MemoryManager reads, compresses, retrieves |
+| **PRIME DIRECTIVE** | ReferenceIndex stores lightweight references |
+| **PATTERN LIBRARY** | TaskDecomposer applies templates |
+
+### Documentation
+
+- **Main Documentation:** `brain/ai_assistant/README.md`
+- **Implementation:** `brain/ai_assistant/*.py`
+- **Decision Log:** DECISION_037 in `decisions.log`
+- **Quick Reference:** `NEXT_STEP.md`
+
 ---
 
 ## Predictive Context Sensitivity (PCS)
