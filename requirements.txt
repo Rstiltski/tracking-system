@@ -10,6 +10,7 @@ streamlit-aggrid>=1.0.0
 sqlalchemy>=2.0.0
 pyyaml>=6.0
 requests>=2.31.0
+streamlit-lottie>=0.0.5  # Phase 9: Gamevibe UI Overhaul (Animations)
 
 # Phase 4: Notifications & Reminders System
 apscheduler>=3.10.0      # Temporal orchestration for recurring reminders

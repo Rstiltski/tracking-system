@@ -1,15 +1,44 @@
 """
-Sidebar Component - Unified Navigation
+Sidebar Component - Categorized Navigation System
 
-Provides consistent sidebar navigation across all pages.
+Provides consistent, categorized sidebar navigation across all pages.
+Supports feature toggles via system_config.json to enable/disable categories.
 
 Usage:
     from tracking_app.components.sidebar import render_sidebar
 """
 import streamlit as st
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Dict, Any, List
 import os
+import json
+
+
+def _load_system_config() -> Dict[str, Any]:
+    """
+    Load the system configuration file for feature toggles.
+    
+    Returns:
+        Dictionary containing system configuration with category settings
+    """
+    config_path = os.path.join(os.path.dirname(__file__), '..', 'system_config.json')
+    try:
+        with open(config_path, 'r') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        # Return default config if file not found
+        return {
+            "categories": {},
+            "ui_settings": {
+                "show_user_stats": True,
+                "show_theme_toggle": True,
+                "show_streak_freeze": False,
+                "collapsed_by_default": False
+            }
+        }
+    except json.JSONDecodeError:
+        st.error("⚠️ Invalid system_config.json format")
+        return {"categories": {}, "ui_settings": {}}
 
 
 def _render_nav_link(label: str, page_file: str):
@@ -25,16 +54,51 @@ def _render_nav_link(label: str, page_file: str):
     st.link_button(label, f"/{page_file}", use_container_width=True)
 
 
+def _render_category_expander(icon: str, label: str, pages: List[str], is_collapsed: bool = True):
+    """
+    Render a collapsible category section with navigation links.
+    
+    Args:
+        icon: Emoji icon for the category
+        label: Category display label
+        pages: List of page filenames to include
+        is_collapsed: Whether the expander should be collapsed by default
+    """
+    if not pages:
+        return
+    
+    with st.expander(f"{icon} {label}", expanded=not is_collapsed):
+        for page_file in pages:
+            # Convert snake_case to Title Case for display
+            page_name = page_file.replace("_", " ").title()
+            # Add emoji based on page type
+            emoji_map = {
+                "dashboard": "🏠", "calendar": "📅", "weekly": "📊", "weekly_review": "🔄",
+                "habits": "✅", "stacks": "🔗", "habit_analytics": "📈", "habit_experiments": "🧪", "template_sharing": "📚",
+                "tasks": "📋", "goals": "🎯", "time": "⏱️", "journal": "📔", "private_todos": "🔒",
+                "health": "💪", "emotional_health": "❤️",
+                "finances": "💰",
+                "achievements": "🏆", "rewards": "🎁", "leaderboards": "📊", "challenges": "⚔️", "friends": "👥",
+                "notification_settings": "⚙️", "habit_reminders": "⏰", "task_alerts": "📋", "goal_alerts": "🎯",
+                "data_export": "📤", "data_import": "📥", "backup_restore": "💾", "data_lifecycle": "🔄",
+                "insights": "💡", "diary": "📖"
+            }
+            page_emoji = emoji_map.get(page_file, "📄")
+            _render_nav_link(f"{page_emoji} {page_name}", page_file)
+
+
 def render_sidebar(show_streak_freeze: bool = False):
     """
-    Render the main sidebar with navigation.
+    Render the main sidebar with categorized navigation.
     
     Displays:
     - App title and logo
     - User stats (Level, XP)
-    - Navigation links to all pages
+    - Categorized navigation using expandable sections
     - Optional Streak Freeze section (for habits page)
     - Theme toggle
+    
+    Categories are loaded from system_config.json and can be toggled on/off.
     
     Args:
         show_streak_freeze: If True, show streak freeze inventory section
@@ -75,54 +139,23 @@ def render_sidebar(show_streak_freeze: bool = False):
             _render_streak_freeze_section()
             st.divider()
         
-        # Main Navigation
-        st.subheader("📊 Tracking")
+        # Load system configuration for feature toggles
+        config = _load_system_config()
+        categories = config.get('categories', {})
+        ui_settings = config.get('ui_settings', {})
+        collapsed_by_default = ui_settings.get('collapsed_by_default', True)
         
-        # Core tracking modules
-        tracking_pages = [
-            ("🏠 Dashboard", "dashboard"),
-            ("✅ Habits", "habits"),
-            ("📋 Tasks", "tasks"),
-            ("💰 Finances", "finances"),
-            ("❤️ Health", "health"),
-            ("🌈 Emotional Health", "emotional_health"),
-            ("⏱️ Time", "time"),
-            ("🎯 Goals", "goals"),
-            ("🏆 Achievements", "achievements"),
-        ]
-        
-        for page_name, page_file in tracking_pages:
-            _render_nav_link(page_name, page_file)
-        
-        st.divider()
-        
-        # Data Management
-        st.subheader("📦 Data")
-        
-        data_pages = [
-            ("📤 Export", "data_export"),
-            ("📥 Import", "data_import"),
-            ("💾 Backup", "backup_restore"),
-            ("🔄 Lifecycle", "data_lifecycle"),
-        ]
-        
-        for page_name, page_file in data_pages:
-            _render_nav_link(page_name, page_file)
-        
-        st.divider()
-        
-        # Notifications
-        st.subheader("🔔 Alerts")
-        
-        notification_pages = [
-            ("⚙️ Notifications", "notification_settings"),
-            ("⏰ Habit Reminders", "habit_reminders"),
-            ("📋 Task Alerts", "task_alerts"),
-            ("🎯 Goal Alerts", "goal_alerts"),
-        ]
-        
-        for page_name, page_file in notification_pages:
-            _render_nav_link(page_name, page_file)
+        # Main Navigation - Categorized
+        for category_key, category_config in categories.items():
+            if not category_config.get('enabled', True):
+                continue  # Skip disabled categories
+            
+            icon = category_config.get('icon', '📄')
+            label = category_config.get('label', category_key.title())
+            pages = category_config.get('pages', [])
+            
+            if pages:
+                _render_category_expander(icon, label, pages, is_collapsed=collapsed_by_default)
         
         st.divider()
         

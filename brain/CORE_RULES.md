@@ -130,6 +130,7 @@ This file serves as the **central nervous system reference** for all rules, cons
 | DOC_003 | **Update FEATURE_MAP**: Update when adding new features | PROJECT_RULES.md | 🟡 MEDIUM | [FEATURE_MAP.md](../FEATURE_MAP.md) |
 | DOC_004 | **Conventional Commits**: Use conventional commit format | PROJECT_RULES.md | 🟡 MEDIUM | - |
 | DOC_005 | **Keep Docs Consistent**: Same structure across all doc files | PROJECT_RULES.md | 🟠 HIGH | - |
+| DOC_006 | **Recursive Context Reading**: When a file references another documentation file, ALL referenced files must be loaded and understood before implementation | AI_RULES.md | 🔴 CRITICAL | [CONTEXT.md](../CONTEXT.md) |
 
 ### AI Communication Rules (AI_) - Vibe Coding Protocol
 

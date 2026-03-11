@@ -1,0 +1,130 @@
+# 🎯 Veryfyn Tracking System - Master Index
+
+**Project Root:** `tracking-system/`  
+**Primary Interface:** Python Streamlit (`tracking_app/`)  
+**Backend Core:** The Brain (`brain/`)
+
+---
+
+## 🚨 LLM START HERE (MANDATORY CONTEXT)
+
+**AI Agents must load these files to understand the project:**
+
+| Sequence | File | Purpose |
+|----------|------|---------|
+| 1 | [`CONTEXT.md`](CONTEXT.md) | **MASTER REFERENCE** - Load this first |
+| 2 | [`brain/CORE_RULES.md`](brain/CORE_RULES.md) | Immutable project laws |
+| 3 | [`brain/AI_RULES.md`](brain/AI_RULES.md) | Thinking protocol (4-Phase Workflow) |
+| 4 | [`session.json`](session.json) | Current memory state |
+| 5 | [`decisions.log`](decisions.log) | Implementation history |
+
+**Command:** "Follow CONTEXT.md" triggers the full context loading sequence.
+
+---
+
+## 🚦 Quick Start & Requirements
+
+**Follow these steps to get up and running:**
+
+### 1. Prerequisites
+- Python 3.10+
+- SQLite3
+
+### 2. Installation
+```bash
+# Install project dependencies
+pip install -r requirements.txt
+```
+
+### 3. Run Application
+```bash
+# Launch the Streamlit interface
+streamlit run tracking_app/app.py
+```
+
+### 4. Development Mode
+- The database is auto-initialized at `tracking_app/tracking.db`
+- See `GETTING_STARTED.md` for detailed workflow
+
+---
+
+## 📚 Documentation Library
+
+### 🧭 Navigation & Planning
+| Document | Purpose |
+|----------|---------|
+| [`README.md`](README.md) | Project overview and architecture |
+| [`FEATURE_MAP.md`](FEATURE_MAP.md) | Maps every feature to its source file |
+| [`ROADMAP.md`](ROADMAP.md) | Strategic development plan |
+| [`CHUNKED_TODO_GUIDELINES.md`](CHUNKED_TODO_GUIDELINES.md) | Active task list |
+| [`PROJECT_RULES.md`](PROJECT_RULES.md) | Coding standards (Python-First, Single-Page Rule) |
+
+### 🧠 The Brain (Backend)
+| Document | Purpose |
+|----------|---------|
+| [`brain/README.md`](brain/README.md) | Architecture of the backend system |
+| [`brain/CORE_RULES.md`](brain/CORE_RULES.md) | Self-healing and protection systems |
+| [`brain/AI_RULES.md`](brain/AI_RULES.md) | Deep dive into state machines, policies, and tools |
+
+### 🔬 Research & Specifications
+| Document | Purpose |
+|----------|---------|
+| [`docs/research/`](docs/research/) | Behavioral science and technical research |
+| [`docs/specs/`](docs/specs/) | Feature specifications (Habit Score, Emotional State) |
+| [`docs/schemas/`](docs/schemas/) | Data and audit schemas |
+
+### 📊 Implementation History
+| Document | Purpose |
+|----------|---------|
+| [`decisions.log`](decisions.log) | Log of all architectural choices |
+| [`PHASE_*_SUMMARY.md`](PHASE_*_SUMMARY.md) | Detailed logs of completed phases (1-7) |
+
+### 🛠️ Developer Guides
+| Document | Purpose |
+|----------|---------|
+| [`GETTING_STARTED.md`](GETTING_STARTED.md) | Onboarding guide for new developers |
+| [`ARCHITECTURAL_MAP.md`](ARCHITECTURAL_MAP.md) | High-level system architecture |
+| [`PAGE_REFACTORING_GUIDE.md`](PAGE_REFACTORING_GUIDE.md) | Guidelines for refactoring pages |
+| [`MODULE_MANAGEMENT_ROADMAP.md`](MODULE_MANAGEMENT_ROADMAP.md) | Module management strategy |
+
+---
+
+## 🏗️ Project Structure Overview
+
+```
+tracking-system/
+├── tracking_app/          # Main Streamlit application
+│   ├── app.py            # Entry point
+│   ├── components/       # Reusable UI components
+│   ├── pages/           # Feature pages
+│   └── database.py      # Database layer
+├── brain/               # Backend intelligence
+│   ├── CORE_RULES.md    # Immutable laws
+│   ├── AI_RULES.md      # AI workflow
+│   └── ai/             # AI modules
+├── docs/                # Documentation folders
+│   ├── research/        # Research documents
+│   ├── specs/           # Technical specifications
+│   └── schemas/         # Data schemas
+├── CONTEXT.md          # Master context reference
+├── FEATURE_MAP.md      # Feature mapping
+├── ROADMAP.md          # Development roadmap
+└── requirements.txt    # Python dependencies
+```
+
+---
+
+## 🎯 Key Commands
+
+| Task | Command |
+|------|---------|
+| Install Dependencies | `pip install -r requirements.txt` |
+| Run App | `streamlit run tracking_app/app.py` |
+| Run with Port | `streamlit run tracking_app/app.py --server.port 8501` |
+| Check Database | `sqlite3 tracking_app/tracking.db ".tables"` |
+
+---
+
+**Last Updated:** Phase 7 Complete  
+**Status:** Production Ready  
+**Next Phase:** Enhancement & Polish

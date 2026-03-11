@@ -19,6 +19,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # Import shared components
 from tracking_app.components.sidebar import render_sidebar
 from tracking_app.components.session import init_session_state
+from tracking_app.theme import apply_gamevibe_theme
 
 
 # ============================================================================
@@ -27,7 +28,7 @@ from tracking_app.components.session import init_session_state
 
 st.set_page_config(
     page_title="Veryfyn - Personal Tracking System",
-    page_icon="🎯",
+    page_icon="🎮",
     layout="wide",
     initial_sidebar_state="expanded",
     menu_items={
@@ -43,6 +44,9 @@ st.set_page_config(
         """
     }
 )
+
+# Apply the Gamevibe Theme (Cyberpunk/RPG aesthetics)
+apply_gamevibe_theme()
 
 
 # ============================================================================

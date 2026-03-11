@@ -1,0 +1,72 @@
+{
+    "version": "1.0.0",
+    "description": "Veryfyn Feature Toggle System - Enable/disable sidebar categories without code changes",
+    "categories": {
+        "overview": {
+            "enabled": true,
+            "icon": "🚀",
+            "label": "Overview",
+            "pages": ["dashboard", "calendar", "weekly", "weekly_review"]
+        },
+        "habit_mastery": {
+            "enabled": true,
+            "icon": "✅",
+            "label": "Habit Mastery",
+            "pages": ["habits", "stacks", "habit_analytics", "habit_experiments", "template_sharing"]
+        },
+        "planning": {
+            "enabled": true,
+            "icon": "📝",
+            "label": "Planning",
+            "pages": ["tasks", "goals", "time", "journal", "private_todos"]
+        },
+        "wellness": {
+            "enabled": true,
+            "icon": "❤️",
+            "label": "Wellness",
+            "pages": ["health", "emotional_health"]
+        },
+        "finance": {
+            "enabled": true,
+            "icon": "💰",
+            "label": "Finance",
+            "pages": ["finances"]
+        },
+        "gamification": {
+            "enabled": true,
+            "icon": "🏆",
+            "label": "Gamification",
+            "pages": ["achievements", "rewards", "leaderboards", "challenges", "friends"]
+        },
+        "alerts": {
+            "enabled": true,
+            "icon": "🔔",
+            "label": "Alerts",
+            "pages": ["notification_settings", "habit_reminders", "task_alerts", "goal_alerts"]
+        },
+        "data": {
+            "enabled": true,
+            "icon": "📦",
+            "label": "Data Management",
+            "pages": ["data_export", "data_import", "backup_restore", "data_lifecycle"]
+        },
+        "insights": {
+            "enabled": true,
+            "icon": "💡",
+            "label": "Insights",
+            "pages": ["insights", "diary"]
+        },
+        "system": {
+            "enabled": true,
+            "icon": "⚙️",
+            "label": "System",
+            "pages": []
+        }
+    },
+    "ui_settings": {
+        "show_user_stats": true,
+        "show_theme_toggle": true,
+        "show_streak_freeze": false,
+        "collapsed_by_default": false
+    }
+}

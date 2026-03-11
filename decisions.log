@@ -157,3 +157,11 @@ Format: `[TIMESTAMP] [Decision ID] Choice -> [Reasoning] -> [Implication]`
 
 **Last Updated:** 2026-03-03
 **Version:** 1.1.0
+[2026-03-07] DECISION_027 Feature Flag System -> Implemented system_config.json for sidebar category toggles -> Reasoning -> Adapted modules_config.json concept from external project to enable/disable sidebar categories without code changes -> Implication -> Users can now customize navigation by editing JSON config instead of modifying Python code
+
+[2026-03-07] DECISION_028 Recursive Context Rule -> Added DOC_006 to CORE_RULES.md -> Reasoning -> Adopted "Recursive Documentation Reading" principle to prevent context gaps during implementation -> Implication -> All AI agents must load referenced documentation files before writing code
+
+[2026-03-07] DECISION_029 Security Playbook -> Created brain/SECURITY_PLAYBOOK.md -> Reasoning -> Established formal security protocols for export guards, audit trails, and XP anti-cheat measures -> Implication -> All future features must comply with defined security tiers and audit requirements
+
+[2026-03-07] DECISION_030 Categorized Sidebar -> Refactored sidebar.py to use expandable categories -> Reasoning -> Support 40+ pages without UI clutter while maintaining feature toggle capability -> Implication -> Navigation now scales indefinitely with clean UX pattern
+[2026-03-11] DECISION_031 Choice -> Implement Phase 9 Gamevibe UI Overhaul -> Reasoning -> User requested cyberpunk/RPG aesthetic transformation -> Implication -> Created theme.py, gamevibe_effects.py, updated app.py and requirements.txt
