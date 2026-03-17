@@ -19,6 +19,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # Import shared components
 from tracking_app.components.sidebar import render_sidebar
 from tracking_app.components.session import init_session_state
+from tracking_app.theme import apply_gamevibe_theme
 
 
 # ============================================================================
@@ -43,6 +44,9 @@ st.set_page_config(
         """
     }
 )
+
+# Apply the Gamevibe theme
+apply_gamevibe_theme()
 
 
 # ============================================================================

@@ -161,12 +161,74 @@ This document maps features to their implementation files. Use it to quickly fin
 
 ---
 
+## §3.5 Decoupled API Backend (Phase 13)
+
+**Status:** 🟡 **In Progress** - Backend complete, React frontend ~10% complete
+
+**Architecture Note:** Phase 13 FastAPI backend is an **API layer** that calls `tracking_app/storage.py` directly. It does NOT duplicate business logic.
+
+### FastAPI Server
+| Feature | File | Description |
+|---------|------|-------------|
+| Main App | `backend/main.py` | FastAPI app with CORS, routers, health check |
+| Config | `backend/config.py` | Settings using pydantic-settings |
+
+### API Routes (All call tracking_app/storage.py)
+| Feature | File | Description |
+|---------|------|-------------|
+| Habits CRUD | `backend/routes/habits.py` | GET/POST/PUT/DELETE habits → calls storage.py |
+| Tasks CRUD | `backend/routes/tasks.py` | GET/POST/PUT/DELETE tasks + completion → calls storage.py |
+| Goals CRUD | `backend/routes/goals.py` | GET/POST/PUT/DELETE goals + progress → calls storage.py |
+| Health CRUD | `backend/routes/health.py` | GET/POST/PUT/DELETE health entries → calls storage.py |
+| Time Tracking | `backend/routes/time.py` | Timer + time entries → calls storage.py |
+| Finances | `backend/routes/finances.py` | Transactions + budget → calls storage.py |
+
+### API Schemas (Pydantic)
+| Feature | File | Description |
+|---------|------|-------------|
+| Habits Schemas | `backend/schemas/habits.py` | HabitRequest, HabitResponse |
+| Tasks Schemas | `backend/schemas/tasks.py` | TaskRequest, TaskResponse |
+| Goals Schemas | `backend/schemas/goals.py` | GoalRequest, GoalResponse |
+| Health Schemas | `backend/schemas/health.py` | HealthRequest, HealthResponse |
+| Time Schemas | `backend/schemas/time.py` | TimeEntryRequest, TimerResponse |
+| Finances Schemas | `backend/schemas/finances.py` | TransactionRequest, BudgetResponse |
+
+### React Frontend
+| Feature | File | Description | Status |
+|---------|------|-------------|--------|
+| Main App | `frontend/src/App.jsx` | React app with navigation | ✅ Complete |
+| Habits View | `frontend/src/App.jsx` | Habit tracking UI (CRUD) | ✅ Complete |
+| Tasks View | `frontend/src/App.jsx` | Task management UI (CRUD) | ✅ Complete |
+| Time View | `frontend/src/App.jsx` | Time tracking UI (entries) | ✅ Complete |
+| Finances View | `frontend/src/App.jsx` | Financial tracking UI | ✅ Complete |
+| Goals View | NOT IMPLEMENTED | Goal tracking UI | ❌ Not Started |
+| Health View | NOT IMPLEMENTED | Health metrics UI | ❌ Not Started |
+| Dashboard | `frontend/src/App.jsx` | Overview dashboard | ⚠️ Placeholder Only |
+
+**Note:** React frontend has only 4 basic CRUD views (~10% of Streamlit's 32+ pages)
+
+---
+
 ## §4 Backend Features (Brain System)
+
+### ⚠️ Architecture Clarification
+
+**The Brain is NOT the data backend.** The Brain is an **intelligence layer** for AI/ML analytics.
+
+| Layer | Purpose | Files |
+|-------|---------|-------|
+| **📦 Data Backend** | Data persistence & CRUD | `tracking_app/storage.py`, `models.py`, `database.py` |
+| **🧠 Intelligence Layer** | AI/ML analytics | `brain/analysis/`, `brain/behavioral/`, `brain/notifications/` |
+| **⚠️ Brain Core** | Business SaaS commands | `brain/core/` (over-engineered for personal tracking) |
+
+**For simple CRUD:** Use `tracking_app/storage.py` directly
+
+**For AI analytics:** Use `brain/analysis/` or `brain/behavioral/`
 
 ### Core Components
 | Feature | File | Description |
 |---------|------|-------------|
-| Brain Core | `brain/core/brain.py` | Main orchestration |
+| Brain Core | `brain/core/brain.py` | Main orchestration (⚠️ over-engineered) |
 | Router | `brain/core/router.py` | Command routing |
 | Result Types | `brain/core/result.py` | Result structures |
 | Tool Base | `brain/core/tool.py` | Tool base class |
@@ -174,7 +236,10 @@ This document maps features to their implementation files. Use it to quickly fin
 | Events | `brain/core/events.py` | Event system |
 | Enums | `brain/core/enums.py` | Risk tiers, status codes |
 
-### Tools (100+)
+### Tools (100+) - ⚠️ FOR BUSINESS SAAS, NOT PERSONAL TRACKING
+
+**Note:** These tools are for a **landscaping business management system**, not personal habit tracking.
+
 | Category | File | Tools |
 |----------|------|-------|
 | Job Management | `brain/tools/job_tools.py` | CreateJob, UpdateJob, DeleteJob |

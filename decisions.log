@@ -477,6 +477,162 @@ All documentation updates follow:
 - Evaluate reflexion enhancement opportunities (Shinn et al. 2023)
 
 
+## DECISION_040: Phase 12 UI/UX Redesign - Design System Foundation
+
+**Date:** March 11, 2026
+**Status:** IN PROGRESS (Phase 12.1 Foundation Complete)
+
+### Summary
+Initiated Phase 12 to create a comprehensive design system for the Veryfyn Tracking System. This phase transforms the existing Gamevibe theme into a professional, systematic design language with proper design tokens, component library, and responsive layouts.
+
+### Problem
+The existing theme.py provided basic neon-dark styling but lacked:
+- Systematic design tokens
+- Consistent component patterns
+- Light/dark theme support
+- Proper responsive breakpoints
+- Accessibility compliance (WCAG 2.1 AA)
+- Reusable component library
+
+### Solution
+Created a modular design system with the following structure:
+
+```
+tracking_app/design/
+├── __init__.py           # Module exports, version info
+├── tokens.py             # Design tokens (colors, spacing, typography, etc.)
+├── theme.py              # Theme provider with light/dark support
+└── components/
+    ├── __init__.py
+    └── buttons.py        # Button component library
+```
+
+### Files Created
+1. **phases/PHASE_11_UI_UX_REDESIGN.md** (~900 lines)
+   - Complete phase specification document
+   - Design token definitions
+   - Component library architecture
+   - Implementation roadmap (4 sub-phases)
+   - Quality checklist and accessibility guidelines
+
+2. **tracking_app/design/__init__.py**
+   - Module initialization
+   - Exports all design tokens and utilities
+   - Version 11.0.0
+
+3. **tracking_app/design/tokens.py** (~450 lines)
+   - ColorPalette: 60+ color tokens (light/dark variants)
+   - SpacingScale: 8px baseline grid (none through xxxxl)
+   - TypographyScale: Fluid typography with clamp()
+   - BorderRadius: 9 radius values
+   - Shadow: Elevation + glow shadows
+   - Transition: Timing and easing functions
+   - ZIndex: Layering scale
+
+4. **tracking_app/design/theme.py** (~500 lines)
+   - apply_design_system(): CSS injection with design tokens
+   - render_theme_toggle(): Sidebar theme selector
+   - get_current_theme(): Session state theme
+   - get_theme_colors(): Programmatic color access
+   - Light and dark mode support
+   - Custom CSS for all Streamlit components
+
+5. **tracking_app/design/components/buttons.py** (~250 lines)
+   - render_button(): Primary button component
+   - render_button_group(): Horizontal button groups
+   - render_icon_button(): Icon-only buttons
+   - render_action_buttons(): Predefined action sets
+   - Variants: primary, secondary, success, warning, danger, ghost, outline
+   - Sizes: sm, md, lg, xl
+
+### Design Token Statistics
+
+| Category | Count | Description |
+|----------|-------|-------------|
+| Colors | 60+ | Primary, secondary, accent, semantic, neutral |
+| Spacing | 9 | 0 through 80px (8px baseline) |
+| Typography | 20+ | Font sizes, weights, line-heights |
+| Radius | 9 | 0 through full (pill-shaped) |
+| Shadows | 20+ | Elevation + glow effects |
+| Transitions | 15+ | Duration + easing functions |
+
+### Color Palette
+
+**Primary Brand:**
+- Indigo (#6366f1) - Primary actions
+- Violet (#8b5cf6) - Secondary actions
+
+**Accent (Gamification):**
+- Gold (#f59e0b) - XP, achievements
+- Cyan (#06b6d4) - Special highlights
+- Emerald (#10b981) - Success, completion
+- Purple (#a855f7) - Premium features
+- Rose (#f43f5e) - Streaks, passion
+
+**Semantic:**
+- Success (Emerald) - Positive actions
+- Warning (Amber) - Caution, deadlines
+- Error (Red) - Destructive, failures
+- Info (Sky) - Informational
+
+### Implementation Progress
+
+**Phase 12.1: Foundation (20% Complete)**
+- [x] Design tokens created
+- [x] Theme provider implemented
+- [x] Button components created
+- [ ] Card components (pending)
+- [ ] Input components (pending)
+- [ ] Navigation components (pending)
+
+**Phase 12.2: Core Components (0% Complete)**
+- [ ] All component types
+- [ ] Feedback components
+- [ ] Loading states
+
+**Phase 12.3: Page Migration (0% Complete)**
+- [ ] Dashboard migration
+- [ ] High-traffic pages
+- [ ] Remaining pages
+
+**Phase 12.4: Polish & Testing (0% Complete)**
+- [ ] Mobile testing
+- [ ] Accessibility audit
+- [ ] Performance optimization
+
+### Next Steps
+1. Create card components (cards.py)
+2. Create form input components (inputs.py)
+3. Create navigation components (navigation.py)
+4. Update app.py to use new design system
+5. Migrate dashboard.py to use new components
+6. Test on mobile/tablet breakpoints
+
+### Related Decisions
+- DECISION_039: Interdisciplinary Research Integration Plan
+- DECISION_031: Phase 10 Performance Optimization
+- DECISION_030: Navigation System Refactored to Streamlit Native
+
+### Phase Philosophy
+
+**Rule DOC_006 (Unlimited Phases):** This project follows a granular phase philosophy - there is no limit to the number of phases. Phases can be added freely for focused, incremental development. This allows for:
+- Focused scope - each phase tackles a specific area
+- Incremental progress - small, manageable chunks
+- Clear milestones - defined start and end points
+- Flexible planning - new phases as needs emerge
+- Better tracking - easier to identify bottlenecks
+
+Phase 12 was created (instead of being part of Phase 11) to keep the UI/UX redesign work separate from the behavioral science safeguards work, allowing each to be tracked and completed independently.
+
+### Impact
+- Provides foundation for consistent UI across 45+ pages
+- Enables light/dark theme switching
+- Improves accessibility compliance
+- Reduces code duplication through reusable components
+- Sets stage for Phase 11 interdisciplinary features
+
+---
+
 ## DECISION_039: Interdisciplinary Research Integration Plan Created
 
 **Date:** March 8, 2026

@@ -17,6 +17,8 @@
 | `PROJECT_RULES.md` | Detailed development guidelines | Write code |
 | `README.md` | Project overview | Get oriented |
 | `ROADMAP.md` | Strategic development plan | Plan features |
+| `ARCHITECTURE_DECISIONS.md` | **Architecture clarification** (Brain vs. Data Backend) | Understand true architecture |
+| `ARCHITECTURAL_MAP.md` | Visual architecture diagrams | See system structure |
 | `phases/PHASE_*.md` | Phase implementation docs | Phase details |
 | `TODO.md` | Task tracking | Find work |
 
@@ -42,9 +44,10 @@ When you mention this file, load context in this order:
 ```
 1. brain/CORE_RULES.md    → All rules loaded
 2. brain/AI_RULES.md      → Thinking protocol loaded
-3. session.json           → Current state loaded
-4. decisions.log          → History loaded
-5. patterns/              → Patterns available
+3. ARCHITECTURE_DECISIONS.md → Architecture clarification loaded
+4. session.json           → Current state loaded
+5. decisions.log          → History loaded
+6. patterns/              → Patterns available
 ```
 
 ---
@@ -54,12 +57,62 @@ When you mention this file, load context in this order:
 | ID | Rule | Description |
 |----|------|-------------|
 | **LANG_001** | Python-First | All new features in Python/Streamlit |
-| **BRAIN_001** | No Direct DB | All operations through Tools |
-| **BRAIN_002** | Always Audit | Every command must be logged |
+| **BRAIN_001** | No Direct DB | All operations through Storage class |
+| **BRAIN_002** | Always Audit | Every command must be logged (if using Brain core) |
 | **EVENT_001** | No Brain Imports | Brains never import each other |
 | **MOD_001** | Single-Page | Only modify the specific file |
 | **AI_001** | Five-Component | All prompts need Purpose, Users, Features, Constraints, Quality |
 | **AI_002** | No "Simple" | Never use "simple" without definition |
+
+---
+
+## 🏗️ ARCHITECTURE CLARIFICATION (CRITICAL)
+
+### Three-Layer Architecture
+
+```
+┌─────────────────────────────────────────┐
+│   UI Layer                              │
+│   - Streamlit (✅ 32+ pages, primary)   │
+│   - React + FastAPI (🟡 Phase 13, ~10%) │
+└───────────────┬─────────────────────────┘
+                │
+                ▼
+┌─────────────────────────────────────────┐
+│   Data Backend (tracking_app/)          │
+│   - storage.py ← ALL CRUD HERE          │
+│   - models.py ← Data classes            │
+│   - database.py ← SQLite connection     │
+└───────────────┬─────────────────────────┘
+                │
+                ▼
+┌─────────────────────────────────────────┐
+│   Intelligence Layer (brain/)           │
+│   - analysis/ ← ML/analytics            │
+│   - behavioral/ ← Habit science         │
+│   - notifications/ ← Reminders          │
+│   - core/ ← ⚠️ OVER-ENGINEERED          │
+└───────────────┬─────────────────────────┘
+                │
+                ▼
+┌─────────────────────────────────────────┐
+│   SQLite Database (tracking.db)         │
+└─────────────────────────────────────────┘
+```
+
+### ⚠️ Critical: Brain is NOT the Data Backend
+
+| Layer | Purpose | Use For |
+|-------|---------|---------|
+| **📦 Data Backend** (`tracking_app/`) | Data persistence & CRUD | **ALL** habit/task/goal storage |
+| **🧠 Intelligence Layer** (`brain/`) | AI/ML analytics | Correlations, predictions, burnout detection |
+| **🎨 UI Layer** | User interface | Streamlit (primary) or React (Phase 13) |
+
+**For simple CRUD:** Call `tracking_app/storage.py` **directly**
+
+**For AI analytics:** Call `brain/analysis/` or `brain/behavioral/`
+
+**DON'T use Brain core** (`brain/core/brain.py`) for personal tracking CRUD - it's over-engineered for business SaaS.
 
 ---
 

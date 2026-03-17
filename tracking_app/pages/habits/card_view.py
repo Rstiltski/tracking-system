@@ -133,26 +133,43 @@ def render_habit_card(habit: Habit, storage, today: date):
                     st.rerun()
         
         with col3:
-            # Habit Score with category badge and trend
+            # Habit Score with circular progress ring
             score_percentage = habit_score.percentage
+            
+            # Calculate SVG circle values (circumference = 2 * pi * r, r=35)
+            circumference = 220  # int(2 * 3.14159 * 35)
+            dash_offset = int(220 * (100 - score_percentage) / 100)
+            
+            # Create circular progress ring using SVG
             st.markdown(
                 f"""
                 <div style="
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
                     padding: 0.5rem;
-                    border-radius: 0.5rem;
-                    border-left: 4px solid {score_category['color']};
-                    background: rgba(255,255,255,0.05);
-                    margin-bottom: 0.5rem;
                 ">
-                    <div style="font-size: 1.3rem; font-weight: bold;">
-                        {score_category['emoji']} {score_percentage}%
-                        <span style="font-size: 0.9rem; color: {trend_indicator['color']};">
-                            {trend_indicator['icon']}
-                        </span>
-                    </div>
-                    <div style="font-size: 0.75rem; color: gray;">
-                        {score_category['label']} · {trend_indicator['label']}
-                    </div>
+                    <svg width="80" height="80" viewBox="0 0 80 80">
+                        <!-- Background circle -->
+                        <circle cx="40" cy="40" r="35" fill="none" stroke="#e2e8f0" stroke-width="8" />
+                        <!-- Progress circle -->
+                        <circle 
+                            cx="40" cy="40" r="35" 
+                            fill="none" 
+                            stroke="{score_category['color']}" 
+                            stroke-width="8"
+                            stroke-linecap="round"
+                            stroke-dasharray="{circumference}"
+                            stroke-dashoffset="{dash_offset}"
+                            transform="rotate(-90 40 40)"
+                            style="transition: stroke-dashoffset 0.5s ease;"
+                        />
+                        <!-- Center text -->
+                        <text x="40" y="45" text-anchor="middle" font-size="16" font-weight="bold" fill="{score_category['color']}">{score_percentage}%</text>
+                    </svg>
+                </div>
+                <div style="font-size: 0.75rem; color: gray; text-align: center;">
+                    {score_category['label']} · {trend_indicator['label']}
                 </div>
                 """,
                 unsafe_allow_html=True

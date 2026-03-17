@@ -25,31 +25,35 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+# Import theme selector for full theme support
+from tracking_app.design.theme_selector import render_theme_selector, get_theme_options
+from tracking_app.design.theme import apply_design_system
+
 
 # Page category mapping based on Behavioral Science taxonomy
 PAGE_CATEGORIES: Dict[str, List[tuple]] = {
     "🚀 Overview": [
-        ("Dashboard", "🏠", "dashboard"),
+        ("Dashboard", "🏠", "dashboard_phase12"),
         ("Calendar", "📅", "calendar"),
         ("Weekly View", "📆", "weekly"),
         ("Weekly Review", "🔄", "weekly_review"),
     ],
     "✅ Mastery": [
-        ("Habits", "✅", "habits"),
+        ("Habits", "✅", "habits_phase12"),
         ("Habit Stacks", "🔗", "stacks"),
         ("Experiments", "🔬", "habit_experiments"),
         ("Analytics", "📈", "habit_analytics"),
         ("Templates", "📚", "template_sharing"),
     ],
     "📝 Planning": [
-        ("Tasks", "📝", "tasks"),
-        ("Goals", "🎯", "goals"),
-        ("Time", "⏰", "time"),
-        ("Journal", "📓", "journal"),
+        ("Tasks", "📝", "tasks_phase12"),
+        ("Goals", "🎯", "goals_phase12"),
+        ("Time", "⏰", "time_phase12"),
+        ("Journal", "📓", "journal_phase12"),
         ("Private Todos", "🔐", "private_todos"),
     ],
     "❤️ Wellness": [
-        ("Health", "❤️", "health"),
+        ("Health", "❤️", "health_phase12"),
         ("Emotional Health", "😊", "emotional_health"),
         ("Diary", "📔", "diary"),
         ("Energy", "⚡", "energy"),
@@ -57,7 +61,7 @@ PAGE_CATEGORIES: Dict[str, List[tuple]] = {
         ("Purpose", "🌟", "purpose_tracker"),
     ],
     "💰 Finance": [
-        ("Finances", "💰", "finances"),
+        ("Finances", "💰", "finances_phase12"),
     ],
     "🏆 Gamification": [
         ("Achievements", "🏆", "achievements"),
@@ -67,7 +71,7 @@ PAGE_CATEGORIES: Dict[str, List[tuple]] = {
         ("Friends", "👥", "friends"),
     ],
     "⚙️ System": [
-        ("Notifications", "🔔", "notification_settings"),
+        ("Notifications", "🔔", "notification_settings_phase12"),
         ("Widgets", "🧩", "widget_settings"),
         ("Data Export", "📤", "data_export"),
         ("Data Import", "📥", "data_import"),
@@ -159,24 +163,26 @@ def _render_category_expander(category: str, pages: List[tuple]) -> None:
 
 
 def _render_theme_toggle() -> None:
-    """Render theme toggle at the bottom of sidebar."""
+    """Render full theme selector at the bottom of sidebar."""
     st.sidebar.subheader("🎨 Appearance")
     
-    # Theme selection
-    theme = st.sidebar.selectbox(
-        "Theme",
-        ["System", "Light", "Dark"],
-        index=0,
-        key="sidebar_theme_select"
-    )
+    # Initialize theme in session state if not present
+    if 'theme' not in st.session_state:
+        st.session_state.theme = 'dark'
     
-    # Apply theme (placeholder - in production would apply CSS)
-    if theme == "Dark":
-        st.sidebar.markdown("🌙 Dark mode enabled")
-    elif theme == "Light":
-        st.sidebar.markdown("☀️ Light mode enabled")
-    else:
-        st.sidebar.markdown("🖥️ Using system theme")
+    # Get current theme
+    current_theme = st.session_state.get('theme', 'dark')
+    
+    # Apply the theme CSS
+    apply_design_system(theme=current_theme)
+    
+    # Render the full theme selector
+    with st.sidebar:
+        render_theme_selector(
+            location="sidebar",
+            show_descriptions=True,
+            show_preview=True
+        )
 
 
 def _render_sidebar_footer() -> None:

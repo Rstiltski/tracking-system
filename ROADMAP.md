@@ -16,7 +16,7 @@ This roadmap outlines the strategic direction for the Veryfyn Personal Tracking 
 
 ## Current Status Overview
 
-**Last Verified:** March 9, 2026
+**Last Verified:** March 17, 2026
 
 | Phase | Name | Status | Completion |
 |-------|------|--------|------------|
@@ -31,6 +31,8 @@ This roadmap outlines the strategic direction for the Veryfyn Personal Tracking 
 | **Phase 9** | Advanced Functionality | ✅ Complete | 100% |
 | **Phase 10** | Core Enhancements | ✅ Complete | 100% |
 | **Phase 11** | Advanced Support & Safeguards | ✅ Complete | 100% |
+| **Phase 12** | UI/UX Redesign - Design System | 🟡 In Progress (12.1) | 20% |
+| **Phase 13** | Decoupled Architecture (React + FastAPI) | 🟡 In Progress | Backend 100%, Frontend ~10% |
 
 ---
 
@@ -127,6 +129,78 @@ This roadmap outlines the strategic direction for the Veryfyn Personal Tracking 
 
 ## Future Phases
 
+### Phase 13: Decoupled Architecture (React + FastAPI) 🟡 IN PROGRESS
+
+**Detailed Plan:** See `ARCHITECTURAL_MAP.md`, `ARCHITECTURE_DECISIONS.md`
+**Duration:** 4-6 weeks | **Status:** Backend 100% Complete, Frontend ~10%
+**Created:** March 2026
+
+**Goal:** Create modern decoupled frontend with React + FastAPI backend while preserving all Streamlit functionality.
+
+#### Phase 13.1: FastAPI Backend ✅ COMPLETE
+
+| Sub-Phase | Feature | Status | File |
+|-----------|---------|--------|------|
+| 13.1.1 | FastAPI Server Setup | ✅ | `backend/main.py` |
+| 13.1.2 | Configuration System | ✅ | `backend/config.py` |
+| 13.1.3 | Habits API Routes | ✅ | `backend/routes/habits.py` |
+| 13.1.4 | Tasks API Routes | ✅ | `backend/routes/tasks.py` |
+| 13.1.5 | Goals API Routes | ✅ | `backend/routes/goals.py` |
+| 13.1.6 | Health API Routes | ✅ | `backend/routes/health.py` |
+| 13.1.7 | Time Tracking API | ✅ | `backend/routes/time.py` |
+| 13.1.8 | Finances API Routes | ✅ | `backend/routes/finances.py` |
+| 13.1.9 | Pydantic Schemas | ✅ | `backend/schemas/*.py` |
+
+**Key Implementation Notes:**
+- All routes call `tracking_app/storage.py` directly (no business logic duplication)
+- CORS configured for React frontend
+- Pydantic models for request/response validation
+- Health check and database test endpoints
+
+#### Phase 13.2: React Frontend 🟡 IN PROGRESS (~10%)
+
+| Sub-Phase | Feature | Status | File |
+|-----------|---------|--------|------|
+| 13.2.1 | React App Setup | ✅ | `frontend/src/App.jsx` |
+| 13.2.2 | Habits View (CRUD) | ✅ | `frontend/src/App.jsx` |
+| 13.2.3 | Tasks View (CRUD) | ✅ | `frontend/src/App.jsx` |
+| 13.2.4 | Time View (Entries) | ✅ | `frontend/src/App.jsx` |
+| 13.2.5 | Finances View | ✅ | `frontend/src/App.jsx` |
+| 13.2.6 | Goals View | ❌ Not Started | NOT IMPLEMENTED |
+| 13.2.7 | Health View | ❌ Not Started | NOT IMPLEMENTED |
+| 13.2.8 | Dashboard | ⚠️ Placeholder | `frontend/src/App.jsx` |
+| 13.2.9 | Advanced Views (25+) | ❌ Not Started | Streamlit has all |
+
+**Current Limitations:**
+- Only 4 basic CRUD views implemented (~10% of Streamlit features)
+- Missing: Goals, Health, Dashboard with real data
+- Missing: All 25+ advanced Streamlit pages (Emotional Health, Achievements, Insights, etc.)
+- Missing: ML/analytics integration, charts, gamification
+
+**Recommendation:** Use Streamlit as primary UI (32+ pages, 100% features). Finish React only if modern UI is desired.
+
+#### Running Phase 13
+
+**Backend:**
+```bash
+cd tracking-system
+source .venv/bin/activate
+uvicorn backend.main:app --reload --port 8000
+```
+
+**Frontend:**
+```bash
+cd tracking-system/frontend
+npm run dev
+```
+
+**Access:**
+- Backend API: http://localhost:8000
+- Frontend: http://localhost:5173
+- API Docs: http://localhost:8000/docs
+
+---
+
 ### Phase 7: Polish & Enhancement 📋 PLANNED
 **Detailed Plan:** [phases/PHASE_7_TODO.md](phases/PHASE_7_TODO.md)
 **Duration:** 2-3 weeks | **Status:** 0% Complete
@@ -216,6 +290,56 @@ This roadmap outlines the strategic direction for the Veryfyn Personal Tracking 
 - N-of-1 experiments
 - Streak optimization
 - Passive/invisible data validation
+
+---
+
+## In Progress Phases
+
+### Phase 12: UI/UX Redesign - Design System 🟡 IN PROGRESS
+**Started:** March 11, 2026 | **Status:** Phase 12.1 Foundation - 20% Complete
+
+| Sub-Phase | Feature | Status | Key Files |
+|-----------|---------|--------|----------|
+| 12.1 | Foundation (Design Tokens, Theme) | 🟡 In Progress | `tracking_app/design/tokens.py`, `tracking_app/design/theme.py` |
+| 12.2 | Core Components | ⏳ Pending | `tracking_app/design/components/` |
+| 12.3 | Page Migration | ⏳ Pending | `tracking_app/pages/` |
+| 12.4 | Polish & Testing | ⏳ Pending | - |
+
+**Key Deliverables:**
+- Design token system (60+ colors, spacing, typography, shadows)
+- Light and dark theme support
+- Component library (buttons, cards, inputs, navigation)
+- Responsive layouts (mobile-first)
+- WCAG 2.1 AA accessibility compliance
+
+---
+
+## Phase Development Philosophy
+
+### Unlimited Phases for Granular Development
+
+This project follows a **granular phase philosophy** - there is no limit to the number of phases that can be created. This approach allows for:
+
+1. **Focused Scope** - Each phase tackles a specific, well-defined area
+2. **Incremental Progress** - Small, manageable chunks of work
+3. **Clear Milestones** - Each phase has defined start and end points
+4. **Flexible Planning** - New phases can be added as needs emerge
+5. **Better Tracking** - Easier to track progress and identify bottlenecks
+
+**Rule DOC_006:** Phases can be added freely for granular development - no limit on phase count.
+
+### When to Create a New Phase
+
+Create a new phase when:
+- A major feature area needs systematic implementation
+- A significant refactor or redesign is required
+- Multiple related features share common dependencies
+- The work requires 1+ weeks of focused development
+- Clear success metrics can be defined
+
+### Phase Numbering
+
+Phases are numbered sequentially. The number has no technical meaning - it's simply an identifier. Higher numbers don't mean "better" or "more important" - they just mean "created later."
 
 ---
 

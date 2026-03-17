@@ -18,7 +18,7 @@ import logging
 
 from tracking_app.database import Database, get_db, generate_id
 from tracking_app.models import (
-    Habit, HabitEntry, Task, Transaction, HealthEntry, Goal, Achievement
+    Habit, HabitEntry, Task, Transaction, HealthEntry, Goal, Achievement, TimeEntry
 )
 from brain.models.burnout import BurnoutRisk, BurnoutSnapshot
 from brain.models.habit_difficulty import (
@@ -491,6 +491,55 @@ class Storage:
         )
         return result.rowcount > 0
     
+    def update_transaction(
+        self,
+        transaction_id: str,
+        description: Optional[str] = None,
+        amount: Optional[float] = None,
+        trans_type: Optional[str] = None,
+        category: Optional[str] = None,
+        trans_date: Optional[date] = None,
+    ) -> Optional[Transaction]:
+        """Update a transaction."""
+        # Build update query
+        updates = []
+        params = []
+        
+        if description is not None:
+            updates.append("description = ?")
+            params.append(description)
+        if amount is not None:
+            updates.append("amount = ?")
+            params.append(amount)
+        if trans_type is not None:
+            updates.append("type = ?")
+            params.append(trans_type)
+        if category is not None:
+            updates.append("category = ?")
+            params.append(category)
+        if trans_date is not None:
+            updates.append("trans_date = ?")
+            params.append(trans_date.isoformat() if isinstance(trans_date, date) else trans_date)
+        
+        if not updates:
+            return None
+        
+        params.append(transaction_id)
+        
+        self._db.execute(
+            f"UPDATE transactions SET {', '.join(updates)} WHERE id = ?",
+            tuple(params)
+        )
+        
+        # Fetch and return updated transaction
+        rows = self._db.fetch_all(
+            "SELECT * FROM transactions WHERE id = ?",
+            (transaction_id,)
+        )
+        if rows:
+            return Transaction.from_dict(rows[0])
+        return None
+    
     # ==================== HEALTH ENTRIES ====================
     
     def get_health_entries(
@@ -565,6 +614,129 @@ class Storage:
         )
         
         return self.get_health_entry(entry_date)
+    
+    def delete_health_entry(self, entry_id: str) -> bool:
+        """Delete a health entry."""
+        result = self._db.execute(
+            "DELETE FROM health_entries WHERE id = ?",
+            (entry_id,)
+        )
+        return result.rowcount > 0
+    
+    # ==================== TIME ENTRIES (Phase 13) ====================
+    
+    def get_time_entries(
+        self,
+        start_date: Optional[date] = None,
+        end_date: Optional[date] = None,
+        category: Optional[str] = None,
+    ) -> List[TimeEntry]:
+        """Get all time entries with optional filtering."""
+        query = "SELECT * FROM time_entries"
+        params = []
+        conditions = []
+        
+        if start_date:
+            conditions.append("entry_date >= ?")
+            # Convert date to string for SQLite
+            params.append(start_date.isoformat() if isinstance(start_date, date) else start_date)
+        if end_date:
+            conditions.append("entry_date <= ?")
+            # Convert date to string for SQLite
+            params.append(end_date.isoformat() if isinstance(end_date, date) else end_date)
+        if category:
+            conditions.append("category = ?")
+            params.append(category)
+        
+        if conditions:
+            query += " WHERE " + " AND ".join(conditions)
+        
+        query += " ORDER BY entry_date DESC"
+        
+        rows = self._db.fetch_all(query, tuple(params) if params else None)
+        return [TimeEntry.from_dict(row) for row in rows]
+    
+    def get_time_entry(self, entry_id: str) -> Optional[TimeEntry]:
+        """Get a single time entry by ID."""
+        row = self._db.fetch_one(
+            "SELECT * FROM time_entries WHERE id = ?",
+            (entry_id,)
+        )
+        return TimeEntry.from_dict(row) if row else None
+    
+    def create_time_entry(
+        self,
+        category: str,
+        duration_seconds: int,
+        entry_date: Optional[date] = None,
+        notes: str = "",
+    ) -> TimeEntry:
+        """Create a new time entry."""
+        if entry_date is None:
+            entry_date = date.today()
+        elif isinstance(entry_date, str):
+            entry_date = date.fromisoformat(entry_date)
+        
+        entry = TimeEntry(
+            category=category,
+            duration_seconds=duration_seconds,
+            entry_date=entry_date,
+            notes=notes,
+        )
+        
+        self._db.execute(
+            """INSERT INTO time_entries 
+               (id, category, duration_seconds, entry_date, notes, created_at)
+               VALUES (?, ?, ?, ?, ?, ?)""",
+            (
+                entry.id, entry.category, entry.duration_seconds,
+                entry.entry_date.isoformat(), entry.notes,
+                entry.created_at.isoformat()
+            )
+        )
+        
+        return entry
+    
+    def update_time_entry(
+        self,
+        entry_id: str,
+        category: Optional[str] = None,
+        duration_seconds: Optional[int] = None,
+        notes: Optional[str] = None,
+    ) -> Optional[TimeEntry]:
+        """Update a time entry."""
+        updates = []
+        params = []
+        
+        if category is not None:
+            updates.append("category = ?")
+            params.append(category)
+        if duration_seconds is not None:
+            updates.append("duration_seconds = ?")
+            params.append(duration_seconds)
+        if notes is not None:
+            updates.append("notes = ?")
+            params.append(notes)
+        
+        if not updates:
+            return None
+        
+        params.append(entry_id)
+        
+        self._db.execute(
+            f"UPDATE time_entries SET {', '.join(updates)} WHERE id = ?",
+            tuple(params)
+        )
+        
+        return self.get_time_entry(entry_id)
+    
+    def delete_time_entry(self, entry_id: str) -> bool:
+        """Delete a time entry."""
+        result = self._db.execute(
+            "DELETE FROM time_entries WHERE id = ?",
+            (entry_id,)
+        )
+        return result.rowcount > 0
     
     # ==================== GOALS ====================
     

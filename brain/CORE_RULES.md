@@ -130,6 +130,7 @@ This file serves as the **central nervous system reference** for all rules, cons
 | DOC_003 | **Update FEATURE_MAP**: Update when adding new features | PROJECT_RULES.md | 🟡 MEDIUM | [FEATURE_MAP.md](../FEATURE_MAP.md) |
 | DOC_004 | **Conventional Commits**: Use conventional commit format | PROJECT_RULES.md | 🟡 MEDIUM | - |
 | DOC_005 | **Keep Docs Consistent**: Same structure across all doc files | PROJECT_RULES.md | 🟠 HIGH | - |
+| DOC_006 | **Unlimited Phases**: Phases can be added freely for granular development - no limit on phase count | ROADMAP.md | 🟢 LOW | [ROADMAP.md](../ROADMAP.md), [phases/](../phases/) |
 
 ### AI Communication Rules (AI_) - Vibe Coding Protocol
 

@@ -119,7 +119,7 @@ def render_enhanced_matrix_view(storage, habits: List[Habit], current_date: date
                     completed += 1
         
         percentage = int((completed / total_valid_days) * 100) if total_valid_days > 0 else 0
-        row['Progress'] = f"{percentage}%"
+        row['Progress'] = percentage  # Store as number for progress bar
         
         data.append(row)
     
@@ -133,10 +133,12 @@ def render_enhanced_matrix_view(storage, habits: List[Habit], current_date: date
             width='medium',
             disabled=True,
         ),
-        'Progress': st.column_config.TextColumn(
+        'Progress': st.column_config.ProgressColumn(
             'Progress',
             width='small',
-            disabled=True,
+            format='%d%%',
+            min_value=0,
+            max_value=100,
         ),
     }
     
@@ -220,10 +222,10 @@ def render_enhanced_matrix_view(storage, habits: List[Habit], current_date: date
                         st.session_state.user_level = get_level_from_xp(st.session_state.user_xp)
                         st.toast(f"↩️ {habit.name} unmarked", icon="↩️")
     
-    # Rerun if changes were made to refresh the display
+    # Save last update timestamp (without rerun to avoid full page refresh)
     if changes_made:
         st.session_state.matrix_last_update = datetime.now().isoformat()
-        st.rerun()
+        # No st.rerun() - data_editor handles UI update automatically
     
     st.divider()
     

@@ -317,6 +317,16 @@ def init_db() -> None:
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
     
+    -- Time entries (Phase 13 - Decoupled Architecture)
+    CREATE TABLE IF NOT EXISTS time_entries (
+        id TEXT PRIMARY KEY,
+        category TEXT NOT NULL,
+        duration_seconds INTEGER NOT NULL,
+        entry_date DATE NOT NULL,
+        notes TEXT DEFAULT '',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    
     -- Goals
     CREATE TABLE IF NOT EXISTS goals (
         id TEXT PRIMARY KEY,

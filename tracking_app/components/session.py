@@ -41,7 +41,9 @@ def init_session_state():
     
     # Theme preference
     if 'theme' not in st.session_state:
-        st.session_state.theme = st.session_state.storage.get_user_data('theme', 'light')
+        saved_theme = st.session_state.storage.get_user_data('theme')
+        # Default to 'dark' if no saved theme
+        st.session_state.theme = saved_theme if saved_theme else 'dark'
     
     # Streak freezes
     if 'streak_freezes' not in st.session_state:

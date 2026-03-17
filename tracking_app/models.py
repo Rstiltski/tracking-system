@@ -442,6 +442,68 @@ class HealthEntry:
 
 
 @dataclass
+class TimeEntry:
+    """
+    Represents a time tracking entry.
+    
+    Attributes:
+        id: Unique identifier
+        category: Time category (Work, Learning, etc.)
+        duration_seconds: Duration in seconds
+        entry_date: Date of the entry
+        notes: Optional notes
+        created_at: Creation timestamp
+    """
+    id: str = ""
+    category: str = "General"
+    duration_seconds: int = 0
+    entry_date: date = None
+    notes: str = ""
+    created_at: Optional[datetime] = None
+    
+    def __post_init__(self):
+        """Set defaults after initialization."""
+        if not self.id:
+            import uuid
+            self.id = str(uuid.uuid4())
+        if self.entry_date is None:
+            self.entry_date = date.today()
+        if self.created_at is None:
+            self.created_at = datetime.now()
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary for storage."""
+        return {
+            "id": self.id,
+            "category": self.category,
+            "duration_seconds": self.duration_seconds,
+            "entry_date": self.entry_date.isoformat() if self.entry_date else None,
+            "notes": self.notes,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+        }
+    
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "TimeEntry":
+        """Create instance from dictionary."""
+        entry_date = data.get("entry_date")
+        if isinstance(entry_date, str):
+            entry_date = date.fromisoformat(entry_date)
+        
+        created_at = data.get("created_at")
+        if isinstance(created_at, str):
+            created_at = datetime.fromisoformat(created_at)
+        
+        return cls(
+            id=data.get("id", ""),
+            category=data.get("category", "General"),
+            duration_seconds=data.get("duration_seconds", 0),
+            entry_date=entry_date,
+            notes=data.get("notes", ""),
+            created_at=created_at,
+        )
+
+
+@dataclass
 class Goal:
     """
     Represents a goal to track.
