@@ -33,27 +33,27 @@ from tracking_app.design.theme import apply_design_system
 # Page category mapping based on Behavioral Science taxonomy
 PAGE_CATEGORIES: Dict[str, List[tuple]] = {
     "🚀 Overview": [
-        ("Dashboard", "🏠", "dashboard_phase12"),
+        ("Dashboard", "🏠", "dashboard"),
         ("Calendar", "📅", "calendar"),
         ("Weekly View", "📆", "weekly"),
         ("Weekly Review", "🔄", "weekly_review"),
     ],
     "✅ Mastery": [
-        ("Habits", "✅", "habits_phase12"),
+        ("Habits", "✅", "habits"),
         ("Habit Stacks", "🔗", "stacks"),
         ("Experiments", "🔬", "habit_experiments"),
         ("Analytics", "📈", "habit_analytics"),
         ("Templates", "📚", "template_sharing"),
     ],
     "📝 Planning": [
-        ("Tasks", "📝", "tasks_phase12"),
-        ("Goals", "🎯", "goals_phase12"),
-        ("Time", "⏰", "time_phase12"),
-        ("Journal", "📓", "journal_phase12"),
+        ("Tasks", "📝", "tasks"),
+        ("Goals", "🎯", "goals"),
+        ("Time", "⏰", "time"),
+        ("Journal", "📓", "journal"),
         ("Private Todos", "🔐", "private_todos"),
     ],
     "❤️ Wellness": [
-        ("Health", "❤️", "health_phase12"),
+        ("Health", "❤️", "health"),
         ("Emotional Health", "😊", "emotional_health"),
         ("Diary", "📔", "diary"),
         ("Energy", "⚡", "energy"),
@@ -61,7 +61,7 @@ PAGE_CATEGORIES: Dict[str, List[tuple]] = {
         ("Purpose", "🌟", "purpose_tracker"),
     ],
     "💰 Finance": [
-        ("Finances", "💰", "finances_phase12"),
+        ("Finances", "💰", "finances"),
     ],
     "🏆 Gamification": [
         ("Achievements", "🏆", "achievements"),
@@ -71,7 +71,7 @@ PAGE_CATEGORIES: Dict[str, List[tuple]] = {
         ("Friends", "👥", "friends"),
     ],
     "⚙️ System": [
-        ("Notifications", "🔔", "notification_settings_phase12"),
+        ("Notifications", "🔔", "notification_settings"),
         ("Widgets", "🧩", "widget_settings"),
         ("Data Export", "📤", "data_export"),
         ("Data Import", "📥", "data_import"),

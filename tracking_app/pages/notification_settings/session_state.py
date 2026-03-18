@@ -5,7 +5,7 @@ Session state management for the Notification Settings page.
 import streamlit as st
 from typing import Optional, Any
 
-from brain.notifications.preferences import get_preference_manager
+from brain.notifications.preferences import get_preference_manager as _get_preference_manager
 
 from .constants import DEFAULT_USER_ID
 
@@ -20,7 +20,7 @@ def init_session_state() -> None:
     
     # Initialize preference manager
     if 'preference_manager' not in st.session_state:
-        st.session_state.preference_manager = get_preference_manager()
+        st.session_state.preference_manager = _get_preference_manager()
 
 
 def get_user_id() -> str:
@@ -30,11 +30,15 @@ def get_user_id() -> str:
 
 def get_preference_manager():
     """Get the preference manager from session state."""
+    if 'preference_manager' not in st.session_state:
+        return None
     return st.session_state.preference_manager
 
 
 def get_current_preferences():
     """Get current user preferences."""
     pm = get_preference_manager()
+    if pm is None:
+        return {}
     user_id = get_user_id()
     return pm.get_user_preferences(user_id)

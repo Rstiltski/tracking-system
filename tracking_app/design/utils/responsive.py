@@ -76,8 +76,13 @@ def get_responsive_columns(
     return st.columns(n_columns, gap=gap)
 
 
+from typing import Optional
+from contextlib import contextmanager
+
+
+@contextmanager
 def render_responsive_container(
-    content: str,
+    content: str = "",
     max_width: str = "1400px",
     padding: str = "var(--spacing-md)",
     key: Optional[str] = None,
@@ -85,13 +90,19 @@ def render_responsive_container(
     """
     Render content in a responsive container with max-width.
     
+    Can be used as a context manager or standalone function.
+    
     Args:
         content: Content to render (markdown/HTML)
         max_width: Maximum container width
         padding: Container padding
         key: Optional unique key
     
-    Example:
+    Example (as context manager):
+        >>> with render_responsive_container(max_width="1200px"):
+        ...     st.write("Content inside container")
+    
+    Example (standalone):
         >>> render_responsive_container(
         ...     content="## Welcome",
         ...     max_width="1200px",
@@ -105,9 +116,12 @@ def render_responsive_container(
         margin: 0 auto;
         padding: {padding};
     ">
-        {content}
+    {content}
     </div>
     """, unsafe_allow_html=True)
+    
+    # Yield to allow use as context manager
+    yield
 
 
 def is_mobile() -> bool:

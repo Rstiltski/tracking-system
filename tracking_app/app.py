@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # Import shared components
 from tracking_app.components.sidebar import render_sidebar
 from tracking_app.components.session import init_session_state
-from tracking_app.theme import apply_gamevibe_theme
+
 
 
 # ============================================================================
@@ -45,9 +45,35 @@ st.set_page_config(
     }
 )
 
-# Apply the Gamevibe theme
-apply_gamevibe_theme()
-
+# Reduce Streamlit blinking - hide loading spinner and make transitions smoother
+st.markdown("""
+<style>
+    /* Hide the loading spinner during reruns */
+    .stSpinner {
+        display: none !important;
+    }
+    
+    /* Make page transition smoother */
+    .stApp {
+        transition: opacity 0.1s ease-in-out;
+    }
+    
+    /* Hide the running indicator */
+    .stStatusWidget {
+        opacity: 0.3 !important;
+    }
+    
+    /* Smooth scrolling */
+    html {
+        scroll-behavior: smooth;
+    }
+    
+    /* Reduce animation flicker */
+    .element-container {
+        transition: all 0.1s ease;
+    }
+</style>
+""", unsafe_allow_html=True)
 
 # ============================================================================
 # Main Entry Point

@@ -180,69 +180,70 @@ When working on this project, the LLM must:
 
 ## 🏗️ Project Architecture
 
-### 📁 File Structure (Python-First)
+### 📁 File Structure (Three-Layer Architecture)
 
 ```
 tracking-system/
-├── tracking_app/               # 🐍 PRIMARY: Python Streamlit Application
-│   ├── app.py                  # Main entry point (redirects to dashboard)
-│   ├── database.py             # SQLite database connection
-│   ├── models.py               # Data models (Habit, Task, etc.)
-│   ├── storage.py              # Storage API (replaces js/storage.js)
-│   ├── components/             # Shared UI components
-│   │   ├── sidebar.py          # Unified sidebar navigation
-│   │   ├── session.py          # Session state management
-│   │   ├── metrics.py          # Metric card components
-│   │   └── charts.py           # Chart components
-│   ├── pages/                  # Streamlit pages
-│   │   ├── dashboard.py        # 📊 Main dashboard (comprehensive)
-│   │   ├── habits.py           # Habits tracking
-│   │   ├── tasks.py            # Tasks/Todos
-│   │   ├── finances.py         # Finances/Budget
-│   │   ├── health.py           # Health metrics
-│   │   ├── emotional_health.py # Emotional health (RGB model)
-│   │   ├── time.py             # Time tracking
-│   │   ├── goals.py            # Goals tracking
-│   │   ├── achievements.py     # Achievements/Gamification
-│   │   ├── data_export.py      # Data export functionality
-│   │   ├── data_import.py      # Data import functionality
-│   │   ├── backup_restore.py   # Backup and restore
-│   │   ├── data_lifecycle.py   # Data lifecycle management
-│   │   ├── notification_settings.py  # Notification preferences
-│   │   ├── habit_reminders.py  # Habit reminder settings
-│   │   ├── task_alerts.py      # Task deadline alerts
-│   │   └── goal_alerts.py      # Goal deadline alerts
-│   ├── charts.py               # Plotly chart definitions
-│   └── utils.py                # Utility functions
+├── README.md                 # Project overview
+├── PROJECT_RULES.md         # This file - Development guidelines
+├── ROADMAP.md               # Development roadmap
+├── TODO.md                  # Task tracking
+├── FEATURE_MAP.md           # Feature-to-file mapping
+├── CONTEXT.md               # AI master reference
+├── requirements.txt          # Python dependencies
+├── pyproject.toml           # Project configuration
 │
-├── brain/                      # 🧠 Python Backend Module
-│   ├── core/                   # Core brain components
-│   ├── brains/                 # Specialized brain modules
-│   ├── tools/                  # Tool definitions
-│   ├── policies/               # Validation policies
-│   ├── state/                  # State machines
-│   ├── audit/                  # Audit logging
-│   ├── security/               # Security components
+├── frontend/                 # 🎨 React Frontend (Phase 13)
+│   ├── src/                # React source code
+│   ├── vite.config.js     # Vite configuration
+│   ├── tailwind.config.js # Tailwind CSS
+│   └── package.json       # NPM dependencies
 │
+├── backend/                 # ⚡ FastAPI Backend (Phase 13)
+│   ├── main.py            # FastAPI application
+│   ├── config.py          # Configuration
+│   ├── routes/           # API routes
+│   └── schemas/          # Pydantic schemas
 │
-├── landscaping_new/            # Landscaping management module (Python/Streamlit)
+├── tracking_app/            # 🐍 PRIMARY: Python Streamlit Application
+│   ├── app.py             # Main entry point
+│   ├── database.py        # SQLite database connection
+│   ├── models.py          # Data models (Habit, Task, etc.)
+│   ├── storage.py         # Storage API (replaces js/storage.js)
+│   ├── components/        # Shared UI components
+│   │   ├── sidebar.py    # Unified sidebar navigation
+│   │   ├── session.py    # Session state management
+│   │   ├── metrics.py     # Metric card components
+│   │   └── charts.py      # Chart components
+│   ├── pages/             # Streamlit pages (32+ pages)
+│   │   ├── dashboard.py   # 📊 Main dashboard
+│   │   ├── habits.py      # Habits tracking
+│   │   ├── tasks.py       # Tasks/Todos
+│   │   ├── finances.py    # Finances/Budget
+│   │   ├── health.py      # Health metrics
+│   │   ├── time.py        # Time tracking
+│   │   └── ...            # 25+ more pages
+│   └── design/             # Design system
 │
-├── js/                         # ⚠️ LEGACY: JavaScript modules (migrating to Python)
-│   ├── app.js                  # Main application controller
-│   ├── storage.js              # Data persistence layer
-│   ├── habits.js               # Habits module
-│   ├── tasks.js                # Tasks/Todos module
-│   ├── finances.js             # Finances/Budget module
-│   ├── health.js               # Health metrics module
-│   ├── time.js                 # Time tracking module
-│   ├── goals.js                # Goals module
-│   ├── achievements.js         # Achievements/gamification module
-│   └── charts.js               # Chart visualization
+├── brain/                   # 🧠 Intelligence Layer (NOT data backend)
+│   ├── core/               # Core brain components
+│   ├── brains/             # Specialized brain modules
+│   ├── tools/              # Tool definitions
+│   ├── policies/           # Validation policies
+│   ├── state/              # State machines
+│   ├── audit/              # Audit logging
+│   ├── security/           # Security components
+│   ├── analysis/           # AI/ML analytics
+│   ├── behavioral/         # Behavioral science
+│   └── models/             # Data models
 │
-├── css/                        # ⚠️ LEGACY: Styles (migrating to Streamlit)
-│   └── styles.css
+├── patterns/                # Code patterns
 │
-├── index.html                  # ⚠️ LEGACY: HTML entry point (migrating to Streamlit)
+├── js/                     # ⚠️ LEGACY: JavaScript modules (being replaced by React)
+│
+├── css/                    # ⚠️ LEGACY: Styles (being replaced by Tailwind)
+│
+├── index.html              # ⚠️ LEGACY: Browser-only entry point
 │
 ├── docs/
 │   ├── research/               # Research documentation

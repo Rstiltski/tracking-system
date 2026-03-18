@@ -356,56 +356,69 @@ tracking-system/
 ├── GETTING_STARTED.md      # Onboarding guide
 ├── ARCHITECTURAL_MAP.md    # System architecture map
 ├── TODO.md                 # Project tracking
+├── CONTEXT.md              # AI master reference
 │
-├── tracking_app/           # Streamlit Application
-│   ├── app.py              # Main app entry point
-│   ├── models.py           # Data models
-│   ├── storage.py          # Storage layer
-│   ├── database.py         # Database connection
-│   ├── migration.py        # Migration utilities
-│   ├── pages/              # Streamlit UI pages
-│   │   ├── dashboard.py    # Main dashboard
-│   │   ├── habits.py       # Habits tracker
-│   │   ├── tasks.py        # Tasks/Todos
-│   │   ├── finances.py     # Finances/Budget
-│   │   ├── health.py       # Health metrics
+├── frontend/               # React Frontend (Phase 13)
+│   ├── src/               # React source code
+│   ├── vite.config.js     # Vite configuration
+│   ├── tailwind.config.js # Tailwind CSS config
+│   └── package.json       # NPM dependencies
+│
+├── backend/               # FastAPI Backend (Phase 13)
+│   ├── main.py            # FastAPI application
+│   ├── config.py          # Configuration
+│   ├── routes/            # API routes
+│   └── schemas/           # Pydantic schemas
+│
+├── tracking_app/          # Streamlit Application (Primary)
+│   ├── app.py             # Main app entry point
+│   ├── models.py          # Data models
+│   ├── storage.py         # Storage layer
+│   ├── database.py        # Database connection
+│   ├── migration.py       # Migration utilities
+│   ├── pages/             # Streamlit UI pages
+│   │   ├── dashboard.py   # Main dashboard
+│   │   ├── habits.py      # Habits tracker
+│   │   ├── tasks.py       # Tasks/Todos
+│   │   ├── finances.py    # Finances/Budget
+│   │   ├── health.py      # Health metrics
 │   │   ├── emotional_health.py  # Emotional tracking
-│   │   ├── time.py         # Time tracking
-│   │   ├── goals.py        # Goals management
+│   │   ├── time.py        # Time tracking
+│   │   ├── goals.py       # Goals management
 │   │   ├── achievements.py # Achievements page
-│   │   ├── challenges.py   # Challenges system
-│   │   ├── friends.py      # Social features
+│   │   ├── challenges.py  # Challenges system
+│   │   ├── friends.py     # Social features
 │   │   ├── leaderboards.py # Leaderboards
-│   │   ├── insights.py     # Intelligence insights
-│   │   ├── stacks.py       # Habit stacking
-│   │   ├── rewards.py      # Variable rewards
-│   │   ├── habit_analytics.py   # Habit analytics
+│   │   ├── insights.py    # Intelligence insights
+│   │   ├── stacks.py      # Habit stacking
+│   │   ├── rewards.py     # Variable rewards
+│   │   ├── habit_analytics.py  # Habit analytics
 │   │   ├── habit_experiments.py # Self-experiments
-│   │   ├── weekly_review.py     # Weekly review
-│   │   ├── backup_restore.py    # Backup management
-│   │   ├── data_export.py       # Data export
-│   │   ├── data_import.py       # Data import
-│   │   ├── data_lifecycle.py    # Data lifecycle
-│   │   ├── goal_alerts.py       # Goal alerts
-│   │   ├── habit_reminders.py   # Habit reminders
+│   │   ├── weekly_review.py    # Weekly review
+│   │   ├── backup_restore.py   # Backup management
+│   │   ├── data_export.py      # Data export
+│   │   ├── data_import.py      # Data import
+│   │   ├── data_lifecycle.py   # Data lifecycle
+│   │   ├── goal_alerts.py     # Goal alerts
+│   │   ├── habit_reminders.py  # Habit reminders
 │   │   ├── notification_settings.py  # Notification config
-│   │   ├── task_alerts.py       # Task alerts
-│   │   └── template_sharing.py  # Template sharing
-│   ├── components/         # Reusable UI components
-│   │   ├── session.py      # Session management
-│   │   ├── sidebar.py      # Sidebar component
-│   │   ├── metrics.py      # Metric displays
-│   │   ├── charts.py       # Chart components
+│   │   ├── task_alerts.py     # Task alerts
+│   │   └── template_sharing.py # Template sharing
+│   ├── components/        # Reusable UI components
+│   │   ├── session.py     # Session management
+│   │   ├── sidebar.py     # Sidebar component
+│   │   ├── metrics.py     # Metric displays
+│   │   ├── charts.py      # Chart components
 │   │   ├── achievement_card.py  # Achievement cards
 │   │   ├── burnout_card.py      # Burnout indicator
 │   │   ├── difficulty_widget.py # Difficulty selector
 │   │   ├── relapse_plan_wizard.py  # Relapse planning
-│   │   ├── srbai_survey.py      # SRBAI survey
+│   │   ├── srbai_survey.py     # SRBAI survey
 │   │   ├── stack_visualizer.py  # Habit stack viz
 │   │   ├── suggestion_card.py   # Suggestion cards
 │   │   ├── template_browser.py  # Template browser
-│   │   ├── timing_indicator.py  # Timing display
-│   │   └── tip_card.py          # Tip display
+│   │   ├── timing_indicator.py # Timing display
+│   │   └── tip_card.py         # Tip display
 │   └── database_migrations/  # Database migrations
 │       ├── achievement_migration.py
 │       ├── burnout_migration.py
@@ -424,80 +437,83 @@ tracking-system/
 │       ├── template_migration.py
 │       └── tip_migration.py
 │
-├── services/               # Business logic services
-│   ├── notifications.py    # Notification service
-│   ├── email.py            # Email service
-│   ├── ai_provider.py      # AI integration
-│   ├── debug_console.py    # Debug console service
+├── services/              # Business logic services
+│   ├── notifications.py   # Notification service
+│   ├── email.py           # Email service
+│   ├── ai_provider.py     # AI integration
+│   ├── debug_console.py   # Debug console service
 │   └── github_cortex_client.py  # GitHub integration
 │
-├── database/               # Database layer
-│   ├── connection.py       # DB connection
-│   └── queries/            # Query modules
+├── database/              # Database layer
+│   ├── connection.py      # DB connection
+│   └── queries/           # Query modules
+│
+├── brain/                 # Intelligence Layer
+│   ├── nervous_system.py  # Main brain orchestrator
+│   ├── core/              # Core brain components
+│   ├── tools/             # Operation tools
+│   ├── brains/            # Specialized brains
+│   ├── policies/          # Validation policies
+│   ├── state/            # State machines
+│   ├── audit/             # Audit logging
+│   ├── security/          # Security components
+│   ├── invariants/        # Business rules
+│   ├── immune/            # Self-healing system
+│   ├── privacy/           # Privacy features
+│   ├── design/            # Design documentation
+│   ├── analysis/          # Correlation & prediction
+│   ├── behavioral/        # Behavioral science features
+│   ├── models/            # Data models
+│   ├── notifications/     # Notification engine
+│   ├── ai/                # AI suggestion engine
+│   ├── analytics/         # Analytics components
+│   ├── backup/            # Backup management
+│   └── ...                # And more
+│
+├── patterns/              # Code patterns
+│   ├── prompt_template.md # Prompt framework
+│   └── page_module.md     # Page pattern
 │
 ├── css/
-│   └── styles.css          # All styles (organized by sections)
+│   └── styles.css         # All styles
 │
-├── js/
-│   ├── app.js              # Main application controller
-│   ├── storage.js          # Data persistence layer
-│   ├── habits.js           # Habits module
-│   ├── tasks.js            # Tasks/Todos module
-│   ├── finances.js         # Finances/Budget module
-│   ├── health.js           # Health metrics module
-│   ├── time.js             # Time tracking module
-│   ├── goals.js            # Goals module
-│   ├── achievements.js     # Achievements/gamification
-│   ├── charts.js           # Chart visualization
-│   ├── notifications.js    # Notification system
-│   ├── dataExport.js       # Import/export functionality
-│   ├── habit-stacking.js   # Habit stacking (frontend)
-│   ├── implementation-intentions.js  # Implementation intentions
-│   ├── rewards.js          # Variable rewards (frontend)
-│   ├── validation.js       # Form validation
-│   ├── enhanced-charts.js  # Advanced charts
-│   ├── enhanced-goals.js   # Enhanced goals module
-│   ├── enhanced-goal-model.js  # Enhanced goal model
-│   └── variable-goal-tracker.js  # Variable goal tracking
+├── js/                    # Legacy JavaScript modules
+│   ├── app.js             # Main application controller
+│   ├── storage.js         # Data persistence layer
+│   └── ...                # (being migrated to Streamlit)
 │
-├── assets/                 # Static assets
-│   ├── icons/              # Icon assets
-│   └── sounds/             # Sound effects
+├── assets/                # Static assets
+│   ├── icons/             # Icon assets
+│   └── sounds/            # Sound effects
 │
-├── backups/                # Backup storage
-├── exports/                # Exported data
-├── templates/              # Habit templates
+├── backups/               # Backup storage
+├── exports/               # Exported data
+├── templates/             # Habit templates
 │
-├── docs/                   # Documentation
-│   ├── research/           # Research documents
-│   ├── specs/              # Specifications
-│   ├── schemas/            # Data schemas
-│   └── guides/             # User guides
+├── docs/                  # Documentation
+│   ├── research/          # Research documents
+│   ├── specs/             # Specifications
+│   ├── schemas/           # Data schemas
+│   └── guides/            # User guides
 │
-├── tests/                  # Test suite
+├── tests/                 # Test suite
 │
-├── phases/                 # Phase documentation
-│
-└── brain/                  # Backend System
-    ├── nervous_system.py   # Main brain orchestrator
-    ├── core/               # Core brain components
-    ├── tools/              # Operation tools
-    ├── brains/             # Specialized brains
-    ├── policies/           # Validation policies
-    ├── state/              # State machines
-    ├── audit/              # Audit logging
-    ├── security/           # Security components
-    ├── invariants/         # Business rules
-    ├── immune/             # Self-healing system
-    ├── privacy/            # Privacy features
-    ├── design/             # Design documentation
-    ├── analysis/           # Correlation & prediction
-    ├── behavioral/         # Behavioral science features
-    ├── models/             # Data models
-    ├── notifications/      # Notification engine
-    ├── ai/                 # AI suggestion engine
-    ├── analytics/          # Analytics components
-    ├── backup/             # Backup management
+└── phases/                # Phase documentation
+```
+
+---
+
+## §7 Technology Stack
+
+| Layer | Technology | Purpose |
+|-------|-----------|---------|
+| **Primary UI** | Streamlit | Main application interface |
+| **Secondary UI** | React + Vite | Phase 13 decoupled frontend |
+| **API** | FastAPI | Phase 13 REST API backend |
+| **Intelligence** | Python Brain | AI/ML analytics |
+| **Database** | SQLite | Local data persistence |
+| **Styling** | Tailwind CSS | React frontend styling |
+| **Legacy** | HTML/CSS/JS | Browser-only mode |
     ├── lifecycle/          # Data lifecycle
     ├── social/             # Social features
     ├── monitoring/         # System monitoring

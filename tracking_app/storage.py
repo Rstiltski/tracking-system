@@ -284,8 +284,12 @@ class Storage:
             notes: Optional notes
             
         Returns:
-            Created or updated HabitEntry
+            Created or Updated HabitEntry
         """
+        # Ensure entry_date is not None
+        if entry_date is None:
+            entry_date = date.today()
+        
         entry_id = generate_id()
         
         self._db.execute(

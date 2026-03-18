@@ -231,7 +231,7 @@ tracking-system/
 ├── TODO.md                 ← Task tracking
 ├── FEATURE_MAP.md          ← Feature locations
 │
-├── brain/                  ← Backend architecture
+├── brain/                  ← Intelligence Layer
 │   ├── CORE_RULES.md       ← Master rule registry
 │   ├── NEURAL_HUB.md       ← Navigation hub
 │   ├── AI_RULES.md         ← AI protocol
@@ -244,18 +244,29 @@ tracking-system/
 │   ├── audit/              ← Audit logging
 │   └── brains/             ← Specialized brains
 │
-├── patterns/               ← Code patterns
-│   ├── prompt_template.md  ← Prompt framework
-│   └── page_module.md      ← Page pattern
+├── frontend/               ← React Frontend (Phase 13)
+│   ├── src/               ← React source code
+│   ├── vite.config.js     ← Vite configuration
+│   └── package.json       ← NPM dependencies
 │
-├── tracking_app/           ← Streamlit application
-│   ├── app.py              ← Main entry
-│   ├── storage.py          ← Data persistence
-│   ├── pages/              ← UI pages
-│   └── components/         ← UI components
+├── backend/               ← FastAPI Backend (Phase 13)
+│   ├── main.py            ← FastAPI application
+│   ├── config.py          ← Configuration
+│   ├── routes/            ← API routes
+│   └── schemas/           ← Pydantic schemas
 │
-└── docs/                   ← Documentation
-    └── research/           ← Research notes
+├── tracking_app/          ← Streamlit Application (Primary)
+│   ├── app.py             ← Main entry
+│   ├── storage.py         ← Data persistence
+│   ├── pages/             ← UI pages
+│   └── components/        ← UI components
+│
+├── patterns/              ← Code patterns
+│   ├── prompt_template.md ← Prompt framework
+│   └── page_module.md     ← Page pattern
+│
+└── docs/                  ← Documentation
+    └── research/          ← Research notes
 ```
 
 ---

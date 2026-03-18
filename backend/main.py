@@ -29,15 +29,47 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
-# Configure CORS middleware
-# Allows React frontend to communicate with FastAPI backend
+# Configure CORS middleware FIRST - before any other middleware or routes
+# This ensures OPTIONS preflight requests are handled properly
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allow_headers=["*", "Authorization", "Content-Type", "X-Requested-With"],
+    expose_headers=["X-Request-ID", "Content-Length"],
+    max_age=600,  # Cache preflight response for 10 minutes
 )
+
+
+# ============================================================================
+# Explicit OPTIONS Handler for All Routes
+# This guarantees OPTIONS requests are handled even if CORS middleware has issues
+# ============================================================================
+
+@app.options("/{full_path:path}")
+async def preflight_handler(full_path: str, request: Request):
+    """
+    Global OPTIONS handler for CORS preflight requests.
+
+    This endpoint catches all OPTIONS requests and returns the appropriate
+    CORS headers without requiring a specific route to exist.
+    """
+    # Get the origin from the request headers
+    origin = request.headers.get("origin", "http://localhost:5173")
+
+    return JSONResponse(
+        content="",
+        status_code=200,
+        headers={
+            "Access-Control-Allow-Origin": origin,
+            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
+            "Access-Control-Allow-Credentials": "true",
+            "Access-Control-Max-Age": "600",
+            "Vary": "Origin",
+        }
+    )
 
 
 # ============================================================================

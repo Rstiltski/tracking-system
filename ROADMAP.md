@@ -16,7 +16,7 @@ This roadmap outlines the strategic direction for the Veryfyn Personal Tracking 
 
 ## Current Status Overview
 
-**Last Verified:** March 17, 2026
+**Last Verified:** March 18, 2026
 
 | Phase | Name | Status | Completion |
 |-------|------|--------|------------|
@@ -31,8 +31,9 @@ This roadmap outlines the strategic direction for the Veryfyn Personal Tracking 
 | **Phase 9** | Advanced Functionality | ✅ Complete | 100% |
 | **Phase 10** | Core Enhancements | ✅ Complete | 100% |
 | **Phase 11** | Advanced Support & Safeguards | ✅ Complete | 100% |
-| **Phase 12** | UI/UX Redesign - Design System | 🟡 In Progress (12.1) | 20% |
+| **Phase 12** | UI/UX Redesign - Design System | ✅ Complete | 100% |
 | **Phase 13** | Decoupled Architecture (React + FastAPI) | 🟡 In Progress | Backend 100%, Frontend ~10% |
+| **Phase 14** | Page Consolidation & Bug Fixes | 🟡 In Progress | Underway |
 
 ---
 
@@ -198,6 +199,26 @@ npm run dev
 - Backend API: http://localhost:8000
 - Frontend: http://localhost:5173
 - API Docs: http://localhost:8000/docs
+
+---
+
+### Phase 14: Page Consolidation & Bug Fixes 🟡 IN PROGRESS
+**Duration:** Ongoing | **Status:** Underway
+**Created:** March 18, 2026
+
+**Goal:** Fix broken pages, consolidate duplicates, and stabilize the application.
+
+| Sub-Phase | Feature | Status | File |
+|-----------|---------|--------|------|
+| 14.1 | Delete broken _phase12 pages | ✅ Complete | `tracking_app/pages/*_phase12.py` |
+| 14.2 | Fix sidebar navigation | ✅ Complete | `tracking_app/components/sidebar.py` |
+| 14.3 | Update documentation | ✅ Complete | Multiple .md files |
+| 14.4 | Verify all pages load | 🔄 In Progress | - |
+
+**Key Changes:**
+- Removed 9 broken _phase12 duplicate pages
+- Sidebar now uses stable base versions of pages
+- Updated README.md, CONTEXT.md, PROJECT_RULES.md, .context.md
 
 ---
 

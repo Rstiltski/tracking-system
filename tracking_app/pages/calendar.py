@@ -1,23 +1,14 @@
 """
 Calendar View Page
 
-Phase 7.4: Monthly calendar view with habit completion visualization.
-Shows a GitHub-style contribution heatmap for habit tracking.
-
-Features:
-- Monthly calendar grid with completion status
-- Color-coded days by completion rate
-- Navigation between months
-- Day detail view
-- Streak visualization
+Simple monthly calendar view with habit completion visualization.
 """
 
 import streamlit as st
 from datetime import date, datetime, timedelta
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any
 
-from brain.analysis.time_views import TimeViewsProcessor
-from tracking_app.components.heatmap import render_heatmap, render_mini_heatmap
+from tracking_app.storage import get_storage
 
 
 def render_page():
@@ -25,11 +16,8 @@ def render_page():
     st.title("📅 Calendar View")
     st.markdown("View your habit completion history in a calendar format.")
     
-    # Get storage from session state
-    storage = st.session_state.get('storage', None)
-    
-    # Initialize processor
-    processor = TimeViewsProcessor(storage=storage)
+    # Get storage correctly
+    storage = get_storage()
     
     # Get current view date from session state
     if 'calendar_view_date' not in st.session_state:
@@ -40,24 +28,24 @@ def render_page():
     # Navigation controls
     col1, col2, col3 = st.columns([1, 3, 1])
     
-    nav = processor.get_prev_next_month(view_date.year, view_date.month)
-    
     with col1:
-        if st.button(f"◀ {nav['prev_label']}", key="prev_month"):
-            st.session_state.calendar_view_date = date(nav['prev_year'], nav['prev_month'], 1)
+        prev_month = view_date.replace(day=1) - timedelta(days=1)
+        if st.button(f"◀ {prev_month.strftime('%b')}", key="prev_month"):
+            st.session_state.calendar_view_date = prev_month.replace(day=1)
             st.rerun()
     
     with col2:
         st.markdown(f"### {view_date.strftime('%B %Y')}")
     
     with col3:
-        if st.button(f"{nav['next_label']} ▶", key="next_month"):
-            st.session_state.calendar_view_date = date(nav['next_year'], nav['next_month'], 1)
+        next_month = (view_date.replace(day=28) + timedelta(days=4)).replace(day=1)
+        if st.button(f"{next_month.strftime('%b')} ▶", key="next_month"):
+            st.session_state.calendar_view_date = next_month
             st.rerun()
     
     # Quick navigation
     st.markdown("---")
-    nav_col1, nav_col2, nav_col3 = st.columns([1, 2, 1])
+    nav_col1, nav_col2 = st.columns([1, 2])
     
     with nav_col1:
         if st.button("Today", key="today_btn"):
@@ -80,7 +68,7 @@ def render_page():
             "Jump to month",
             options=month_options,
             format_func=lambda x: x.strftime('%B %Y'),
-            index=month_options.index(view_date.replace(day=1)) if view_date.replace(day=1) in month_options else 0,
+            index=0,
             key="month_selector"
         )
         
@@ -88,32 +76,162 @@ def render_page():
             st.session_state.calendar_view_date = selected_month
             st.rerun()
     
-    # Get monthly view data
+    # Get monthly data directly from storage
     with st.spinner("Loading calendar data..."):
-        monthly_view = processor.get_monthly_view(view_date.year, view_date.month)
+        monthly_data = _get_monthly_data(storage, view_date.year, view_date.month)
     
     # Render month summary
-    _render_month_summary(monthly_view)
+    _render_month_summary(monthly_data)
     
     # Render the calendar grid
     st.markdown("---")
-    _render_calendar_grid(monthly_view)
+    _render_calendar_grid(monthly_data, view_date.year, view_date.month)
     
     # Render day detail if selected
-    _render_day_detail_view(processor)
+    _render_day_detail_view(storage)
     
     # Render streak information
-    _render_streak_info(processor)
+    _render_streak_info(storage)
 
 
-def _render_month_summary(monthly_view: dict) -> None:
+def _get_monthly_data(storage, year: int, month: int) -> Dict[str, Any]:
+    """Get monthly data from storage."""
+    # Get habits
+    habits = storage.get_habits()
+    
+    # Get the first and last day of the month
+    first_day = date(year, month, 1)
+    if month == 12:
+        last_day = date(year + 1, 1, 1) - timedelta(days=1)
+    else:
+        last_day = date(year, month + 1, 1) - timedelta(days=1)
+    
+    # Build daily data
+    daily_data = {}
+    days_tracked = 0
+    total_completion = 0
+    
+    current = first_day
+    while current <= last_day:
+        date_str = current.strftime('%Y-%m-%d')
+        
+        # Count completed habits for this day
+        completed = 0
+        total = len(habits)
+        
+        for habit in habits:
+            if storage.is_habit_completed_on_date(habit.id, date_str):
+                completed += 1
+        
+        completion_rate = completed / total if total > 0 else 0
+        
+        daily_data[date_str] = {
+            'date': current,
+            'completed': completed,
+            'total': total,
+            'completion_rate': completion_rate,
+            'has_data': total > 0
+        }
+        
+        if total > 0:
+            days_tracked += 1
+            total_completion += completion_rate
+        
+        current += timedelta(days=1)
+    
+    # Calculate monthly stats
+    overall_completion_rate = total_completion / days_tracked if days_tracked > 0 else 0
+    overall_average_score = (total_completion / days_tracked * 100) if days_tracked > 0 else 0
+    
+    # Calculate streak
+    current_streak = _calculate_current_streak(storage, habits, first_day)
+    best_streak = _calculate_best_streak(storage, habits)
+    
+    return {
+        'year': year,
+        'month': month,
+        'first_day': first_day,
+        'last_day': last_day,
+        'num_days': (last_day - first_day).days + 1,
+        'days_tracked': days_tracked,
+        'overall_completion_rate': overall_completion_rate,
+        'overall_average_score': overall_average_score,
+        'current_streak': current_streak,
+        'best_streak': best_streak,
+        'daily_data': daily_data,
+        'total_habits': len(habits)
+    }
+
+
+def _calculate_current_streak(storage, habits, reference_date: date) -> int:
+    """Calculate current streak."""
+    if not habits:
+        return 0
+    
+    streak = 0
+    current = reference_date
+    
+    # Check up to 365 days back
+    for _ in range(365):
+        date_str = current.strftime('%Y-%m-%d')
+        all_completed = True
+        
+        for habit in habits:
+            if not storage.is_habit_completed_on_date(habit.id, date_str):
+                all_completed = False
+                break
+        
+        if all_completed:
+            streak += 1
+            current -= timedelta(days=1)
+        else:
+            break
+    
+    return streak
+
+
+def _calculate_best_streak(storage, habits) -> int:
+    """Calculate best streak."""
+    if not habits:
+        return 0
+    
+    # Get all completion dates
+    completion_dates = set()
+    
+    for habit in habits:
+        entries = storage.get_habit_entries(habit.id) if hasattr(storage, 'get_habit_entries') else []
+        for entry in entries:
+            if hasattr(entry, 'date'):
+                completion_dates.add(entry.date)
+    
+    if not completion_dates:
+        return 0
+    
+    # Sort dates
+    sorted_dates = sorted(completion_dates)
+    
+    # Calculate best streak
+    best_streak = 0
+    current_streak = 1
+    
+    for i in range(1, len(sorted_dates)):
+        if (sorted_dates[i] - sorted_dates[i-1]).days == 1:
+            current_streak += 1
+            best_streak = max(best_streak, current_streak)
+        else:
+            current_streak = 1
+    
+    return max(best_streak, current_streak)
+
+
+def _render_month_summary(monthly_data: dict) -> None:
     """Render monthly summary statistics."""
     st.markdown("### 📊 Monthly Summary")
     
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        rate = monthly_view['overall_completion_rate']
+        rate = monthly_data['overall_completion_rate']
         st.metric(
             "Completion Rate",
             f"{rate:.0%}"
@@ -122,25 +240,23 @@ def _render_month_summary(monthly_view: dict) -> None:
     with col2:
         st.metric(
             "Average Score",
-            f"{monthly_view['overall_average_score']:.1f}"
+            f"{monthly_data['overall_average_score']:.1f}"
         )
     
     with col3:
         st.metric(
             "Days Tracked",
-            f"{monthly_view['total_days_tracked']}/{monthly_view['num_days']}"
+            f"{monthly_data['days_tracked']}/{monthly_data['num_days']}"
         )
     
     with col4:
-        trend = monthly_view.get('trend', {}).get('direction', 'N/A')
-        trend_icon = "📈" if trend == "improving" else ("📉" if trend == "declining" else "➡️")
         st.metric(
-            "Trend",
-            f"{trend_icon} {trend.replace('_', ' ').title()}"
+            "Total Habits",
+            f"{monthly_data['total_habits']}"
         )
 
 
-def _render_calendar_grid(monthly_view: dict) -> None:
+def _render_calendar_grid(monthly_data: dict, year: int, month: int) -> None:
     """Render the calendar as an HTML grid."""
     st.markdown("### 📅 Calendar Grid")
     
@@ -169,18 +285,32 @@ def _render_calendar_grid(monthly_view: dict) -> None:
     
     # Calendar rows
     today = date.today()
-    for week_row in monthly_view['calendar_grid']:
+    first_day = monthly_data['first_day']
+    daily_data = monthly_data['daily_data']
+    
+    # Get the first day of the week (0 = Monday, 6 = Sunday)
+    start_weekday = first_day.weekday()  # 0 = Monday
+    
+    # Create calendar weeks
+    current_day = first_day - timedelta(days=start_weekday)
+    
+    for week in range(6):  # Max 6 weeks in a month
         html_parts.append('<div style="display: flex; gap: 2px; align-items: center;">')
         html_parts.append('<div style="width: 30px;"></div>')  # Spacer
         
-        for cell in week_row:
-            if cell is None:
-                # Empty cell (before first day or after last day)
-                html_parts.append('<div style="width: 40px; height: 50px;"></div>')
-            else:
+        for day in range(7):
+            if current_day.month == month and current_day <= today:
+                # Get data for this day
+                date_str = current_day.strftime('%Y-%m-%d')
+                day_data = daily_data.get(date_str, {})
+                
+                rate = day_data.get('completion_rate', 0)
+                has_data = day_data.get('has_data', False)
+                completed = day_data.get('completed', 0)
+                total = day_data.get('total', 0)
+                
                 # Calculate level based on completion rate
-                rate = cell['completion_rate']
-                if not cell['has_data']:
+                if not has_data:
                     level = -1
                 elif rate == 0:
                     level = 0
@@ -196,173 +326,141 @@ def _render_calendar_grid(monthly_view: dict) -> None:
                 color = colors.get(level, colors[-1])
                 
                 # Today marker
-                is_today = cell['date'] == today
+                is_today = current_day == today
                 border = "2px solid #0969da" if is_today else "none"
                 
-                # Future marker
-                opacity = 0.4 if cell['is_future'] else 1.0
-                
-                # Tooltip
-                tooltip = f"{cell['date_str']}: {cell['completed_count']}/{cell['total_count']} completed"
-                
-                # Day number and score
-                day_num = cell['date'].day
-                score_text = f"{cell['average_score']:.0f}" if cell['has_data'] and cell['average_score'] > 0 else ""
-                
                 html_parts.append(f'''
-                    <div style="
-                        width: 40px;
-                        height: 50px;
-                        background-color: {color};
-                        opacity: {opacity};
-                        border-radius: 4px;
-                        border: {border};
-                        display: flex;
-                        flex-direction: column;
-                        align-items: center;
-                        justify-content: center;
-                        font-size: 12px;
-                        color: #24292f;
-                        cursor: pointer;
-                    " title="{tooltip}">
-                        <div style="font-weight: 600;">{day_num}</div>
-                        <div style="font-size: 9px; color: #57606a;">{score_text}</div>
-                    </div>
+                <div style="
+                    width: 40px;
+                    height: 50px;
+                    background-color: {color};
+                    opacity: {1.0 if current_day.month == month else 0.4};
+                    border-radius: 4px;
+                    border: {border};
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 12px;
+                    color: #24292f;
+                    cursor: pointer;
+                " title="{date_str}: {completed}/{total} completed">
+                    <div style="font-weight: 600;">{current_day.day}</div>
+                    <div style="font-size: 9px; color: #57606a;">{completed}/{total}</div>
+                </div>
                 ''')
+            else:
+                # Empty or future cell
+                html_parts.append(f'''
+                <div style="
+                    width: 40px;
+                    height: 50px;
+                    background-color: #ebedf0;
+                    opacity: 0.4;
+                    border-radius: 4px;
+                    border: none;
+                ">
+                </div>
+                ''')
+            
+            current_day += timedelta(days=1)
         
         html_parts.append('</div>')
+        
+        # Stop after we've covered the month
+        if current_day.month != month and current_day > today:
+            break
     
     html_parts.append('</div>')
     
     # Legend
     html_parts.append('<div style="display: flex; gap: 12px; margin-top: 12px; font-size: 11px; color: #57606a;">')
     html_parts.append('<span>Less</span>')
-    for level in range(0, 5):
-        color = colors[level]
-        html_parts.append(f'<div style="width: 12px; height: 12px; background-color: {color}; border-radius: 2px;"></div>')
+    for level in range(5):
+        html_parts.append(f'<div style="width: 12px; height: 12px; background-color: {colors[level-1]}; border-radius: 2px;"></div>')
     html_parts.append('<span>More</span>')
     html_parts.append('</div>')
     
     st.markdown(''.join(html_parts), unsafe_allow_html=True)
 
 
-def _render_day_detail_view(processor: TimeViewsProcessor) -> None:
-    """Render the day detail view."""
-    st.markdown("---")
+def _render_day_detail_view(storage) -> None:
+    """Render day detail view."""
     st.markdown("### 📋 Day Detail")
     
     # Date selector
+    today = date.today()
     selected_date = st.date_input(
         "Select a date to view details",
-        value=date.today(),
-        max_value=date.today(),
-        key="calendar_day_select"
+        value=today,
+        max_value=today
     )
     
-    # Get day detail
-    day = processor.get_day_detail(selected_date)
+    date_str = selected_date.strftime('%Y-%m-%d')
     
-    col1, col2, col3, col4 = st.columns(4)
+    # Get habits
+    habits = storage.get_habits()
+    
+    # Count completed
+    completed = 0
+    for habit in habits:
+        if storage.is_habit_completed_on_date(habit.id, date_str):
+            completed += 1
+    
+    total = len(habits)
+    completion_rate = completed / total if total > 0 else 0
+    
+    # Display metrics
+    col1, col2, col3 = st.columns(3)
     
     with col1:
-        st.metric(
-            "Completion",
-            f"{day['completion_rate']:.0%}"
-        )
+        st.metric("Date", selected_date.strftime('%Y/%m/%d'))
     
     with col2:
-        st.metric(
-            "Habits",
-            f"{day['completed_habits']}/{day['total_habits']}"
-        )
+        st.metric("Completion", f"{completion_rate:.0%}")
     
     with col3:
-        st.metric(
-            "Tasks",
-            f"{day['completed_tasks']}/{day['total_tasks']}"
-        )
+        st.metric("Habits", f"{completed}/{total}")
     
-    with col4:
-        st.metric(
-            "Avg Score",
-            f"{day['average_score']:.1f}"
-        )
-    
-    # Show habit breakdown if available
-    if day['habits']:
-        st.markdown("**Habit Breakdown:**")
-        for habit_name, habit_info in day['habits'].items():
-            completed = habit_info.get('completed', False)
-            score = habit_info.get('score', 0)
-            status = "✅" if completed else "❌"
-            score_text = f" (score: {score})" if completed else ""
-            st.markdown(f"{status} **{habit_name}**{score_text}")
+    # Show habits list
+    if habits:
+        st.markdown("#### Habits")
+        for habit in habits:
+            is_completed = storage.is_habit_completed_on_date(habit.id, date_str)
+            icon = "✅" if is_completed else "⬜"
+            st.markdown(f"{icon} {habit.name}")
     else:
-        st.info(f"No habit data available for {selected_date.strftime('%B %d, %Y')}")
+        st.info("No habits found. Create some habits to see them here!")
 
 
-def _render_streak_info(processor: TimeViewsProcessor) -> None:
+def _render_streak_info(storage) -> None:
     """Render streak information."""
-    st.markdown("---")
     st.markdown("### 🔥 Streaks")
     
-    streaks = processor.get_streaks()
+    # Get habits
+    habits = storage.get_habits()
     
-    col1, col2 = st.columns(2)
+    # Calculate current streak
+    current_streak = _calculate_current_streak(storage, habits, date.today())
+    
+    # Calculate best streak
+    best_streak = _calculate_best_streak(storage, habits)
+    
+    # Calculate total tracked days
+    total_tracked = 0
+    for habit in habits:
+        entries = storage.get_habit_entries(habit.id) if hasattr(storage, 'get_habit_entries') else []
+        if entries:
+            total_tracked = len(entries)
+            break
+    
+    col1, col2, col3 = st.columns(3)
     
     with col1:
-        st.metric(
-            "Current Streak",
-            f"{streaks['current_streak']} days",
-            delta=f"Best: {streaks['longest_streak']} days"
-        )
+        st.metric("Current Streak", f"{current_streak} days")
     
     with col2:
-        st.metric(
-            "Total Tracked",
-            f"{streaks['total_tracked_days']} days"
-        )
-
-
-def render_mini_calendar(
-    storage: Optional[Any] = None,
-    days: int = 30
-) -> None:
-    """
-    Render a mini calendar for dashboard use.
+        st.metric("Best Streak", f"{best_streak} days")
     
-    Args:
-        storage: Storage backend
-        days: Number of days to show
-    """
-    processor = TimeViewsProcessor(storage=storage)
-    
-    # Get heatmap data
-    heatmap_data = processor.get_heatmap_data(days=days)
-    
-    # Convert to expected format
-    formatted_data = []
-    for day in heatmap_data:
-        formatted_data.append({
-            'date': day['date'],
-            'total_habits': day['total_habits'],
-            'completed_habits': day['completed_habits'],
-            'completion_rate': day['completion_rate'],
-            'is_today': day['is_today'],
-            'is_future': day['is_future'],
-        })
-    
-    render_mini_heatmap(formatted_data, days=days)
-
-
-# Page configuration
-PAGE_CONFIG = {
-    "title": "Calendar",
-    "icon": "📅",
-    "description": "View habit completion history",
-    "sidebar_order": 4,
-}
-
-
-if __name__ == "__main__":
-    render_page()
+    with col3:
+        st.metric("Total Tracked", f"{total_tracked} days")
