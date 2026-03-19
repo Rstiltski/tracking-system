@@ -22,7 +22,6 @@ from tracking_app.pages.dashboard.components import (
     render_welcome,
     render_quick_stats,
     render_habit_scores_section,
-    render_quick_actions,
     render_todays_habits,
     render_active_tasks,
     render_goals_progress,
@@ -32,7 +31,7 @@ from tracking_app.pages.dashboard.components import (
 )
 from tracking_app.pages.dashboard.helpers import get_weekly_habit_data
 from tracking_app.components.charts import render_weekly_chart
-
+from tracking_app.components.launchpad import render_glassmorphic_launchpad
 
 # =============================================================================
 # PAGE CONFIGURATION
@@ -70,8 +69,8 @@ def main():
     render_habit_scores_section()
     st.divider()
     
-    # Quick actions
-    render_quick_actions()
+    # Phase 12 Command Center Launchpad
+    render_glassmorphic_launchpad()
     st.divider()
     
     # Two column layout

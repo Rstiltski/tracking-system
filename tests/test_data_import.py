@@ -13,6 +13,7 @@ Run with:
 import pytest
 import json
 import csv
+import sqlite3
 import tempfile
 import os
 from datetime import datetime

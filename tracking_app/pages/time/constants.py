@@ -33,7 +33,7 @@ def get_time_category_index(category: str) -> int:
 
 # XP rates
 XP_PER_MINUTE = 1  # 1 XP per minute tracked
-XP_PER_HOUR = 10   # 10 XP per hour for manual entry
+XP_PER_HOUR = 60   # 60 XP per hour for manual entry (consistent with timer)
 XP_MINIMUM = 5     # Minimum XP for saving a time entry
 
 # Timer display colors

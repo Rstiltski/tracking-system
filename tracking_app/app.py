@@ -19,6 +19,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # Import shared components
 from tracking_app.components.sidebar import render_sidebar
 from tracking_app.components.session import init_session_state
+from tracking_app.design.theme import apply_design_system
 
 
 
@@ -88,6 +89,9 @@ def main():
     """
     # Initialize session state
     init_session_state()
+    
+    # Apply design system (theme and styling)
+    apply_design_system(theme=st.session_state.get('theme', 'dark'))
     
     # Render custom categorized sidebar
     render_sidebar()

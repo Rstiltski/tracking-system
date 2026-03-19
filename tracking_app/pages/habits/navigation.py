@@ -116,66 +116,57 @@ def render_navigation_controls(current_date: date, view_mode: str):
     # Get time until midnight for countdown
     time_left = get_time_until_midnight()
     
-    # Render controls using Streamlit columns - updated layout with countdown
-    col1, col2, col3, col4, col5, col6 = st.columns([2, 1, 2, 1, 1, 2])
+    # Render controls using a clean 2-row layout to prevent overlapping/vertical text
     
-    with col1:
-        # Stats pill
-        st.markdown(f'<span class="stats-pill">📊 {stats_text}</span>', unsafe_allow_html=True)
+    # ROW 1: Quick info and Views
+    info_col, view_col1, view_col2, view_col3 = st.columns([4, 1, 1, 1])
     
-    with col2:
-        # Previous button
-        if st.button("← Prev", key="nav_prev", use_container_width=True):
+    with info_col:
+        st.markdown(f'<div style="display:flex;gap:16px;">'
+                    f'<span class="stats-pill">📊 {stats_text}</span>'
+                    f'<span class="countdown-timer" title="Time until daily reset">🔄 {time_left["hours"]:02d}h {time_left["minutes"]:02d}m</span>'
+                    f'</div>', unsafe_allow_html=True)
+    
+    with view_col1:
+        if st.button("📍 Today", key="nav_today", use_container_width=True):
+            st.session_state.habit_current_date = get_local_date()
+            st.rerun()
+            
+    with view_col2:
+        if st.button("Week", key="view_week", use_container_width=True, type="primary" if view_mode == 'week' else "secondary"):
+            st.session_state.habit_view_mode = 'week'
+            st.rerun()
+            
+    with view_col3:
+        if st.button("Month", key="view_month", use_container_width=True, type="primary" if view_mode == 'month' else "secondary"):
+            st.session_state.habit_view_mode = 'month'
+            st.rerun()
+
+    st.write("") # Spacer
+
+    # ROW 2: Date Navigation
+    nav_col1, nav_col2, nav_col3 = st.columns([1, 4, 1])
+    
+    with nav_col1:
+        if st.button("← Previous", key="nav_prev", use_container_width=True):
             if view_mode == 'week':
                 st.session_state.habit_current_date = current_date - timedelta(days=7)
             else:
                 new_date = current_date.replace(day=1) - timedelta(days=1)
                 st.session_state.habit_current_date = new_date.replace(day=1)
             st.rerun()
-    
-    with col3:
-        # Period title
+            
+    with nav_col2:
         st.markdown(f'<div class="nav-title">📅 {period_title}</div>', unsafe_allow_html=True)
-    
-    with col4:
-        # Next button
+        
+    with nav_col3:
         if st.button("Next →", key="nav_next", use_container_width=True):
             if view_mode == 'week':
                 st.session_state.habit_current_date = current_date + timedelta(days=7)
             else:
-                # Go to next month
                 if current_date.month == 12:
                     new_date = current_date.replace(year=current_date.year + 1, month=1, day=1)
                 else:
                     new_date = current_date.replace(month=current_date.month + 1, day=1)
                 st.session_state.habit_current_date = new_date
             st.rerun()
-    
-    with col5:
-        # Today button
-        if st.button("📍 Today", key="nav_today", use_container_width=True):
-            st.session_state.habit_current_date = get_local_date()
-            st.rerun()
-    
-    with col6:
-        # View toggle buttons (Week/Month) and countdown
-        week_col, month_col, countdown_col = st.columns([1, 1, 1.5])
-        
-        with week_col:
-            if st.button("Week", key="view_week", use_container_width=True, 
-                        type="primary" if view_mode == 'week' else "secondary"):
-                st.session_state.habit_view_mode = 'week'
-                st.rerun()
-        
-        with month_col:
-            if st.button("Month", key="view_month", use_container_width=True,
-                        type="primary" if view_mode == 'month' else "secondary"):
-                st.session_state.habit_view_mode = 'month'
-                st.rerun()
-        
-        with countdown_col:
-            # Countdown timer display
-            st.markdown(
-                f'<div class="countdown-timer" title="Time until daily reset">🔄 {time_left["hours"]:02d}h {time_left["minutes"]:02d}m</div>',
-                unsafe_allow_html=True
-            )

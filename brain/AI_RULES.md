@@ -313,8 +313,9 @@ Always include these phrases in prompts:
 ### Language Rules (LANG_)
 | ID | Rule | Check Before |
 |----|------|--------------|
-| LANG_001 | Python-First | Creating ANY new file |
-| LANG_002 | No new JavaScript | Writing .js files |
+| LANG_001 | Python-First (Except frontend/) | Creating ANY new file in tracking_app/ |
+| LANG_002 | No new JS (Except frontend/) | Writing .js files outside frontend/ |
+| LANG_003 | React/JS Required for Phase 13 | Working inside the frontend/ directory |
 
 ### Modification Rules (MOD_)
 | ID | Rule | Check Before |
@@ -339,7 +340,8 @@ Always include these phrases in prompts:
 | Vague request | Ask clarifying questions (Phase 1) |
 | Missing context | Load context files first |
 | Multiple files affected | STOP - violates MOD_001 |
-| New JavaScript file | STOP - violates LANG_002 |
+| New JS file outside frontend/ | STOP - violates LANG_002 |
+| New JS/TS in frontend/ | Execute - Allowed by LANG_003 |
 | Direct SQL in code | STOP - violates BRAIN_001 |
 | Clear, specific request | Execute (Phase 4) |
 
@@ -362,13 +364,13 @@ Always include these phrases in prompts:
 
 ### Example Conflict:
 ```
-User wants to add feature to js/app.js
-- LANG_002 says: No new JavaScript
+User wants to add feature to js/app.js (Legacy folder)
+- LANG_002 says: No new JavaScript outside frontend/
 - Feature request says: Add this feature
 
 Resolution: 
-- LANG_002 is CRITICAL
-- Feature must be implemented in Python/Streamlit instead
+- LANG_002 is CRITICAL for legacy folders
+- Feature must be implemented in Python/Streamlit instead OR in the Phase 13 React frontend/
 - Document decision in decisions.log
 ```
 

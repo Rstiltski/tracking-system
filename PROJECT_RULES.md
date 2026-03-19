@@ -26,21 +26,21 @@ This document outlines the rules, conventions, and best practices for developing
 ║                    🐍 PYTHON-FIRST RULE 🐍                        ║
 ╠══════════════════════════════════════════════════════════════════╣
 ║                                                                   ║
-║  ALL NEW FEATURES MUST BE IMPLEMENTED IN PYTHON                  ║
+║  ALL NEW FEATURES MUST BE IN PYTHON (OR REACT IN FRONTEND)       ║
 ║                                                                   ║
 ║  ✅ DO:                                                           ║
-║  - Create new features in Python using Streamlit                 ║
+║  - Create Streamlit features in tracking_app/ using Python       ║
+║  - Create React Phase 13 features in frontend/ using JS/TS       ║
 ║  - Use Python dataclasses for models                             ║
 ║  - Use SQLite for data persistence                               ║
 ║  - Follow the Python Module Pattern (see below)                  ║
 ║  - Follow the Streamlit Page Pattern (see below)                 ║
 ║                                                                   ║
 ║  ❌ DO NOT:                                                       ║
-║  - Create new JavaScript files (.js)                             ║
-║  - Create new HTML files (.html)                                 ║
-║  - Create new CSS files (.css)                                   ║
-║  - Add functionality to existing JavaScript files                ║
-║  - Implement features in the browser/frontend layer              ║
+║  - Create new JS files (.js) OUTSIDE the frontend/ directory     ║
+║  - Create new HTML/CSS files outside the frontend/ directory     ║
+║  - Add functionality to existing LEGACY js/ files                ║
+║  - Implement features in the browser outside Phase 13            ║
 ║                                                                   ║
 ║  WHY? This project is migrating FROM JavaScript/HTML/CSS         ║
 ║  TO Python/Streamlit. ALL new development must be in Python.     ║
@@ -59,7 +59,7 @@ This document outlines the rules, conventions, and best practices for developing
 
 **Rule:** Any new feature or module MUST be implemented in Python first. JavaScript is only for maintaining existing functionality during the transition period.
 
-**LLM Assistants:** If you create JavaScript/HTML/CSS files for new features, you have violated the primary rule of this project. DELETE them and reimplement in Python.
+**LLM Assistants:** If you create JavaScript/HTML/CSS files OUTSIDE of the explicitly Phase 13 `frontend/` directory, you have violated the primary rule of this project. The `frontend/` directory is the ONLY place where JS/React is allowed for the decoupled architecture.
 
 ---
 

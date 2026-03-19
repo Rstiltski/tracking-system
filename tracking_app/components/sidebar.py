@@ -70,20 +70,6 @@ PAGE_CATEGORIES: Dict[str, List[tuple]] = {
         ("Challenges", "💪", "challenges"),
         ("Friends", "👥", "friends"),
     ],
-    "⚙️ System": [
-        ("Notifications", "🔔", "notification_settings"),
-        ("Widgets", "🧩", "widget_settings"),
-        ("Data Export", "📤", "data_export"),
-        ("Data Import", "📥", "data_import"),
-        ("Backup & Restore", "💾", "backup_restore"),
-        ("Data Lifecycle", "♻️", "data_lifecycle"),
-        ("Privacy", "🔒", "privacy_dashboard"),
-        ("Reports", "📋", "reports"),
-        ("Insights", "💡", "insights"),
-        ("Habit Reminders", "⏰", "habit_reminders"),
-        ("Goal Alerts", "🚨", "goal_alerts"),
-        ("Task Alerts", "📌", "task_alerts"),
-    ],
 }
 
 
@@ -187,6 +173,14 @@ def _render_theme_toggle() -> None:
 
 def _render_sidebar_footer() -> None:
     """Render sidebar footer with actions."""
+    st.sidebar.divider()
+    
+    # Unified settings access
+    st.sidebar.page_link(
+        "pages/settings.py",
+        label="⚙️ Settings & System",
+    )
+    
     st.sidebar.subheader("🔧 Quick Actions")
     
     # Quick action buttons

@@ -50,7 +50,7 @@ class TaskPriority(Enum):
 
 @dataclass
 class TaskNode:
-    """A node in the task decomposition tree."""
+    """A node in the task decomposition tree, upgraded with LATS and MAS features."""
     task_id: str
     description: str
     parent_id: Optional[str] = None
@@ -65,6 +65,16 @@ class TaskNode:
     started_at: Optional[datetime] = None
     completed_at: Optional[datetime] = None
     metadata: Dict[str, Any] = field(default_factory=dict)
+    
+    # LATS (Language Agent Tree Search) Mechanics
+    probability_score: float = 1.0
+    alternative_branches: List[str] = field(default_factory=list)
+    
+    # Multi-Agent Delegation (Manager-Worker Topology)
+    assigned_agent_role: str = "Generalist"
+    
+    # Self-Healing
+    anomaly_recovery_strategy: Optional[str] = None
 
 
 @dataclass

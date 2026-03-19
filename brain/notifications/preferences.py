@@ -582,7 +582,7 @@ class PreferenceManager:
             'total_notifications': total['count'] if total else 0,
             'unread_count': unread['count'] if unread else 0,
             'by_status': {r['status']: r['count'] for r in by_status},
-            'by_type': {r['type']: r['count'] for r in by_type},
+            'by_type': {r['notification_type']: r['count'] for r in by_type},
         }
     
     # ==========================================

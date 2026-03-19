@@ -10,6 +10,19 @@ from typing import List, Dict, Any
 
 from tracking_app.storage import get_storage
 
+def _is_habit_completed(storage, habit_id, date_val):
+    if isinstance(date_val, str):
+        try:
+            date_val = datetime.strptime(date_val, '%Y-%m-%d').date()
+        except Exception:
+            pass
+    entry = storage.get_habit_entry(habit_id, date_val)
+    if not entry:
+        return False
+    if isinstance(entry, dict):
+        return entry.get('completed', False)
+    return getattr(entry, 'completed', False)
+
 
 def render_page():
     """Render the calendar view page."""
@@ -120,7 +133,7 @@ def _get_monthly_data(storage, year: int, month: int) -> Dict[str, Any]:
         total = len(habits)
         
         for habit in habits:
-            if storage.is_habit_completed_on_date(habit.id, date_str):
+            if _is_habit_completed(storage, habit.id, date_str):
                 completed += 1
         
         completion_rate = completed / total if total > 0 else 0
@@ -177,7 +190,7 @@ def _calculate_current_streak(storage, habits, reference_date: date) -> int:
         all_completed = True
         
         for habit in habits:
-            if not storage.is_habit_completed_on_date(habit.id, date_str):
+            if not _is_habit_completed(storage, habit.id, date_str):
                 all_completed = False
                 break
         
@@ -404,7 +417,7 @@ def _render_day_detail_view(storage) -> None:
     # Count completed
     completed = 0
     for habit in habits:
-        if storage.is_habit_completed_on_date(habit.id, date_str):
+        if _is_habit_completed(storage, habit.id, date_str):
             completed += 1
     
     total = len(habits)
@@ -426,7 +439,7 @@ def _render_day_detail_view(storage) -> None:
     if habits:
         st.markdown("#### Habits")
         for habit in habits:
-            is_completed = storage.is_habit_completed_on_date(habit.id, date_str)
+            is_completed = _is_habit_completed(storage, habit.id, date_str)
             icon = "✅" if is_completed else "⬜"
             st.markdown(f"{icon} {habit.name}")
     else:
@@ -464,3 +477,6 @@ def _render_streak_info(storage) -> None:
     
     with col3:
         st.metric("Total Tracked", f"{total_tracked} days")
+
+if __name__ == "__main__":
+    render_page()

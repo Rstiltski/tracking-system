@@ -77,87 +77,33 @@ This document maps features to their implementation files. Use it to quickly fin
 
 ---
 
-## §3 Frontend Features
+## §3 Frontend Features (Python-First)
 
-### Dashboard
+### Main Application (Streamlit)
 | Feature | File | Description |
 |---------|------|-------------|
-| Main UI | `index.html` | Main HTML entry point |
-| App Controller | `js/app.js` | Main application controller |
-| Charts | `js/charts.js` | Chart visualization |
-| Notifications | `js/notifications.js` | Notification system |
+| Main Entry | `run.py` | Primary script to launch the app |
+| App Main | `tracking_app/app.py` | Streamlit application entry point |
+| Design System| `tracking_app/design/theme.py`| Glassmorphism & custom styling |
+| Sidebar | `tracking_app/components/sidebar.py`| Dynamic categorized navigation |
 
-### Habits Tracker
+### ⚠️ Legacy Frontend (JavaScript/HTML)
+**Status:** Deprecated. Maintained for reference only.
 | Feature | File | Description |
 |---------|------|-------------|
-| Habits Module | `js/habits.js` | Habits tracking logic |
-| Streaks | `js/habits.js` | Streak counter |
-| Completion | `js/habits.js` | Habit completion logging |
+| Legacy HTML | `index.html` | Old HTML entry point |
+| Legacy Controller| `js/app.js` | Old JS application controller |
 
-### Tasks & Todos
+### Core Tracking Pages (Streamlit)
 | Feature | File | Description |
 |---------|------|-------------|
-| Tasks Module | `js/tasks.js` | Tasks/Todos logic |
-| Priorities | `js/tasks.js` | Priority handling |
-| Filtering | `js/tasks.js` | Status filtering |
-
-### Finances & Budget
-| Feature | File | Description |
-|---------|------|-------------|
-| Finances Module | `js/finances.js` | Financial tracking |
-| Budget | `js/finances.js` | Budget monitoring |
-| Charts | `js/charts.js` | Expense visualization |
-
-### Health Metrics
-| Feature | File | Description |
-|---------|------|-------------|
-| Health Module | `js/health.js` | Health metrics logic |
-| Weight Tracking | `js/health.js` | Weight charts |
-| Mood Tracking | `js/health.js` | Mood selector |
-
-### Emotional Health (RGB Model)
-| Feature | File | Description |
-|---------|------|-------------|
-| Emotional Health Page | `tracking_app/pages/emotional_health.py` | Streamlit page for emotion tracking |
-| Emotion Model | `brain/models/emotional_state.py` | RGB neurotransmitter model |
-| Emotion Spec | `docs/specs/EMOTIONAL_STATE_SPEC.md` | Full specification |
-| Quick Presets | `tracking_app/pages/emotional_health.py` | 15 emotion presets |
-| Custom Sliders | `tracking_app/pages/emotional_health.py` | Fine-tune neurotransmitters |
-| Color Visualization | `brain/models/emotional_state.py` | Emotion to color mapping |
-| Pattern Detection | `brain/models/emotional_state.py` | `EmotionAnalyzer` class |
-
-### Time & Productivity
-| Feature | File | Description |
-|---------|------|-------------|
-| Time Module | `js/time.js` | Time tracking |
-| Timer | `js/time.js` | Stopwatch functionality |
-| Categories | `js/time.js` | Time categorization |
-
-### Goals & Progress
-| Feature | File | Description |
-|---------|------|-------------|
-| Goals Module | `js/goals.js` | Goals tracking |
-| Progress Bars | `js/goals.js` | Visual progress |
-| Deadlines | `js/goals.js` | Deadline management |
-
-### Gamification
-| Feature | File | Description |
-|---------|------|-------------|
-| Achievements | `js/achievements.js` | Achievement system |
-| XP System | `js/achievements.js` | XP and levels |
-| Celebrations | `js/achievements.js` | Confetti effects |
-
-### Data Management
-| Feature | File | Description |
-|---------|------|-------------|
-| Storage | `js/storage.js` | LocalStorage layer |
-| Export/Import | `js/dataExport.js` | Data portability |
-
-### Styling
-| Feature | File | Description |
-|---------|------|-------------|
-| Styles | `css/styles.css` | All CSS styles |
-| Dark Mode | `css/styles.css` | Theme switching |
+| Dashboard | `tracking_app/pages/dashboard.py` | Main overview and metrics |
+| Habits | `tracking_app/pages/habits.py` | Habit tracking & engineering |
+| Tasks | `tracking_app/pages/tasks.py` | Task & Todo management |
+| Finances | `tracking_app/pages/finances.py` | Budget & transaction tracking |
+| Health | `tracking_app/pages/health.py` | Health & mood metrics |
+| Time | `tracking_app/pages/time.py` | Timer & time entry tracking |
+| Goals | `tracking_app/pages/goals.py` | Goal setting & progress |
 
 ---
 

@@ -89,7 +89,13 @@ class DifficultyAdjuster:
 
         # If user recently rated, prioritize their feedback
         if latest_rating:
-            suggestion = self._suggestion_from_rating(latest_rating)
+            # Handle both dict (from storage) and Model instances
+            if isinstance(latest_rating, dict):
+                rating_obj = DifficultyRatingEntry.from_dict(latest_rating)
+            else:
+                rating_obj = latest_rating
+                
+            suggestion = self._suggestion_from_rating(rating_obj)
             if suggestion:
                 return suggestion
 

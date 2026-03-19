@@ -60,7 +60,7 @@ class Domain(str, Enum):
 
 @dataclass
 class ThinkingResult:
-    """Result of the thinking process"""
+    """Result of the thinking process (Upgraded via Cognitive Paradigm Shift)"""
     original_prompt: str
     interpreted_intent: IntentCategory
     identified_domain: Domain
@@ -73,6 +73,11 @@ class ThinkingResult:
     alternative_interpretations: List[str] = field(default_factory=list)
     brain_pathway: str = ""
     related_features: List[str] = field(default_factory=list)
+    
+    # Agentic Upgrades (Per Cognitive Architecture Spec)
+    extracted_entities: Dict[str, Any] = field(default_factory=dict)
+    scratchpad_state: Dict[str, Any] = field(default_factory=dict)
+    self_critique: str = ""
 
 
 @dataclass

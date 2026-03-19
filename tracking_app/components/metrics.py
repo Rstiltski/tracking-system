@@ -55,50 +55,25 @@ def render_habit_score_card(
         trend: Trend value (-1.0 to 1.0)
         show_details: Whether to show category details
     """
-    # Get category
     category = _get_score_category(score_value)
     trend_icon = "↑" if trend > 0.001 else "↓" if trend < -0.001 else "→"
-    trend_color = "green" if trend > 0 else "red" if trend < 0 else "gray"
-    
-    # Create container with border color
+    trend_color = "#10B981" if trend > 0 else "#EF4444" if trend < 0 else "#94A3B8"
     percentage = round(score_value * 100)
     
-    # Display score
-    col1, col2 = st.columns([3, 1])
+    card_html = f"""<div style="background: linear-gradient(145deg, rgba(30, 41, 59, 0.4) 0%, rgba(15, 23, 42, 0.2) 100%); border: 1px solid rgba(255, 255, 255, 0.05); border-top: 3px solid {category['color']}; border-radius: 12px; padding: 16px; margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); display: flex; flex-direction: column; gap: 12px;">
+<div style="display: flex; justify-content: space-between; align-items: flex-start;">
+<div style="font-size: 28px; font-weight: 800; color: #F8FAFC; line-height: 1; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">{category['emoji']} {percentage}%</div>
+<div style="font-size: 13px; font-weight: 700; color: {trend_color}; display: flex; flex-direction: column; align-items: flex-end; gap: 2px;">
+<span>{trend_icon} {category['label'] if show_details else ''}</span>
+</div>
+</div>
+<div style="width: 100%; height: 6px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; margin-top: 4px;">
+<div style="width: {percentage}%; height: 100%; background: {category['color']}; border-radius: 4px; box-shadow: 0 0 10px {category['color']}80;"></div>
+</div>
+<div style="color: #94A3B8; font-size: 14px; font-weight: 500; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; line-height: 1.4;">{habit_name}</div>
+</div>"""
     
-    with col1:
-        st.markdown(
-            f"""
-            <div style="
-                padding: 1rem;
-                border-radius: 0.5rem;
-                border-left: 4px solid {category['color']};
-                background: rgba(255,255,255,0.05);
-            ">
-                <div style="font-size: 1.5rem; font-weight: bold;">
-                    {category['emoji']} {percentage}%
-                </div>
-                <div style="color: gray; font-size: 0.9rem;">
-                    {habit_name}
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-    
-    with col2:
-        if show_details:
-            st.markdown(
-                f"""
-                <div style="text-align: center; padding: 0.5rem;">
-                    <div style="font-size: 1.2rem;">{trend_icon}</div>
-                    <div style="font-size: 0.8rem; color: {trend_color};">
-                        {category['label']}
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
+    st.markdown(card_html, unsafe_allow_html=True)
 
 
 def _get_score_category(score: float) -> Dict[str, str]:

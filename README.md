@@ -59,8 +59,9 @@
 
 Veryfyn is a **complete personal tracking system** with an integrated Brain backend architecture. Originally built as a habit tracker, it has evolved into a **comprehensive life management platform** with:
 
-- **Frontend**: Pure HTML/CSS/JavaScript (no framework dependencies)
-- **Backend**: Python-based Brain system for data management
+- **Primary Interface**: Python Streamlit for core operations
+- **Phase 13 Platform**: Next-gen decoupled architecture (React/Tailwind UI + FastAPI Backend)
+- **Backend Components**: Python-based Brain system for data management
 - **Storage**: Browser LocalStorage + SQLite for Brain operations
 - **Gamification**: XP, levels, achievements, and celebrations
 
@@ -529,22 +530,19 @@ tracking-system/
 
 ## §7 Technology Stack
 
-### Frontend
-- **HTML5** - Semantic markup
-- **CSS3** - Custom properties, Flexbox, Grid, Animations
-- **JavaScript (ES6+)** - Module pattern, LocalStorage
-- **Chart.js** - Data visualization
+### Phase 13 Decoupled Architecture (New Direction)
+- **React 18** - Frontend UI library with Vite
+- **Tailwind CSS** - Utility-first styling
+- **FastAPI** - High-performance backend API
+- **Uvicorn** - ASGI server
 
-### Backend (Brain System)
+### Primary Streamlit Architecture
 - **Python 3.8+** - Core language
+- **Streamlit** - Rapid application UI
 - **SQLite** - Database
-- **Streamlit** - Admin interface
 
-### Key Principles
-- **No framework dependencies** for frontend
-- **Mobile-first** responsive design
-- **Offline-capable** with LocalStorage
-- **Privacy-focused** - all data stays local
+### Legacy Browser-Only Mode (Being Migrated)
+- **HTML5/CSS3/Vanilla JS** - No framework dependencies frontend
 
 ---
 

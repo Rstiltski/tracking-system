@@ -105,7 +105,8 @@ def render_edit_habit_modal():
         return None
     
     storage = st.session_state.storage
-    habit = storage.get_habit_by_id(st.session_state.editing_habit)
+    habits = storage.get_habits()
+    habit = next((h for h in habits if h.id == st.session_state.editing_habit), None)
     
     if not habit:
         st.session_state.editing_habit = None

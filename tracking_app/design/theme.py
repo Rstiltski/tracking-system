@@ -456,13 +456,12 @@ def apply_design_system(theme: ThemeMode = "dark", special_theme_config: dict = 
     div[data-testid="stProgress"] > div {{
         background-color: var(--bg-tertiary) !important;
         border-radius: var(--radius-full) !important;
-        height: 12px !important;
     }}
     
     div[data-testid="stProgress"] > div > div > div {{
-        background: var(--gradient-xp) !important;
+        background: linear-gradient(90deg, #10b981, #059669) !important;
         border-radius: var(--radius-full) !important;
-        box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+        box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
         transition: width var(--transition-slow) !important;
     }}
     

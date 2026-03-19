@@ -14,6 +14,7 @@ from tracking_app.components.metrics import (
     render_streak_card,
     render_burnout_risk_card
 )
+from tracking_app.components.dynamic_progress import render_chickmini_progress
 from tracking_app.components.charts import render_weekly_chart
 
 from .constants import (
@@ -141,9 +142,8 @@ def render_todays_habits():
             st.switch_page("pages/habits.py")
         return
     
-    # Progress bar
-    progress = completed / total if total > 0 else 0
-    st.progress(progress, text=f"{completed}/{total} completed")
+    # Phase 12 Dynamic Progress Tracker
+    render_chickmini_progress(completed, total)
     
     # List habits
     for habit in habits:

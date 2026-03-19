@@ -32,6 +32,7 @@ from brain.backup import (
     RetentionPolicy,
     RetentionManager,
     RestoreEngine,
+    RestorePlanner,
     BackupValidator,
     BackupHealthChecker,
     ScheduleBuilder,
