@@ -59,11 +59,18 @@
 
 Veryfyn is a **complete personal tracking system** with an integrated Brain backend architecture. Originally built as a habit tracker, it has evolved into a **comprehensive life management platform** with:
 
-- **Primary Interface**: Python Streamlit for core operations
+- **Primary Interface**: Python Streamlit for core operations (32+ pages)
 - **Phase 13 Platform**: Next-gen decoupled architecture (React/Tailwind UI + FastAPI Backend)
 - **Backend Components**: Python-based Brain system for data management
 - **Storage**: Browser LocalStorage + SQLite for Brain operations
 - **Gamification**: XP, levels, achievements, and celebrations
+
+### Current Development Status
+
+| Phase | Status | Details |
+|-------|--------|---------|
+| Phase 13 | ✅ Complete | React + FastAPI Backend (16 API routes) |
+| Phase 14 | ✅ Complete | React Frontend (14 views), Page Consolidation |
 
 **The core idea:** Track every aspect of your life with immediate visual feedback, streaks, and rewards - all running locally in your browser.
 
@@ -263,20 +270,20 @@ No server required - runs entirely in the browser using LocalStorage.
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                    TRACKING SYSTEM UI                           │
-│                    (index.html + js/*.js)                       │
+│                    (index.html + js/*.js)                        │
 └────────────────────────────────┬────────────────────────────────┘
                                  │
                                  ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │                     STORAGE LAYER                               │
 │                   (js/storage.js)                               │
-│              LocalStorage / IndexedDB                           │
+│              LocalStorage / IndexedDB                          │
 └────────────────────────────────┬────────────────────────────────┘
                                  │
                                  ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │                        BRAIN SYSTEM                             │
-│                    (brain/core/brain.py)                        │
+│                    (brain/core/brain.py)                       │
 │                                                                 │
 │  ┌──────────┐   ┌──────────┐   ┌──────────┐   ┌──────────┐    │
 │  │  Router  │──▶│ Policies │──▶│  State   │──▶│  Tools   │    │
@@ -497,260 +504,4 @@ tracking-system/
 │   ├── schemas/           # Data schemas
 │   └── guides/            # User guides
 │
-├── tests/                 # Test suite
-│
-└── phases/                # Phase documentation
-```
-
----
-
-## §7 Technology Stack
-
-| Layer | Technology | Purpose |
-|-------|-----------|---------|
-| **Primary UI** | Streamlit | Main application interface |
-| **Secondary UI** | React + Vite | Phase 13 decoupled frontend |
-| **API** | FastAPI | Phase 13 REST API backend |
-| **Intelligence** | Python Brain | AI/ML analytics |
-| **Database** | SQLite | Local data persistence |
-| **Styling** | Tailwind CSS | React frontend styling |
-| **Legacy** | HTML/CSS/JS | Browser-only mode |
-    ├── lifecycle/          # Data lifecycle
-    ├── social/             # Social features
-    ├── monitoring/         # System monitoring
-    ├── context/            # Context loading
-    ├── data_export/        # Data export
-    ├── data_import/        # Data import
-    ├── rules/              # Rule engine
-    ├── fork/               # Brain forking
-    └── assets/             # Brain assets
-```
-
----
-
-## §7 Technology Stack
-
-### Phase 13 Decoupled Architecture (New Direction)
-- **React 18** - Frontend UI library with Vite
-- **Tailwind CSS** - Utility-first styling
-- **FastAPI** - High-performance backend API
-- **Uvicorn** - ASGI server
-
-### Primary Streamlit Architecture
-- **Python 3.8+** - Core language
-- **Streamlit** - Rapid application UI
-- **SQLite** - Database
-
-### Legacy Browser-Only Mode (Being Migrated)
-- **HTML5/CSS3/Vanilla JS** - No framework dependencies frontend
-
----
-
-## §8 Gamification
-
-### ⭐ XP System
-| Action | XP Reward |
-|--------|-----------|
-| Completing a habit | +10 XP |
-| Completing a task (low priority) | +5 XP |
-| Completing a task (medium priority) | +10 XP |
-| Completing a task (high priority) | +20 XP |
-| Reaching a goal | +50 XP |
-| Maintaining a 7-day streak | +25 XP |
-
-### 🏆 Level Progression
-| Level | XP Required |
-|-------|-------------|
-| Level 1 | 0 XP |
-| Level 2 | 100 XP |
-| Level 3 | 250 XP |
-| Level N | Previous + 150 XP |
-
-### 🎖️ Achievements
-Achievements are defined with:
-- Unique ID
-- Name and description
-- Icon/emoji
-- XP reward
-- Unlock condition
-
----
-
-## §9 Development
-
-### Coding Standards
-
-**JavaScript:**
-- Use `const`/`let`, never `var`
-- Arrow functions for callbacks
-- Template literals for HTML
-- Optional chaining for DOM elements
-
-**CSS:**
-- Use CSS custom properties for theming
-- BEM-like naming convention
-- Support dark mode with `data-theme`
-
-**HTML:**
-- Use semantic elements
-- Add data attributes for JavaScript hooks
-- Include accessibility attributes
-
-### Module Pattern
-Each JavaScript module follows this structure:
-```javascript
-const ModuleName = {
-    config: { /* settings */ },
-    items: [],
-    
-    init() { /* initialization */ },
-    loadData() { /* fetch data */ },
-    saveData() { /* persist data */ },
-    render() { /* update UI */ }
-};
-
-window.ModuleName = ModuleName;
-```
-
-**See [PROJECT_RULES.md](PROJECT_RULES.md) for complete guidelines.**
-
----
-
-## §10 Testing
-
-### Manual Testing Checklist
-
-**Functionality:**
-- [ ] All CRUD operations work correctly
-- [ ] Data persists after page refresh
-- [ ] Navigation between views works
-- [ ] Modals open and close properly
-- [ ] Forms validate input correctly
-
-**UI/UX:**
-- [ ] Responsive on mobile, tablet, desktop
-- [ ] Dark mode displays correctly
-- [ ] Animations are smooth
-- [ ] No console errors
-
-**Brain System:**
-```bash
-# Run Brain tests
-python -m pytest brain/immune/tests/
-```
-
----
-
-## §11 Configuration
-
-### Theme
-Click the 🌙 button in the header to toggle light/dark mode. Theme preference is saved automatically.
-
-### Data Storage
-All data is stored locally in your browser's LocalStorage:
-- No account required
-- Data stays on your device
-- Export/import functionality available
-
-### Timer Persistence
-The timer state is automatically saved and restored:
-- Timer seconds, running state, and category are persisted
-- If the timer was running when the page was closed, elapsed time is calculated on restore
-- Timer continues counting even if you close and reopen the browser
-- Storage key: `veryfyn_timer_state`
-
-### Notification Settings
-Configure notification preferences through the settings panel:
-- Enable/disable desktop notifications
-- Choose notification sound (Default, Chime, Bell)
-- Set notification style (Standard or Urgent)
-- Toggle habit, task, and goal reminders independently
-- Storage key: `veryfyn_notification_settings`
-
-### Environment Variables (Brain System)
-```bash
-# .env file
-DATABASE_PATH=veryfyn.db
-SECRET_KEY=<auto-generated>
-ENVIRONMENT=development
-DEBUG=True
-```
-
----
-
-## §12 Troubleshooting
-
-### App won't start
-```bash
-# Check dependencies
-pip install -r requirements.txt
-
-# Check database exists
-ls -la veryfyn.db
-```
-
-### Can't login
-```bash
-# Reset admin user
-python force_admin_reset.py
-```
-
-### Data not persisting
-- Check browser LocalStorage is enabled
-- Try exporting and re-importing data
-- Check browser console for errors
-
-### Port already in use
-```bash
-# Kill existing process
-pkill -f streamlit
-streamlit run run.py --server.port=8502
-```
-
----
-
-## §13 Contributing
-
-1. Read [PROJECT_RULES.md](PROJECT_RULES.md) for coding standards
-2. Make your changes
-3. Test thoroughly
-4. Update relevant documentation
-5. Commit with clear message
-
-**Commit Message Format:**
-```
-feat: add habit streak freeze feature
-fix: correct streak calculation for skipped days
-docs: update README with new installation steps
-```
-
----
-
-## §14 Cross-References
-
-| If you need... | Read this file |
-|----------------|---------------|
-| Development guidelines | `PROJECT_RULES.md` |
-| Architecture design | `TRACKING_SYSTEM_DESIGN.md` |
-| Feature-to-file mapping | `FEATURE_MAP.md` |
-| Brain system details | `brain/README.md` |
-| Brain design docs | `brain/design/README.md` |
-| Tool contracts | `brain/design/04_tool_contracts.md` |
-| State machines | `brain/design/01_state_machines.md` |
-| Command namespace | `brain/design/00_command_namespace.md` |
-
----
-
-## License
-
-This project is open source and available under the [MIT License](LICENSE).
-
----
-
-**Made with ❤️ for personal productivity**
-
-**Auditable. Production-ready.**
-
----
-
-**Last Updated:** March 2026
+└── tests/                 # Test suite

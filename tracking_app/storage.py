@@ -2425,6 +2425,67 @@ class Storage:
         )
         return True
 
+    # ==================== NOTIFICATION PREFERENCES ====================
+
+    def get_notification_preferences(self, user_id: str) -> Optional[Dict[str, Any]]:
+        """Get notification preferences for a user."""
+        result = self._db.execute(
+            "SELECT * FROM user_notification_preferences WHERE user_id = ?",
+            (user_id,)
+        ).fetchone()
+        
+        if not result:
+            return None
+        
+        return {
+            'enabled': bool(result.get('enabled', 1)),
+            'habit_reminders': bool(result.get('habit_reminders', 1)),
+            'task_deadlines': bool(result.get('task_deadlines', 1)),
+            'goal_alerts': bool(result.get('goal_alerts', 1)),
+            'achievement_unlocks': bool(result.get('achievement_unlocks', 1)),
+            'friend_activity': bool(result.get('friend_activity', 0)),
+            'weekly_review': bool(result.get('weekly_review', 1)),
+            'burnout_warnings': bool(result.get('burnout_warnings', 1)),
+            'quiet_hours_enabled': bool(result.get('quiet_hours_enabled', 0)),
+            'quiet_hours_start': result.get('quiet_hours_start', '22:00'),
+            'quiet_hours_end': result.get('quiet_hours_end', '08:00'),
+            'notification_sound': bool(result.get('notification_sound', 1)),
+            'desktop_notifications': bool(result.get('desktop_notifications', 1)),
+        }
+
+    def save_notification_preferences(
+        self,
+        user_id: str,
+        preferences: Dict[str, Any]
+    ) -> bool:
+        """Save notification preferences for a user."""
+        self._db.execute(
+            """INSERT OR REPLACE INTO user_notification_preferences
+               (user_id, enabled, habit_reminders, task_deadlines, goal_alerts,
+                achievement_unlocks, friend_activity, weekly_review, burnout_warnings,
+                quiet_hours_enabled, quiet_hours_start, quiet_hours_end,
+                notification_sound, desktop_notifications, updated_at)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            (
+                user_id,
+                1 if preferences.get('enabled', True) else 0,
+                1 if preferences.get('habit_reminders', True) else 0,
+                1 if preferences.get('task_deadlines', True) else 0,
+                1 if preferences.get('goal_alerts', True) else 0,
+                1 if preferences.get('achievement_unlocks', True) else 0,
+                1 if preferences.get('friend_activity', False) else 0,
+                1 if preferences.get('weekly_review', True) else 0,
+                1 if preferences.get('burnout_warnings', True) else 0,
+                1 if preferences.get('quiet_hours_enabled', False) else 0,
+                preferences.get('quiet_hours_start', '22:00'),
+                preferences.get('quiet_hours_end', '08:00'),
+                1 if preferences.get('notification_sound', True) else 0,
+                1 if preferences.get('desktop_notifications', True) else 0,
+                datetime.now().isoformat()
+            )
+        )
+        return True
+
     # ==================== CHALLENGES ====================
 
     def save_challenge(self, challenge_data: Dict[str, Any]) -> str:
@@ -2957,6 +3018,355 @@ class Storage:
         result = self._db.execute(
             "DELETE FROM private_todos WHERE id = ?",
             (todo_id,)
+        )
+        return result.rowcount > 0
+
+    # ==================== EMOTIONAL STATES ====================
+    
+    def _init_emotional_states_table(self):
+        """Create the emotional_states table if it doesn't exist."""
+        self._db.execute("""
+            CREATE TABLE IF NOT EXISTS emotional_states (
+                id TEXT PRIMARY KEY,
+                timestamp TEXT NOT NULL,
+                dopamine REAL NOT NULL,
+                norepinephrine REAL NOT NULL,
+                serotonin REAL NOT NULL,
+                oxytocin REAL DEFAULT 0.0,
+                endorphins REAL DEFAULT 0.0,
+                gaba REAL DEFAULT 0.0,
+                notes TEXT,
+                triggers TEXT,
+                hex_color TEXT,
+                emotion_label TEXT,
+                emotion_category TEXT
+            )
+        """)
+        # Create index for timestamp queries
+        self._db.execute("""
+            CREATE INDEX IF NOT EXISTS idx_emotional_states_timestamp 
+            ON emotional_states(timestamp)
+        """)
+    
+    def get_emotional_states(
+        self,
+        start_date: Optional[date] = None,
+        end_date: Optional[date] = None,
+        limit: int = 100
+    ) -> List[Dict[str, Any]]:
+        """
+        Get emotional states within a date range.
+        
+        Args:
+            start_date: Start date for filtering (optional)
+            end_date: End date for filtering (optional)
+            limit: Maximum number of records to return
+            
+        Returns:
+            List of emotional state dictionaries
+        """
+        # Ensure table exists
+        self._init_emotional_states_table()
+        
+        query = "SELECT * FROM emotional_states"
+        params = []
+        
+        if start_date or end_date:
+            conditions = []
+            if start_date:
+                conditions.append("timestamp >= ?")
+                params.append(start_date.isoformat())
+            if end_date:
+                conditions.append("timestamp <= ?")
+                params.append(end_date.isoformat() + " 23:59:59")
+            query += " WHERE " + " AND ".join(conditions)
+        
+        query += " ORDER BY timestamp DESC LIMIT ?"
+        params.append(limit)
+        
+        rows = self._db.fetch_all(query, tuple(params))
+        return [dict(row) for row in rows]
+    
+    def get_emotional_state(self, state_id: str) -> Optional[Dict[str, Any]]:
+        """
+        Get a single emotional state by ID.
+        
+        Args:
+            state_id: Emotional state ID
+            
+        Returns:
+            Emotional state dictionary or None if not found
+        """
+        row = self._db.fetch_one(
+            "SELECT * FROM emotional_states WHERE id = ?",
+            (state_id,)
+        )
+        return dict(row) if row else None
+    
+    def get_latest_emotional_state(self) -> Optional[Dict[str, Any]]:
+        """
+        Get the most recent emotional state.
+        
+        Returns:
+            Latest emotional state dictionary or None if not found
+        """
+        row = self._db.fetch_one(
+            "SELECT * FROM emotional_states ORDER BY timestamp DESC LIMIT 1"
+        )
+        return dict(row) if row else None
+    
+    def create_emotional_state(
+        self,
+        dopamine: float,
+        norepinephrine: float,
+        serotonin: float,
+        oxytocin: float = 0.0,
+        endorphins: float = 0.0,
+        gaba: float = 0.0,
+        notes: str = "",
+        triggers: Optional[List[str]] = None
+    ) -> Dict[str, Any]:
+        """
+        Create a new emotional state entry.
+        
+        Args:
+            dopamine: Dopamine level (0.0-1.0)
+            norepinephrine: Norepinephrine level (0.0-1.0)
+            serotonin: Serotonin level (0.0-1.0)
+            oxytocin: Oxytocin level (0.0-1.0) - optional modifier
+            endorphins: Endorphins level (0.0-1.0) - optional modifier
+            gaba: GABA level (0.0-1.0) - optional modifier
+            notes: User notes about this emotional state
+            triggers: List of triggers that caused this state
+            
+        Returns:
+            Created emotional state dictionary
+        """
+        import uuid
+        from datetime import datetime
+        
+        # Ensure table exists
+        self._init_emotional_states_table()
+        
+        # Generate ID and timestamp
+        state_id = str(uuid.uuid4())
+        timestamp = datetime.now().isoformat()
+        
+        # Calculate hex color from RGB values
+        def _float_to_hex(val: float) -> str:
+            return format(int(val * 255), '02x')
+        
+        hex_color = f"#{_float_to_hex(dopamine)}{_float_to_hex(norepinephrine)}{_float_to_hex(serotonin)}"
+        
+        # Determine emotion label based on levels
+        emotion_label = "Balanced"
+        emotion_category = "neutral"
+        
+        if dopamine > 0.7 and serotonin > 0.6:
+            emotion_label = "Joyful"
+            emotion_category = "positive"
+        elif dopamine > 0.6 and norepinephrine > 0.6:
+            emotion_label = "Excited"
+            emotion_category = "positive"
+        elif norepinephrine > 0.7:
+            emotion_label = "Stressed"
+            emotion_category = "negative"
+        elif serotonin > 0.7 and dopamine < 0.4:
+            emotion_label = "Calm"
+            emotion_category = "neutral"
+        elif dopamine < 0.3 and norepinephrine < 0.3 and serotonin < 0.3:
+            emotion_label = "Low"
+            emotion_category = "negative"
+        
+        # Convert triggers list to JSON string
+        triggers_json = json.dumps(triggers) if triggers else None
+        
+        # Insert into database
+        self._db.execute(
+            """
+            INSERT INTO emotional_states (
+                id, timestamp, dopamine, norepinephrine, serotonin,
+                oxytocin, endorphins, gaba, notes, triggers,
+                hex_color, emotion_label, emotion_category
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (state_id, timestamp, dopamine, norepinephrine, serotonin,
+             oxytocin, endorphins, gaba, notes, triggers_json,
+             hex_color, emotion_label, emotion_category)
+        )
+        
+        return self.get_emotional_state(state_id)
+    
+    def delete_emotional_state(self, state_id: str) -> bool:
+        """
+        Delete an emotional state.
+        
+        Args:
+            state_id: Emotional state ID to delete
+            
+        Returns:
+            True if deleted, False if not found
+        """
+        result = self._db.execute(
+            "DELETE FROM emotional_states WHERE id = ?",
+            (state_id,)
+        )
+        return result.rowcount > 0
+
+    # ==================== INSIGHTS ====================
+    
+    def _init_insights_table(self):
+        """Create the insights table if it doesn't exist."""
+        self._db.execute("""
+            CREATE TABLE IF NOT EXISTS insights (
+                id TEXT PRIMARY KEY,
+                user_id TEXT,
+                insight_type TEXT NOT NULL,
+                title TEXT NOT NULL,
+                description TEXT,
+                data TEXT,
+                created_at TEXT NOT NULL,
+                is_read INTEGER DEFAULT 0
+            )
+        """)
+        self._db.execute("""
+            CREATE INDEX IF NOT EXISTS idx_insights_type 
+            ON insights(insight_type)
+        """)
+    
+    def save_insight(
+        self,
+        insight_type: str,
+        title: str,
+        description: str = "",
+        data: Optional[Dict[str, Any]] = None,
+        user_id: str = "default"
+    ) -> Dict[str, Any]:
+        """
+        Save an insight to the database.
+        
+        Args:
+            insight_type: Type of insight (correlation, burnout, prediction, etc.)
+            title: Insight title
+            description: Detailed description
+            data: Additional data as JSON
+            user_id: User ID (default for single-user)
+            
+        Returns:
+            Created insight dictionary
+        """
+        import uuid
+        from datetime import datetime
+        
+        self._init_insights_table()
+        
+        insight_id = str(uuid.uuid4())
+        timestamp = datetime.now().isoformat()
+        data_json = json.dumps(data) if data else None
+        
+        self._db.execute(
+            """
+            INSERT INTO insights (
+                id, user_id, insight_type, title, description, data, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?)
+            """,
+            (insight_id, user_id, insight_type, title, description, data_json, timestamp)
+        )
+        
+        return self.get_insight(insight_id)
+    
+    def get_insights(
+        self,
+        insight_type: Optional[str] = None,
+        limit: int = 50
+    ) -> List[Dict[str, Any]]:
+        """
+        Get insights, optionally filtered by type.
+        
+        Args:
+            insight_type: Filter by type (optional)
+            limit: Maximum number to return
+            
+        Returns:
+            List of insight dictionaries
+        """
+        self._init_insights_table()
+        
+        if insight_type:
+            rows = self._db.fetch_all(
+                "SELECT * FROM insights WHERE insight_type = ? ORDER BY created_at DESC LIMIT ?",
+                (insight_type, limit)
+            )
+        else:
+            rows = self._db.fetch_all(
+                "SELECT * FROM insights ORDER BY created_at DESC LIMIT ?",
+                (limit,)
+            )
+        
+        results = []
+        for row in rows:
+            result = dict(row)
+            if result.get('data'):
+                try:
+                    result['data'] = json.loads(result['data'])
+                except:
+                    pass
+            results.append(result)
+        return results
+    
+    def get_insight(self, insight_id: str) -> Optional[Dict[str, Any]]:
+        """
+        Get a single insight by ID.
+        
+        Args:
+            insight_id: Insight ID
+            
+        Returns:
+            Insight dictionary or None
+        """
+        row = self._db.fetch_one(
+            "SELECT * FROM insights WHERE id = ?",
+            (insight_id,)
+        )
+        if not row:
+            return None
+        result = dict(row)
+        if result.get('data'):
+            try:
+                result['data'] = json.loads(result['data'])
+            except:
+                pass
+        return result
+    
+    def mark_insight_read(self, insight_id: str) -> bool:
+        """
+        Mark an insight as read.
+        
+        Args:
+            insight_id: Insight ID
+            
+        Returns:
+            True if updated
+        """
+        result = self._db.execute(
+            "UPDATE insights SET is_read = 1 WHERE id = ?",
+            (insight_id,)
+        )
+        return result.rowcount > 0
+    
+    def delete_insight(self, insight_id: str) -> bool:
+        """
+        Delete an insight.
+        
+        Args:
+            insight_id: Insight ID
+            
+        Returns:
+            True if deleted
+        """
+        result = self._db.execute(
+            "DELETE FROM insights WHERE id = ?",
+            (insight_id,)
         )
         return result.rowcount > 0
 

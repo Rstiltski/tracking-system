@@ -229,6 +229,15 @@ from backend.routes import health
 from backend.routes import time
 from backend.routes import finances
 from backend.routes import journal
+from backend.routes import achievements  # Phase 14
+from backend.routes import emotional_health  # Phase 14
+from backend.routes import insights  # Phase 14
+from backend.routes import diary  # Phase 14
+from backend.routes import privacy  # Phase 14
+from backend.routes import notifications  # Phase 14
+from backend.routes import challenges  # Phase 14
+from backend.routes import friends  # Phase 14
+from backend.routes import experiments  # Phase 14
 
 app.include_router(habits.router)
 app.include_router(tasks.router)
@@ -237,44 +246,15 @@ app.include_router(health.router)
 app.include_router(time.router)
 app.include_router(finances.router)
 app.include_router(journal.router)
-
-
-# ============================================================================
-# Database Connection Endpoint (for testing)
-# ============================================================================
-
-@app.get("/api/db/test")
-async def test_database_connection() -> Dict[str, Any]:
-    """
-    Test the database connection.
-    
-    Returns:
-        Dict with connection status and database path
-    """
-    if not EXISTING_MODULES_LOADED:
-        return {
-            "status": "error",
-            "message": "tracking_app modules not loaded",
-        }
-    
-    try:
-        # Test simple database query
-        db = database.Database()
-        with db.get_connection() as conn:
-            cursor = conn.execute("SELECT 1")
-            result = cursor.fetchone()
-        
-        return {
-            "status": "connected",
-            "database_path": settings.database_path,
-            "query_result": result[0] if result else None,
-        }
-    except Exception as e:
-        return {
-            "status": "error",
-            "message": str(e),
-            "database_path": settings.database_path,
-        }
+app.include_router(achievements.router)  # Phase 14
+app.include_router(emotional_health.router)  # Phase 14
+app.include_router(insights.router)  # Phase 14
+app.include_router(diary.router)  # Phase 14
+app.include_router(privacy.router)  # Phase 14
+app.include_router(notifications.router)  # Phase 14
+app.include_router(challenges.router)  # Phase 14
+app.include_router(friends.router)  # Phase 14
+app.include_router(experiments.router)  # Phase 14
 
 
 # ============================================================================

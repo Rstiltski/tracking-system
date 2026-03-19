@@ -88,6 +88,60 @@ function App() {
                             Finances
                         </button>
                         <button
+                            onClick={() => setView('emotional')}
+                            className={`py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${view === 'emotional'
+                                ? 'border-primary-500 text-primary-600'
+                                : 'border-transparent text-gray-500 hover:text-gray-700'
+                                }`}
+                        >
+                            Emotional
+                        </button>
+                        <button
+                            onClick={() => setView('achievements')}
+                            className={`py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${view === 'achievements'
+                                ? 'border-primary-500 text-primary-600'
+                                : 'border-transparent text-gray-500 hover:text-gray-700'
+                                }`}
+                        >
+                            Achievements
+                        </button>
+                        <button
+                            onClick={() => setView('insights')}
+                            className={`py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${view === 'insights'
+                                ? 'border-primary-500 text-primary-600'
+                                : 'border-transparent text-gray-500 hover:text-gray-700'
+                                }`}
+                        >
+                            Insights
+                        </button>
+                        <button
+                            onClick={() => setView('calendar')}
+                            className={`py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${view === 'calendar'
+                                ? 'border-primary-500 text-primary-600'
+                                : 'border-transparent text-gray-500 hover:text-gray-700'
+                                }`}
+                        >
+                            Calendar
+                        </button>
+                        <button
+                            onClick={() => setView('reports')}
+                            className={`py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${view === 'reports'
+                                ? 'border-primary-500 text-primary-600'
+                                : 'border-transparent text-gray-500 hover:text-gray-700'
+                                }`}
+                        >
+                            Reports
+                        </button>
+                        <button
+                            onClick={() => setView('settings')}
+                            className={`py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${view === 'settings'
+                                ? 'border-primary-500 text-primary-600'
+                                : 'border-transparent text-gray-500 hover:text-gray-700'
+                                }`}
+                        >
+                            Settings
+                        </button>
+                        <button
                             onClick={() => setView('test')}
                             className={`py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${view === 'test'
                                 ? 'border-primary-500 text-primary-600'
@@ -116,6 +170,12 @@ function App() {
                 {view === 'health' && <HealthView setStatus={setStatus} />}
                 {view === 'time' && <TimeView setStatus={setStatus} />}
                 {view === 'finances' && <FinancesView setStatus={setStatus} />}
+                {view === 'emotional' && <EmotionalHealthView setStatus={setStatus} />}
+                {view === 'achievements' && <AchievementsView setStatus={setStatus} />}
+                {view === 'insights' && <InsightsView setStatus={setStatus} />}
+                {view === 'calendar' && <CalendarView setStatus={setStatus} />}
+                {view === 'reports' && <ReportsView setStatus={setStatus} />}
+                {view === 'settings' && <SettingsView setStatus={setStatus} />}
                 {view === 'test' && <ApiHealthDashboard />}
             </main>
 
@@ -1225,6 +1285,859 @@ function FinancesView({ setStatus }) {
                         )}
                     </tbody>
                 </table>
+            </div>
+        </div>
+    )
+}
+
+// Emotional Health View (RGB Model: Dopamine, Norepinephrine, Serotonin)
+function EmotionalHealthView({ setStatus }) {
+    const [entries, setEntries] = useState([])
+    const [loading, setLoading] = useState(false)
+    const [newEntry, setNewEntry] = useState({
+        dopamine: 50, // Joy/Excitement
+        norepinephrine: 50, // Stress/Energy
+        serotonin: 50, // Satisfaction/Calm
+        mood: 'neutral',
+        notes: ''
+    })
+
+    const EMOTION_PRESETS = [
+        { name: 'Joyful', dopamine: 90, norepinephrine: 60, serotonin: 80, emoji: '😊' },
+        { name: 'Excited', dopamine: 95, norepinephrine: 90, serotonin: 60, emoji: '🤩' },
+        { name: 'Content', dopamine: 60, norepinephrine: 30, serotonin: 90, emoji: '😌' },
+        { name: 'Calm', dopamine: 40, norepinephrine: 20, serotonin: 85, emoji: '😴' },
+        { name: 'Anxious', dopamine: 30, norepinephrine: 90, serotonin: 30, emoji: '😰' },
+        { name: 'Stressed', dopamine: 20, norepinephrine: 95, serotonin: 20, emoji: '😫' },
+        { name: 'Sad', dopamine: 20, norepinephrine: 40, serotonin: 20, emoji: '😢' },
+        { name: 'Angry', dopamine: 30, norepinephrine: 85, serotonin: 15, emoji: '😠' },
+        { name: 'Tired', dopamine: 30, norepinephrine: 20, serotonin: 40, emoji: '😪' },
+        { name: 'Energetic', dopamine: 70, norepinephrine: 70, serotonin: 50, emoji: '⚡' },
+        { name: 'Grateful', dopamine: 70, norepinephrine: 30, serotonin: 85, emoji: '🙏' },
+        { name: 'Motivated', dopamine: 85, norepinephrine: 70, serotonin: 60, emoji: '💪' },
+        { name: 'Frustrated', dopamine: 25, norepinephrine: 80, serotonin: 25, emoji: '😤' },
+        { name: 'Bored', dopamine: 20, norepinephrine: 20, serotonin: 40, emoji: '😑' },
+        { name: 'Hopeful', dopamine: 70, norepinephrine: 50, serotonin: 65, emoji: '🌟' }
+    ]
+
+    const fetchEntries = async () => {
+        setLoading(true)
+        try {
+            const response = await axios.get(`${API_BASE}/emotional-health/entries`)
+            setEntries(response.data)
+            setStatus({ type: 'success', message: `Loaded ${response.data.length} emotional entries` })
+        } catch (error) {
+            setStatus({ type: 'error', message: `Error: ${error.message}` })
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const createEntry = async (e) => {
+        e.preventDefault()
+        try {
+            await axios.post(`${API_BASE}/emotional-health/entries`, newEntry)
+            setNewEntry({ dopamine: 50, norepinephrine: 50, serotonin: 50, mood: 'neutral', notes: '' })
+            setStatus({ type: 'success', message: 'Emotional state recorded!' })
+            fetchEntries()
+        } catch (error) {
+            setStatus({ type: 'error', message: `Error: ${error.message}` })
+        }
+    }
+
+    const applyPreset = (preset) => {
+        setNewEntry({
+            ...newEntry,
+            dopamine: preset.dopamine,
+            norepinephrine: preset.norepinephrine,
+            serotonin: preset.serotonin,
+            mood: preset.name.toLowerCase()
+        })
+        setStatus({ type: 'success', message: `Applied ${preset.name} preset` })
+    }
+
+    useEffect(() => {
+        fetchEntries()
+    }, [])
+
+    return (
+        <div className="space-y-6">
+            <div className="flex justify-between items-center">
+                <h2 className="text-xl font-semibold text-gray-900">Emotional Health</h2>
+                <button onClick={fetchEntries} disabled={loading} className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:opacity-50">
+                    {loading ? 'Loading...' : 'Refresh'}
+                </button>
+            </div>
+
+            {/* RGB Sliders */}
+            <form onSubmit={createEntry} className="bg-white p-6 rounded-lg shadow">
+                <h3 className="text-lg font-medium mb-4">How are you feeling?</h3>
+
+                {/* Presets */}
+                <div className="mb-4">
+                    <p className="text-sm text-gray-500 mb-2">Quick presets:</p>
+                    <div className="flex flex-wrap gap-2">
+                        {EMOTION_PRESETS.slice(0, 8).map((preset) => (
+                            <button
+                                key={preset.name}
+                                type="button"
+                                onClick={() => applyPreset(preset)}
+                                className="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded-full"
+                            >
+                                {preset.emoji} {preset.name}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Dopamine Slider */}
+                <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Dopamine (Joy/Excitement): {newEntry.dopamine}%
+                    </label>
+                    <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={newEntry.dopamine}
+                        onChange={(e) => setNewEntry({ ...newEntry, dopamine: parseInt(e.target.value) })}
+                        className="w-full h-2 bg-gradient-to-r from-gray-300 via-purple-500 to-purple-600 rounded-lg appearance-none cursor-pointer"
+                    />
+                </div>
+
+                {/* Norepinephrine Slider */}
+                <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Norepinephrine (Stress/Energy): {newEntry.norepinephrine}%
+                    </label>
+                    <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={newEntry.norepinephrine}
+                        onChange={(e) => setNewEntry({ ...newEntry, norepinephrine: parseInt(e.target.value) })}
+                        className="w-full h-2 bg-gradient-to-r from-gray-300 via-red-500 to-red-600 rounded-lg appearance-none cursor-pointer"
+                    />
+                </div>
+
+                {/* Serotonin Slider */}
+                <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Serotonin (Satisfaction/Calm): {newEntry.serotonin}%
+                    </label>
+                    <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={newEntry.serotonin}
+                        onChange={(e) => setNewEntry({ ...newEntry, serotonin: parseInt(e.target.value) })}
+                        className="w-full h-2 bg-gradient-to-r from-gray-300 via-blue-500 to-blue-600 rounded-lg appearance-none cursor-pointer"
+                    />
+                </div>
+
+                <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                    <input
+                        type="text"
+                        value={newEntry.notes}
+                        onChange={(e) => setNewEntry({ ...newEntry, notes: e.target.value })}
+                        placeholder="Any thoughts or context..."
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    />
+                </div>
+
+                <button type="submit" className="w-full px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700">
+                    Record Emotional State
+                </button>
+            </form>
+
+            {/* Recent Entries */}
+            <div className="bg-white rounded-lg shadow overflow-hidden">
+                <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                        <tr>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Dopamine</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Norepinephrine</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Serotonin</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                        {entries.slice(0, 10).map((entry) => (
+                            <tr key={entry.id}>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{entry.date || '-'}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                    <span className="px-2 py-1 rounded-full bg-purple-100 text-purple-800">{entry.dopamine}%</span>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                    <span className="px-2 py-1 rounded-full bg-red-100 text-red-800">{entry.norepinephrine}%</span>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                    <span className="px-2 py-1 rounded-full bg-blue-100 text-blue-800">{entry.serotonin}%</span>
+                                </td>
+                                <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">{entry.notes || '-'}</td>
+                            </tr>
+                        ))}
+                        {entries.length === 0 && (
+                            <tr>
+                                <td colSpan="5" className="px-6 py-8 text-center text-gray-500">
+                                    No emotional entries yet. Start tracking your feelings!
+                                </td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    )
+}
+
+// Achievements View (XP, Levels, Badges)
+function AchievementsView({ setStatus }) {
+    const [achievements, setAchievements] = useState([])
+    const [userStats, setUserStats] = useState(null)
+    const [loading, setLoading] = useState(false)
+
+    const fetchData = async () => {
+        setLoading(true)
+        try {
+            const [achievementsRes, statsRes] = await Promise.all([
+                axios.get(`${API_BASE}/achievements`),
+                axios.get(`${API_BASE}/user/stats`)
+            ])
+            setAchievements(achievementsRes.data.achievements || [])
+            setUserStats(statsRes.data)
+            setStatus({ type: 'success', message: 'Achievements loaded!' })
+        } catch (error) {
+            setStatus({ type: 'error', message: `Error: ${error.message}` })
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    useEffect(() => {
+        fetchData()
+    }, [])
+
+    const getLevelProgress = () => {
+        if (!userStats) return 0
+        const { xp = 0, level = 1 } = userStats
+        const xpForNextLevel = level * 1000
+        const xpInCurrentLevel = xp % xpForNextLevel
+        return Math.min((xpInCurrentLevel / xpForNextLevel) * 100, 100)
+    }
+
+    return (
+        <div className="space-y-6">
+            <div className="flex justify-between items-center">
+                <h2 className="text-xl font-semibold text-gray-900">Achievements</h2>
+                <button onClick={fetchData} disabled={loading} className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:opacity-50">
+                    {loading ? 'Loading...' : 'Refresh'}
+                </button>
+            </div>
+
+            {/* User Stats Card */}
+            {userStats && (
+                <div className="bg-white p-6 rounded-lg shadow">
+                    <div className="flex items-center justify-between mb-4">
+                        <div>
+                            <h3 className="text-2xl font-bold text-primary-600">Level {userStats.level || 1}</h3>
+                            <p className="text-gray-500">{userStats.xp || 0} XP</p>
+                        </div>
+                        <div className="text-right">
+                            <p className="text-sm text-gray-500">Next Level</p>
+                            <p className="font-medium">{((userStats.level || 1) * 1000) - (userStats.xp || 0)} XP away</p>
+                        </div>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-4">
+                        <div
+                            className="bg-primary-600 h-4 rounded-full transition-all duration-500"
+                            style={{ width: `${getLevelProgress()}%` }}
+                        />
+                    </div>
+                </div>
+            )}
+
+            {/* Achievement Badges */}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {achievements.map((achievement) => (
+                    <div
+                        key={achievement.id}
+                        className={`p-4 rounded-lg shadow ${achievement.unlocked ? 'bg-white' : 'bg-gray-100 opacity-60'}`}
+                    >
+                        <div className="text-4xl mb-2 text-center">{achievement.icon || '🏆'}</div>
+                        <h4 className="font-medium text-center">{achievement.name}</h4>
+                        <p className="text-sm text-gray-500 text-center mt-1">{achievement.description}</p>
+                        {achievement.unlocked && (
+                            <p className="text-xs text-green-600 text-center mt-2">✓ Unlocked</p>
+                        )}
+                    </div>
+                ))}
+                {achievements.length === 0 && (
+                    <div className="col-span-full text-center py-8 text-gray-500">
+                        No achievements yet. Complete habits to earn badges!
+                    </div>
+                )}
+            </div>
+        </div>
+    )
+}
+
+// Insights View (AI-Powered Analytics)
+function InsightsView({ setStatus }) {
+    const [insights, setInsights] = useState([])
+    const [correlations, setCorrelations] = useState([])
+    const [burnoutRisk, setBurnoutRisk] = useState(null)
+    const [loading, setLoading] = useState(false)
+
+    const fetchData = async () => {
+        setLoading(true)
+        try {
+            const [insightsRes] = await Promise.all([
+                axios.get(`${API_BASE}/insights`)
+            ])
+            setInsights(insightsRes.data.insights || [])
+            setCorrelations(insightsRes.data.correlations || [])
+            setBurnoutRisk(insightsRes.data.burnout_risk)
+            setStatus({ type: 'success', message: 'Insights loaded!' })
+        } catch (error) {
+            setStatus({ type: 'error', message: `Error: ${error.message}` })
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    useEffect(() => {
+        fetchData()
+    }, [])
+
+    const getBurnoutColor = (risk) => {
+        if (risk === null || risk === undefined) return 'bg-gray-100'
+        if (risk < 30) return 'bg-green-100 text-green-800'
+        if (risk < 60) return 'bg-yellow-100 text-yellow-800'
+        if (risk < 80) return 'bg-orange-100 text-orange-800'
+        return 'bg-red-100 text-red-800'
+    }
+
+    return (
+        <div className="space-y-6">
+            <div className="flex justify-between items-center">
+                <h2 className="text-xl font-semibold text-gray-900">Insights</h2>
+                <button onClick={fetchData} disabled={loading} className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:opacity-50">
+                    {loading ? 'Loading...' : 'Refresh'}
+                </button>
+            </div>
+
+            {/* Burnout Risk Card */}
+            {burnoutRisk !== null && burnoutRisk !== undefined && (
+                <div className={`p-6 rounded-lg shadow ${getBurnoutColor(burnoutRisk)}`}>
+                    <h3 className="text-lg font-semibold mb-2">🔥 Burnout Risk Level</h3>
+                    <div className="flex items-center gap-4">
+                        <span className="text-4xl font-bold">{burnoutRisk}%</span>
+                        <div className="flex-1">
+                            <div className="w-full bg-gray-300 rounded-full h-3">
+                                <div
+                                    className={`h-3 rounded-full ${burnoutRisk < 30 ? 'bg-green-500' : burnoutRisk < 60 ? 'bg-yellow-500' : burnoutRisk < 80 ? 'bg-orange-500' : 'bg-red-500'}`}
+                                    style={{ width: `${burnoutRisk}%` }}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    {burnoutRisk >= 60 && (
+                        <p className="mt-2 text-sm">Consider taking a break or reducing habit load.</p>
+                    )}
+                </div>
+            )}
+
+            {/* AI Insights */}
+            <div className="bg-white rounded-lg shadow overflow-hidden">
+                <div className="px-6 py-4 border-b">
+                    <h3 className="text-lg font-semibold">💡 AI Insights</h3>
+                </div>
+                <div className="p-6">
+                    {insights.length > 0 ? (
+                        <div className="space-y-4">
+                            {insights.map((insight, idx) => (
+                                <div key={idx} className="flex gap-3 p-3 bg-blue-50 rounded-lg">
+                                    <span className="text-xl">💡</span>
+                                    <div>
+                                        <p className="font-medium">{insight.title}</p>
+                                        <p className="text-sm text-gray-600">{insight.description}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="text-gray-500 text-center py-4">No insights available yet. Keep tracking!</p>
+                    )}
+                </div>
+            </div>
+
+            {/* Correlations */}
+            <div className="bg-white rounded-lg shadow overflow-hidden">
+                <div className="px-6 py-4 border-b">
+                    <h3 className="text-lg font-semibold">🔗 Correlations</h3>
+                </div>
+                <div className="p-6">
+                    {correlations.length > 0 ? (
+                        <div className="space-y-3">
+                            {correlations.map((corr, idx) => (
+                                <div key={idx} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                                    <span className="text-sm">{corr.factor_1} ↔ {corr.factor_2}</span>
+                                    <span className={`px-2 py-1 rounded text-xs font-medium ${corr.strength > 0.5 ? 'bg-green-100 text-green-800' :
+                                        corr.strength > 0.3 ? 'bg-yellow-100 text-yellow-800' :
+                                            'bg-gray-100 text-gray-800'
+                                        }`}>
+                                        {corr.strength.toFixed(2)}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="text-gray-500 text-center py-4">No correlations detected yet.</p>
+                    )}
+                </div>
+            </div>
+        </div>
+    )
+}
+
+// Calendar View with Habit Heatmap
+function CalendarView({ setStatus }) {
+    const [currentDate, setCurrentDate] = useState(new Date())
+    const [habits, setHabits] = useState([])
+    const [entries, setEntries] = useState({})
+    const [loading, setLoading] = useState(false)
+
+    const fetchData = async () => {
+        setLoading(true)
+        try {
+            const [habitsRes, entriesRes] = await Promise.all([
+                axios.get(`${API_BASE}/habits`),
+                axios.get(`${API_BASE}/habits/entries`)
+            ])
+            setHabits(habitsRes.data)
+            // Organize entries by date
+            const entryMap = {}
+            entriesRes.data.forEach(entry => {
+                const date = entry.date
+                if (!entryMap[date]) entryMap[date] = []
+                entryMap[date].push(entry)
+            })
+            setEntries(entryMap)
+            setStatus({ type: 'success', message: 'Calendar data loaded!' })
+        } catch (error) {
+            setStatus({ type: 'error', message: `Error: ${error.message}` })
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const getDaysInMonth = (date) => {
+        const year = date.getFullYear()
+        const month = date.getMonth()
+        return new Date(year, month + 1, 0).getDate()
+    }
+
+    const getFirstDayOfMonth = (date) => {
+        const year = date.getFullYear()
+        const month = date.getMonth()
+        return new Date(year, month, 1).getDay()
+    }
+
+    const formatDate = (day) => {
+        const year = currentDate.getFullYear()
+        const month = String(currentDate.getMonth() + 1).padStart(2, '0')
+        const dayStr = String(day).padStart(2, '0')
+        return `${year}-${month}-${dayStr}`
+    }
+
+    const prevMonth = () => {
+        setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1))
+    }
+
+    const nextMonth = () => {
+        setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1))
+    }
+
+    const getCompletionColor = (day) => {
+        const dateStr = formatDate(day)
+        const dayEntries = entries[dateStr] || []
+        if (dayEntries.length === 0) return 'bg-gray-50'
+        const rate = dayEntries.length / habits.length
+        if (rate >= 0.8) return 'bg-green-500'
+        if (rate >= 0.5) return 'bg-green-300'
+        if (rate >= 0.3) return 'bg-yellow-300'
+        return 'bg-yellow-100'
+    }
+
+    useEffect(() => {
+        fetchData()
+    }, [])
+
+    const daysInMonth = getDaysInMonth(currentDate)
+    const firstDay = getFirstDayOfMonth(currentDate)
+    const days = []
+    for (let i = 0; i < firstDay; i++) days.push(null)
+    for (let i = 1; i <= daysInMonth; i++) days.push(i)
+
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December']
+
+    return (
+        <div className="space-y-6">
+            <div className="flex justify-between items-center">
+                <h2 className="text-xl font-semibold text-gray-900">Calendar</h2>
+                <button onClick={fetchData} disabled={loading} className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:opacity-50">
+                    {loading ? 'Loading...' : 'Refresh'}
+                </button>
+            </div>
+
+            {/* Month Navigation */}
+            <div className="bg-white p-4 rounded-lg shadow">
+                <div className="flex justify-between items-center mb-4">
+                    <button onClick={prevMonth} className="px-4 py-2 bg-gray-100 rounded hover:bg-gray-200">← Prev</button>
+                    <h3 className="text-lg font-semibold">{monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}</h3>
+                    <button onClick={nextMonth} className="px-4 py-2 bg-gray-100 rounded hover:bg-gray-200">Next →</button>
+                </div>
+
+                {/* Calendar Grid */}
+                <div className="grid grid-cols-7 gap-1">
+                    {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                        <div key={day} className="text-center text-sm font-medium text-gray-500 py-2">{day}</div>
+                    ))}
+                    {days.map((day, idx) => (
+                        <div
+                            key={idx}
+                            className={`h-16 border rounded flex items-center justify-center text-sm ${day ? `${getCompletionColor(day)} cursor-pointer hover:opacity-80` : ''
+                                }`}
+                        >
+                            {day}
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Legend */}
+            <div className="bg-white p-4 rounded-lg shadow">
+                <h4 className="text-sm font-medium mb-2">Completion Legend</h4>
+                <div className="flex gap-4 text-sm">
+                    <div className="flex items-center gap-1"><div className="w-4 h-4 bg-green-500 rounded"></div> 80%+</div>
+                    <div className="flex items-center gap-1"><div className="w-4 h-4 bg-green-300 rounded"></div> 50-79%</div>
+                    <div className="flex items-center gap-1"><div className="w-4 h-4 bg-yellow-300 rounded"></div> 30-49%</div>
+                    <div className="flex items-center gap-1"><div className="w-4 h-4 bg-yellow-100 rounded"></div> 1-29%</div>
+                    <div className="flex items-center gap-1"><div className="w-4 h-4 bg-gray-50 border rounded"></div> None</div>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+// Reports View with Date Range and Export
+function ReportsView({ setStatus }) {
+    const [dateRange, setDateRange] = useState('week')
+    const [startDate, setStartDate] = useState('')
+    const [endDate, setEndDate] = useState('')
+    const [reportData, setReportData] = useState(null)
+    const [loading, setLoading] = useState(false)
+
+    const fetchReport = async () => {
+        setLoading(true)
+        try {
+            const params = new URLSearchParams()
+            if (dateRange === 'custom') {
+                if (startDate) params.append('start_date', startDate)
+                if (endDate) params.append('end_date', endDate)
+            } else {
+                params.append('range', dateRange)
+            }
+            const response = await axios.get(`${API_BASE}/habits/report?${params}`)
+            setReportData(response.data)
+            setStatus({ type: 'success', message: 'Report loaded!' })
+        } catch (error) {
+            setStatus({ type: 'error', message: `Error: ${error.message}` })
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const exportCSV = async () => {
+        try {
+            const response = await axios.get(`${API_BASE}/export/csv`, { responseType: 'blob' })
+            const url = window.URL.createObjectURL(new Blob([response.data]))
+            const link = document.createElement('a')
+            link.href = url
+            link.setAttribute('download', `export_${new Date().toISOString().split('T')[0]}.csv`)
+            document.body.appendChild(link)
+            link.click()
+            link.remove()
+            setStatus({ type: 'success', message: 'Export downloaded!' })
+        } catch (error) {
+            setStatus({ type: 'error', message: `Export failed: ${error.message}` })
+        }
+    }
+
+    const exportJSON = async () => {
+        try {
+            const response = await axios.get(`${API_BASE}/export/json`, { responseType: 'blob' })
+            const url = window.URL.createObjectURL(new Blob([response.data]))
+            const link = document.createElement('a')
+            link.href = url
+            link.setAttribute('download', `export_${new Date().toISOString().split('T')[0]}.json`)
+            document.body.appendChild(link)
+            link.click()
+            link.remove()
+            setStatus({ type: 'success', message: 'Export downloaded!' })
+        } catch (error) {
+            setStatus({ type: 'error', message: `Export failed: ${error.message}` })
+        }
+    }
+
+    return (
+        <div className="space-y-6">
+            <div className="flex justify-between items-center">
+                <h2 className="text-xl font-semibold text-gray-900">Reports</h2>
+                <div className="flex gap-2">
+                    <button onClick={exportCSV} className="px-3 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm">
+                        Export CSV
+                    </button>
+                    <button onClick={exportJSON} className="px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">
+                        Export JSON
+                    </button>
+                </div>
+            </div>
+
+            {/* Date Range Selection */}
+            <div className="bg-white p-4 rounded-lg shadow">
+                <div className="flex gap-4 items-end flex-wrap">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Date Range</label>
+                        <select
+                            value={dateRange}
+                            onChange={(e) => setDateRange(e.target.value)}
+                            className="px-3 py-2 border border-gray-300 rounded-md"
+                        >
+                            <option value="week">Last 7 Days</option>
+                            <option value="month">Last 30 Days</option>
+                            <option value="quarter">Last 90 Days</option>
+                            <option value="year">Last Year</option>
+                            <option value="custom">Custom Range</option>
+                        </select>
+                    </div>
+                    {dateRange === 'custom' && (
+                        <>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                                <input
+                                    type="date"
+                                    value={startDate}
+                                    onChange={(e) => setStartDate(e.target.value)}
+                                    className="px-3 py-2 border border-gray-300 rounded-md"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                                <input
+                                    type="date"
+                                    value={endDate}
+                                    onChange={(e) => setEndDate(e.target.value)}
+                                    className="px-3 py-2 border border-gray-300 rounded-md"
+                                />
+                            </div>
+                        </>
+                    )}
+                    <button
+                        onClick={fetchReport}
+                        disabled={loading}
+                        className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:opacity-50"
+                    >
+                        {loading ? 'Loading...' : 'Generate Report'}
+                    </button>
+                </div>
+            </div>
+
+            {/* Report Data */}
+            {reportData && (
+                <div className="bg-white p-6 rounded-lg shadow">
+                    <h3 className="text-lg font-semibold mb-4">Report Summary</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div className="p-4 bg-gray-50 rounded-lg">
+                            <p className="text-sm text-gray-500">Total Habits</p>
+                            <p className="text-2xl font-bold">{reportData.total_habits || 0}</p>
+                        </div>
+                        <div className="p-4 bg-gray-50 rounded-lg">
+                            <p className="text-sm text-gray-500">Completions</p>
+                            <p className="text-2xl font-bold">{reportData.total_completions || 0}</p>
+                        </div>
+                        <div className="p-4 bg-gray-50 rounded-lg">
+                            <p className="text-sm text-gray-500">Completion Rate</p>
+                            <p className="text-2xl font-bold">{((reportData.completion_rate || 0) * 100).toFixed(1)}%</p>
+                        </div>
+                        <div className="p-4 bg-gray-50 rounded-lg">
+                            <p className="text-sm text-gray-500">XP Earned</p>
+                            <p className="text-2xl font-bold">{reportData.xp_earned || 0}</p>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {!reportData && (
+                <div className="bg-white p-8 rounded-lg shadow text-center text-gray-500">
+                    Select a date range and click "Generate Report" to view your data.
+                </div>
+            )}
+        </div>
+    )
+}
+
+// Settings View
+function SettingsView({ setStatus }) {
+    const [settings, setSettings] = useState({
+        theme: 'light',
+        notifications: true,
+        quiet_hours_start: '22:00',
+        quiet_hours_end: '07:00',
+        timezone: 'UTC'
+    })
+    const [loading, setLoading] = useState(false)
+
+    const fetchSettings = async () => {
+        setLoading(true)
+        try {
+            const response = await axios.get(`${API_BASE}/user/settings`)
+            setSettings({ ...settings, ...response.data })
+        } catch (error) {
+            // Use defaults if endpoint doesn't exist
+            setStatus({ type: 'info', message: 'Using default settings' })
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const saveSettings = async () => {
+        try {
+            await axios.post(`${API_BASE}/user/settings`, settings)
+            setStatus({ type: 'success', message: 'Settings saved!' })
+        } catch (error) {
+            setStatus({ type: 'error', message: `Error saving: ${error.message}` })
+        }
+    }
+
+    useEffect(() => {
+        fetchSettings()
+    }, [])
+
+    return (
+        <div className="space-y-6">
+            <div className="flex justify-between items-center">
+                <h2 className="text-xl font-semibold text-gray-900">Settings</h2>
+                <button onClick={saveSettings} className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700">
+                    Save Settings
+                </button>
+            </div>
+
+            {/* Appearance */}
+            <div className="bg-white p-6 rounded-lg shadow">
+                <h3 className="text-lg font-semibold mb-4">Appearance</h3>
+                <div className="space-y-4">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Theme</label>
+                        <select
+                            value={settings.theme}
+                            onChange={(e) => setSettings({ ...settings, theme: e.target.value })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                        >
+                            <option value="light">Light</option>
+                            <option value="dark">Dark</option>
+                            <option value="auto">Auto (System)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            {/* Notifications */}
+            <div className="bg-white p-6 rounded-lg shadow">
+                <h3 className="text-lg font-semibold mb-4">Notifications</h3>
+                <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="font-medium">Enable Notifications</p>
+                            <p className="text-sm text-gray-500">Receive reminders for habits and tasks</p>
+                        </div>
+                        <button
+                            onClick={() => setSettings({ ...settings, notifications: !settings.notifications })}
+                            className={`relative inline-flex h-6 w-11 items-center rounded-full ${settings.notifications ? 'bg-primary-600' : 'bg-gray-200'
+                                }`}
+                        >
+                            <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${settings.notifications ? 'translate-x-6' : 'translate-x-1'
+                                }`} />
+                        </button>
+                    </div>
+
+                    {settings.notifications && (
+                        <div className="grid grid-cols-2 gap-4 pt-4 border-t">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Quiet Hours Start</label>
+                                <input
+                                    type="time"
+                                    value={settings.quiet_hours_start}
+                                    onChange={(e) => setSettings({ ...settings, quiet_hours_start: e.target.value })}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Quiet Hours End</label>
+                                <input
+                                    type="time"
+                                    value={settings.quiet_hours_end}
+                                    onChange={(e) => setSettings({ ...settings, quiet_hours_end: e.target.value })}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                />
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            {/* Data & Privacy */}
+            <div className="bg-white p-6 rounded-lg shadow">
+                <h3 className="text-lg font-semibold mb-4">Data & Privacy</h3>
+                <div className="space-y-4">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Timezone</label>
+                        <select
+                            value={settings.timezone}
+                            onChange={(e) => setSettings({ ...settings, timezone: e.target.value })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                        >
+                            <option value="UTC">UTC</option>
+                            <option value="US/Eastern">US Eastern</option>
+                            <option value="US/Pacific">US Pacific</option>
+                            <option value="Europe/London">Europe/London</option>
+                            <option value="Europe/Paris">Europe/Paris</option>
+                            <option value="Asia/Tokyo">Asia/Tokyo</option>
+                        </select>
+                    </div>
+                    <div className="pt-4 border-t">
+                        <button
+                            onClick={() => setStatus({ type: 'info', message: 'Export feature available in Reports tab' })}
+                            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200"
+                        >
+                            Export All Data
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {/* About */}
+            <div className="bg-white p-6 rounded-lg shadow">
+                <h3 className="text-lg font-semibold mb-4">About</h3>
+                <div className="text-sm text-gray-500 space-y-1">
+                    <p><strong>Veryfyn</strong> - Personal Tracking System</p>
+                    <p>Version: 2.0.0</p>
+                    <p>Architecture: React + FastAPI (Phase 13)</p>
+                </div>
             </div>
         </div>
     )
