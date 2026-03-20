@@ -17,6 +17,13 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspa
 
 from tracking_app.storage import Storage, get_storage as _get_storage
 
+# Import achievement tracker
+try:
+    from brain.behavioral.achievement_tracker import AchievementTracker
+    ACHIEVEMENTS_AVAILABLE = True
+except ImportError:
+    ACHIEVEMENTS_AVAILABLE = False
+
 
 def init_session_state():
     """
@@ -114,6 +121,18 @@ def add_xp(amount: int) -> int:
     new_xp = storage.add_xp(amount)
     st.session_state.user_xp = new_xp
     st.session_state.user_level = get_level_from_xp(new_xp)
+    
+    # Check and unlock achievements
+    if ACHIEVEMENTS_AVAILABLE:
+        try:
+            tracker = AchievementTracker(storage, "default")
+            newly_unlocked = tracker.check_achievements()
+            if newly_unlocked:
+                for achievement in newly_unlocked:
+                    st.toast(f"🏆 Unlocked: {achievement.name}! +{achievement.xp_reward} XP", icon="🎉")
+        except Exception:
+            pass  # Silently handle achievement check errors
+    
     return new_xp
 
 

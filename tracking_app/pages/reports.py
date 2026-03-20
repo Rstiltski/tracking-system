@@ -143,11 +143,11 @@ def render_page():
                 label="📥 Export as CSV",
                 data=csv_data,
                 file_name=f"veryfyn_report_{start_date}_{end_date}.csv",
-                mime="text/csv"
+                mime="text/csv",
+                key="export_csv"
             )
         else:
-            st.button("📥 Export as CSV", disabled=True)
-            st.caption("Generate a report first")
+            st.info("💡 Generate a report first to enable CSV export")
     
     with col2:
         if st.session_state.current_report:
@@ -158,11 +158,11 @@ def render_page():
                 label="📥 Export as JSON",
                 data=report_json,
                 file_name=f"veryfyn_report_{start_date}_{end_date}.json",
-                mime="application/json"
+                mime="application/json",
+                key="export_json"
             )
         else:
-            st.button("📥 Export as JSON", disabled=True)
-            st.caption("Generate a report first")
+            st.info("💡 Generate a report first to enable JSON export")
 
 
 def _generate_report(storage, processor, start_date: date, end_date: date, report_type: str) -> Dict[str, Any]:
@@ -179,7 +179,7 @@ def _generate_report(storage, processor, start_date: date, end_date: date, repor
     Returns:
         Dictionary containing report data
     """
-    report = {
+    report: Dict[str, Any] = {
         "date_range": {
             "start": start_date.isoformat(),
             "end": end_date.isoformat()

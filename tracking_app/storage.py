@@ -900,17 +900,55 @@ class Storage:
     # ==================== ACHIEVEMENTS ====================
     
     def get_achievements(self, unlocked_only: bool = False) -> List[Achievement]:
-        """Get all achievements."""
+        """
+        Get all achievements.
+        
+        Args:
+            unlocked_only: If True, only return unlocked achievements
+            
+        Returns:
+            List of Achievement objects
+        """
         if unlocked_only:
+            # Join with user_achievements to get only unlocked achievements
             rows = self._db.fetch_all(
-                "SELECT * FROM achievements WHERE unlocked_at IS NOT NULL"
+                """SELECT a.* FROM achievements a 
+                   INNER JOIN user_achievements ua ON a.id = ua.achievement_id"""
             )
         else:
             rows = self._db.fetch_all("SELECT * FROM achievements")
         return [Achievement.from_dict(row) for row in rows]
     
-    def unlock_achievement(self, achievement_id: str) -> Optional[Achievement]:
-        """Unlock an achievement."""
+    def get_user_achievement(self, user_id: str, achievement_id: str) -> Optional[Dict[str, Any]]:
+        """
+        Check if a user has unlocked a specific achievement.
+        
+        Args:
+            user_id: User ID
+            achievement_id: Achievement ID to check
+            
+        Returns:
+            User achievement record if unlocked, None otherwise
+        """
+        row = self._db.fetch_one(
+            "SELECT * FROM user_achievements WHERE user_id = ? AND achievement_id = ?",
+            (user_id, achievement_id)
+        )
+        return row
+
+    def unlock_achievement(self, achievement_id: str, xp_reward: int = 0, user_id: str = "default") -> Optional[Achievement]:
+        """
+        Unlock an achievement for the user.
+        
+        Args:
+            achievement_id: ID of the achievement to unlock
+            xp_reward: XP reward amount to grant
+            user_id: User ID (defaults to "default")
+            
+        Returns:
+            Achievement object if successful, None otherwise
+        """
+        # First check if achievement exists
         row = self._db.fetch_one(
             "SELECT * FROM achievements WHERE id = ?",
             (achievement_id,)
@@ -919,15 +957,27 @@ class Storage:
         if not row:
             return None
 
+        # Check if already unlocked for this user
+        existing = self._db.fetch_one(
+            "SELECT * FROM user_achievements WHERE user_id = ? AND achievement_id = ?",
+            (user_id, achievement_id)
+        )
+        
+        if existing:
+            return None  # Already unlocked
+
+        # Insert into user_achievements table
+        import uuid
+        user_achievement_id = str(uuid.uuid4())[:8]
+        
         self._db.execute(
-            "UPDATE achievements SET unlocked_at = ? WHERE id = ? AND unlocked_at IS NULL",
-            (datetime.now().isoformat(), achievement_id)
+            """INSERT INTO user_achievements 
+               (id, achievement_id, user_id, unlocked_at, xp_awarded)
+               VALUES (?, ?, ?, ?, ?)""",
+            (user_achievement_id, achievement_id, user_id, datetime.now().isoformat(), xp_reward)
         )
 
-        return self._db.fetch_one(
-            "SELECT * FROM achievements WHERE id = ?",
-            (achievement_id,)
-        )
+        return Achievement.from_dict(row)
 
     # ==================== BURNOUT RISK ====================
 

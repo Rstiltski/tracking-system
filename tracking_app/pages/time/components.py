@@ -21,6 +21,13 @@ from .helpers import (
 )
 from .session_state import start_timer, pause_timer, reset_timer
 
+# Import achievement tracker
+try:
+    from brain.behavioral.achievement_tracker import AchievementTracker
+    ACHIEVEMENTS_AVAILABLE = True
+except ImportError:
+    ACHIEVEMENTS_AVAILABLE = False
+
 
 def render_header():
     """Render page header."""
@@ -123,6 +130,18 @@ def render_timer():
                     storage = st.session_state.storage
                     xp_earned = calculate_xp(final_elapsed)
                     storage.add_xp(xp_earned)
+                    
+                    # Check and unlock achievements
+                    if ACHIEVEMENTS_AVAILABLE:
+                        try:
+                            tracker = AchievementTracker(storage, "default")
+                            newly_unlocked = tracker.check_achievements()
+                            if newly_unlocked:
+                                for achievement in newly_unlocked:
+                                    st.toast(f"🏆 Unlocked: {achievement.name}! +{achievement.xp_reward} XP", icon="🎉")
+                        except Exception as e:
+                            pass  # Silently handle achievement check errors
+                    
                     st.success(f"✅ Time entry saved! +{xp_earned} XP")
                 
                 # Reset timer
@@ -183,6 +202,18 @@ def render_manual_entry():
                     storage = st.session_state.storage
                     xp_earned = calculate_xp_for_hours(duration_hours)
                     storage.add_xp(xp_earned)
+                    
+                    # Check and unlock achievements
+                    if ACHIEVEMENTS_AVAILABLE:
+                        try:
+                            tracker = AchievementTracker(storage, "default")
+                            newly_unlocked = tracker.check_achievements()
+                            if newly_unlocked:
+                                for achievement in newly_unlocked:
+                                    st.toast(f"🏆 Unlocked: {achievement.name}! +{achievement.xp_reward} XP", icon="🎉")
+                        except Exception as e:
+                            pass  # Silently handle achievement check errors
+                    
                     st.success(f"✅ Entry saved! +{xp_earned} XP")
                 
                 st.session_state.show_manual_entry = False

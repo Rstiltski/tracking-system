@@ -10,6 +10,13 @@ from typing import Optional
 
 from .constants import HABIT_ICONS
 
+# Import achievement tracker
+try:
+    from brain.behavioral.achievement_tracker import AchievementTracker
+    ACHIEVEMENTS_AVAILABLE = True
+except ImportError:
+    ACHIEVEMENTS_AVAILABLE = False
+
 
 def render_add_habit_form():
     """
@@ -65,6 +72,18 @@ def render_add_habit_form():
                         target_type="at_least",
                         category="general"  # Default category
                     )
+                    
+                    # Check and unlock achievements after creating habit
+                    if ACHIEVEMENTS_AVAILABLE:
+                        try:
+                            tracker = AchievementTracker(storage, "default")
+                            newly_unlocked = tracker.check_achievements()
+                            if newly_unlocked:
+                                for achievement in newly_unlocked:
+                                    st.toast(f"🏆 Unlocked: {achievement.name}! +{achievement.xp_reward} XP", icon="🎉")
+                        except Exception:
+                            pass  # Silently handle achievement check errors
+                    
                     st.success(f"✅ Created habit: {habit.name}")
                     st.rerun()
                 except Exception as e:
@@ -134,6 +153,18 @@ def render_add_habit_form_inline():
                         target_type="at_least",
                         category="general"  # Default category
                     )
+                    
+                    # Check and unlock achievements after creating habit
+                    if ACHIEVEMENTS_AVAILABLE:
+                        try:
+                            tracker = AchievementTracker(storage)
+                            newly_unlocked = tracker.check_achievements()
+                            if newly_unlocked:
+                                for achievement in newly_unlocked:
+                                    st.toast(f"🏆 Unlocked: {achievement.name}! +{achievement.xp_reward} XP", icon="🎉")
+                        except Exception:
+                            pass  # Silently handle achievement check errors
+                    
                     st.session_state.show_add_habit_form = False
                     # Update timestamp to refresh all tabs
                     st.session_state.matrix_last_update = datetime.now().isoformat()

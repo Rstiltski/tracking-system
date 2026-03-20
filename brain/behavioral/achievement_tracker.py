@@ -160,9 +160,9 @@ class AchievementTracker:
         # Save to storage
         if hasattr(self.storage, 'unlock_achievement'):
             self.storage.unlock_achievement(
-                self.user_id,
                 achievement.id,
-                achievement.xp_reward
+                achievement.xp_reward,
+                self.user_id
             )
 
         # Add XP

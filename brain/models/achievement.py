@@ -140,6 +140,9 @@ class Achievement:
             return user_data.get("perfect_weeks", 0) >= req_value
         elif req_type == "total_completions":
             return user_data.get("total_completions", 0) >= req_value
+        elif req_type == "first_habit":
+            # Check if user has created at least one habit
+            return user_data.get("habit_count", 0) >= req_value
 
         return False
 
