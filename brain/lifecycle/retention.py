@@ -119,10 +119,11 @@ class RetentionEngine:
         # Create defaults for missing policies
         for entity_type, config in DEFAULT_POLICIES.items():
             if entity_type not in self._policies:
+                # Use config value - None means never archive/delete for this entity type
                 policy = RetentionPolicy(
                     entity_type=entity_type,
-                    archive_after_days=config['archive_after_days'] or 365,
-                    delete_after_days=config['delete_after_days'] or 730,
+                    archive_after_days=config['archive_after_days'],
+                    delete_after_days=config['delete_after_days'],
                     cascade_to=config['cascade_to']
                 )
                 self._policies[entity_type] = policy
@@ -131,10 +132,14 @@ class RetentionEngine:
         """Create default policies from configuration."""
         policies = {}
         for entity_type, config in DEFAULT_POLICIES.items():
+            # Use config value if not None, otherwise use sensible default
+            # None means never archive/delete for this entity type
+            archive_days = config['archive_after_days']
+            delete_days = config['delete_after_days']
             policies[entity_type] = RetentionPolicy(
                 entity_type=entity_type,
-                archive_after_days=config['archive_after_days'] or 365,
-                delete_after_days=config['delete_after_days'] or 730,
+                archive_after_days=archive_days,
+                delete_after_days=delete_days,
                 cascade_to=config['cascade_to']
             )
         return policies
@@ -196,11 +201,13 @@ class RetentionEngine:
         age_days = (datetime.now() - record_date).days
         
         # Check delete threshold first (higher priority)
-        if policy.delete_after_days and age_days >= policy.delete_after_days:
+        # None means never delete
+        if policy.delete_after_days is not None and age_days >= policy.delete_after_days:
             return RetentionAction.PURGE
         
         # Check archive threshold
-        if policy.archive_after_days and age_days >= policy.archive_after_days:
+        # None means never archive
+        if policy.archive_after_days is not None and age_days >= policy.archive_after_days:
             return RetentionAction.ARCHIVE
         
         return RetentionAction.KEEP

@@ -290,6 +290,11 @@ class TestConflictResolver:
             ConflictResolver, ConflictStrategy
         )
         
+        # Set up mock to return existing record
+        mock_cursor = MagicMock()
+        mock_cursor.fetchone.return_value = {'id': 'habit-1', 'name': 'Old Habit'}
+        mock_db.execute.return_value = mock_cursor
+        
         resolver = ConflictResolver(mock_db)
         
         conflict = resolver._check_by_id(
@@ -306,6 +311,11 @@ class TestConflictResolver:
         from brain.data_import.conflict_resolver import (
             ConflictResolver, ConflictStrategy
         )
+        
+        # Set up mock to return existing record
+        mock_cursor = MagicMock()
+        mock_cursor.fetchone.return_value = {'id': 'habit-1', 'name': 'Old Habit'}
+        mock_db.execute.return_value = mock_cursor
         
         resolver = ConflictResolver(mock_db)
         

@@ -392,24 +392,22 @@ class ImportValidator:
     
     def _get_type_rules(self, module_name: str) -> Dict[str, str]:
         """Get type rules for a module."""
+        # Note: 'id' field accepts any non-empty value (string or UUID)
+        # This allows flexibility for imported data from external systems
         rules = {
             'habits': {
-                'id': 'uuid',
                 'streak': 'int',
                 'created_at': 'datetime',
             },
             'tasks': {
-                'id': 'uuid',
                 'completed': 'bool',
                 'created_at': 'datetime',
             },
             'transactions': {
-                'id': 'uuid',
                 'amount': 'float',
                 'date': 'datetime',
             },
             'goals': {
-                'id': 'uuid',
                 'target_value': 'float',
                 'current_value': 'float',
                 'deadline': 'datetime',

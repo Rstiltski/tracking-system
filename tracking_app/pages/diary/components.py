@@ -31,69 +31,78 @@ def render_add_entry_form(storage):
     """
     st.subheader("✨ New Entry")
 
-    # Random prompt suggestion
+    # Random prompt suggestion - outside the form
     if st.button("💡 Get a writing prompt", type="secondary"):
         st.session_state.diary_prompt = random.choice(DIARY_PROMPTS)
 
     if 'diary_prompt' in st.session_state:
         st.info(f"💡 **Prompt:** {st.session_state.diary_prompt}")
 
-    # Entry form
-    col1, col2 = st.columns([3, 1])
+    # Use st.form to properly handle form submission and reset
+    with st.form("diary_entry_form"):
+        # Entry form
+        col1, col2 = st.columns([3, 1])
 
-    with col1:
-        entry_title = st.text_input(
-            "Title",
-            placeholder="Give your entry a title...",
-            key="diary_new_title"
+        with col1:
+            entry_title = st.text_input(
+                "Title",
+                placeholder="Give your entry a title...",
+                key="diary_new_title"
+            )
+
+        with col2:
+            entry_date = st.date_input(
+                "Date",
+                value=st.session_state.get('diary_selected_date', date.today()),
+                key="diary_new_date"
+            )
+
+        # Mood selector with emojis
+        st.markdown("**How are you feeling?**")
+        mood_cols = st.columns(len(DIARY_MOODS))
+        selected_mood = st.session_state.get('diary_new_mood', 'good')
+
+        for i, mood in enumerate(DIARY_MOODS):
+            with mood_cols[i]:
+                emoji = get_mood_emoji(mood)
+                is_selected = selected_mood == mood
+                button_type = "primary" if is_selected else "secondary"
+                if st.button(
+                    f"{emoji}",
+                    key=f"mood_{mood}",
+                    type=button_type,
+                    use_container_width=True
+                ):
+                    st.session_state.diary_new_mood = mood
+                    st.rerun()
+
+        # Content textarea
+        content = st.text_area(
+            "What's on your mind?",
+            height=200,
+            placeholder="Write your thoughts here...",
+            key="diary_new_content"
         )
 
-    with col2:
-        entry_date = st.date_input(
-            "Date",
-            value=st.session_state.get('diary_selected_date', date.today()),
-            key="diary_new_date"
-        )
+        # Tags
+        col_tag1, col_tag2 = st.columns([3, 1])
+        with col_tag1:
+            custom_tags = st.text_input(
+                "Tags (comma-separated)",
+                placeholder="personal, reflection, goals...",
+                key="diary_new_tags"
+            )
 
-    # Mood selector with emojis
-    st.markdown("**How are you feeling?**")
-    mood_cols = st.columns(len(DIARY_MOODS))
-    selected_mood = st.session_state.get('diary_new_mood', 'good')
+        with col_tag2:
+            st.markdown("<br>", unsafe_allow_html=True)
+            submitted = st.form_submit_button("Add Entry", type="primary", use_container_width=True)
 
-    for i, mood in enumerate(DIARY_MOODS):
-        with mood_cols[i]:
-            emoji = get_mood_emoji(mood)
-            is_selected = selected_mood == mood
-            button_type = "primary" if is_selected else "secondary"
-            if st.button(
-                f"{emoji}",
-                key=f"mood_{mood}",
-                type=button_type,
-                use_container_width=True
-            ):
-                st.session_state.diary_new_mood = mood
-                st.rerun()
+        # Word count
+        if content:
+            st.caption(f"📝 {get_word_count(content)} words")
 
-    # Content textarea
-    content = st.text_area(
-        "What's on your mind?",
-        height=200,
-        placeholder="Write your thoughts here...",
-        key="diary_new_content"
-    )
-
-    # Tags
-    col_tag1, col_tag2 = st.columns([3, 1])
-    with col_tag1:
-        custom_tags = st.text_input(
-            "Tags (comma-separated)",
-            placeholder="personal, reflection, goals...",
-            key="diary_new_tags"
-        )
-
-    with col_tag2:
-        st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("Add Entry", type="primary", use_container_width=True):
+        # Handle form submission
+        if submitted:
             if content.strip():
                 # Parse tags
                 tags = [t.strip() for t in custom_tags.split(',') if t.strip()] if custom_tags else []
@@ -110,10 +119,7 @@ def render_add_entry_form(storage):
 
                 st.success("✅ Entry saved!")
 
-                # Clear form
-                st.session_state.diary_new_title = ""
-                st.session_state.diary_new_content = ""
-                st.session_state.diary_new_tags = ""
+                # Clear prompt after successful save
                 if 'diary_prompt' in st.session_state:
                     del st.session_state.diary_prompt
 
