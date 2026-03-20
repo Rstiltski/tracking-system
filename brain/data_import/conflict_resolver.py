@@ -184,19 +184,23 @@ class ConflictResolver:
     
     def resolve(
         self,
-        conflict: ConflictRecord,
+        conflict: Optional[ConflictRecord],
         strategy: 'ConflictStrategy'
     ) -> ConflictResolution:
         """
         Resolve a conflict using specified strategy.
         
         Args:
-            conflict: Conflict to resolve
+            conflict: Conflict to resolve (can be None for no conflict)
             strategy: Resolution strategy
             
         Returns:
             Resolution result
         """
+        # If no conflict, return NO_CONFLICT
+        if conflict is None:
+            return ConflictResolution.NO_CONFLICT
+        
         if strategy == ConflictStrategy.SKIP:
             return self._resolve_skip(conflict)
         elif strategy == ConflictStrategy.OVERWRITE:
